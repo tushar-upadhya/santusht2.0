@@ -1,5 +1,5 @@
 import { QrTableColumns } from "@/components/admin/Qr/QrTableColumns";
-import { DataTable } from "@/components/admin/table/data-table";
+import { DataTable } from "@/components/data-table/data-table";
 import AddQrCodeForm from "@/components/forms/add-qr/AddQrCodeForm";
 import DialogForm from "@/components/forms/dialog-form/DialogForm";
 import Logo from "@/components/header/logo/Logo";

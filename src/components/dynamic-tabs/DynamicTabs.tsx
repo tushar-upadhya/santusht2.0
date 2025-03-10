@@ -1,4 +1,4 @@
-import { DataTable } from "@/components/admin/table/data-table";
+import { DataTable } from "@/components/data-table/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";

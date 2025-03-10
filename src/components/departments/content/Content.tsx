@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 interface MainContentProps {
     title: string;
     tagLine: string;
@@ -22,7 +20,7 @@ const Content = ({ title, tagLine, content, image }: MainContentProps) => {
 
             {image && (
                 <div className="flex justify-center my-4">
-                    <Image
+                    <img
                         src={image}
                         alt={title}
                         width={500}

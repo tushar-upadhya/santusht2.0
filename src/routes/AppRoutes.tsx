@@ -7,6 +7,7 @@ import UserManagementPage from "@/pages/admin/user-management/UserManagementPage
 import LoginPage from "@/pages/auth/login/LoginPage";
 import ContactPage from "@/pages/contact/ContactPage";
 import HomePage from "@/pages/home/HomePage";
+import Index from "@/pages/super-admin/Index";
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -33,6 +34,9 @@ const AppRoutes = () => {
                     />
                     <Route path="feedback" element={<FeedbackPage />} />
                 </Route>
+
+                {/*SUPER-ADMIN */}
+                <Route path="/super-admin" element={<Index />} />
 
                 {/* Protected Routes */}
                 <Route

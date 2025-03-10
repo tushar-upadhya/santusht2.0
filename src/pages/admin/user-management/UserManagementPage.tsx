@@ -1,7 +1,5 @@
-"use client";
-
-import { DataTable } from "@/components/admin/table/data-table";
 import { UserTableColumns } from "@/components/admin/user-management/user-table/UserTableColumns";
+import { DataTable } from "@/components/data-table/data-table";
 import BuildingMasterForm from "@/components/forms/building-master-form/BuildingMasterForm";
 import CategoryMasterForm from "@/components/forms/category-master-form/CategoryMasterForm";
 import DesignationMaster from "@/components/forms/designation-master/DesignationMaster";
@@ -11,7 +9,6 @@ import LockAndUnlockUserForm from "@/components/forms/unlock-user-forms/LockAndU
 import Logo from "@/components/header/logo/Logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
-
 import React from "react";
 
 interface UserData {
