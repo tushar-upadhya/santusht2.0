@@ -1,34 +1,27 @@
+import Header from "@/components/header/Header";
+import { AdminLayout } from "@/layout/Layout";
+import ContactRequestPage from "@/pages/admin/contact-request/ContactRequestPage";
+import FeedbackPage from "@/pages/admin/feedback/FeedbackPage";
+import QrPage from "@/pages/admin/qr/QrPage";
+import UserManagementPage from "@/pages/admin/user-management/UserManagementPage";
+import LoginPage from "@/pages/auth/login/LoginPage";
+import ContactPage from "@/pages/contact/ContactPage";
+import HomePage from "@/pages/home/HomePage";
 import { Navigate, Route, Routes } from "react-router-dom";
-import Header from "../components/header/Header";
-import Index from "../pages/admin";
-import ContactRequestPage from "../pages/admin/contact-request/ContactRequestPage";
-import FeedbackPage from "../pages/admin/feedback/FeedbackPage";
-import QrPage from "../pages/admin/qr/QrPage";
-import UserManagementPage from "../pages/admin/user-management/UserManagementPage";
-import ContactPage from "../pages/contact/ContactPage";
-import HomePage from "../pages/home/HomePage";
-import { AdminLayout } from "../pages/layout/AdminLayout";
-import LoginPage from "../pages/login/LoginPage";
+import ProtectedRoute from "./ProtectedRoute";
 
-export default function AppRoutes() {
+const AppRoutes = () => {
     return (
         <>
             <Header />
             <Routes>
-                {/* Public Routes */}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/login" element={<LoginPage />} />
 
-                {/* Admin Routes (Protected) */}
-                <Route
-                    path="/admin"
-                    element={
-                        <AdminLayout />
-                        // </ProtectedRoute>
-                    }
-                >
-                    <Route index element={<Index />} />
+                {/* Admin Routes */}
+                <Route path="/admin" element={<AdminLayout />}>
+                    <Route index element={<ContactRequestPage />} />
                     <Route
                         path="user-management"
                         element={<UserManagementPage />}
@@ -41,9 +34,21 @@ export default function AppRoutes() {
                     <Route path="feedback" element={<FeedbackPage />} />
                 </Route>
 
-                {/* Redirect unknown routes to home */}
+                {/* Protected Routes */}
+                <Route
+                    path="/protected"
+                    element={
+                        <ProtectedRoute allowedRoles={["admin", "viewer"]}>
+                            <div>Protected Content</div>
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Redirect unknown routes */}
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </>
     );
-}
+};
+
+export default AppRoutes;

@@ -1,0 +1,40 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "serialNumber": 1,
+            "status": "Active",
+            "role": "Admin",
+            "fullName": "John Doe",
+            "description": "Handles system operations",
+            "mobile": 9876543210
+        },
+        {
+            "id": 2,
+            "serialNumber": 2,
+            "status": "Inactive",
+            "role": "User",
+            "fullName": "Jane Smith",
+            "description": "HR Specialist",
+            "mobile": 9876543222
+        },
+        {
+            "id": 2,
+            "serialNumber": 2,
+            "status": "Inactive",
+            "role": "User",
+            "fullName": "Jane Smith",
+            "description": "HR Specialist",
+            "mobile": 9876543222
+        },
+        {
+            "id": 2,
+            "serialNumber": 2,
+            "status": "Inactive",
+            "role": "User",
+            "fullName": "Jane Smith",
+            "description": "HR Specialist",
+            "mobile": 9876543222
+        }
+    ]
+}
