@@ -71,32 +71,32 @@ const ActionButtons = ({ employee }: { employee: QRType }) => {
         delete: false,
         resetPassword: false,
     });
-    const [editedEmployee, setEditedEmployee] = useState({ ...employee });
+    const [editedEmployee] = useState({ ...employee });
 
     // API Base URL
     const API_URL = "http://localhost:3000/users";
 
     // Function to update employee details (PUT request)
-    const handleEdit = async () => {
-        try {
-            const response = await fetch(
-                `${API_URL}/${editedEmployee.serialNumber}`,
-                {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(editedEmployee),
-                }
-            );
+    // const handleEdit = async () => {
+    //     try {
+    //         const response = await fetch(
+    //             `${API_URL}/${editedEmployee.serialNumber}`,
+    //             {
+    //                 method: "PUT",
+    //                 headers: { "Content-Type": "application/json" },
+    //                 body: JSON.stringify(editedEmployee),
+    //             }
+    //         );
 
-            if (!response.ok) throw new Error("Failed to update employee");
+    //         if (!response.ok) throw new Error("Failed to update employee");
 
-            alert("Employee updated successfully!");
-            setDialogState({ ...dialogState, edit: false });
-        } catch (error) {
-            console.error(error);
-            alert("Error updating employee");
-        }
-    };
+    //         alert("Employee updated successfully!");
+    //         setDialogState({ ...dialogState, edit: false });
+    //     } catch (error) {
+    //         console.error(error);
+    //         alert("Error updating employee");
+    //     }
+    // };
 
     // Function to delete employee (DELETE request)
     const handleDelete = async () => {
