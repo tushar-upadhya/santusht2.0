@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import ThemeToggler from "../theme/theme-provider/theme-toggler/ThemeToggler";
+import ThemeToggler from "../theme/theme-toggler/ThemeToggler";
 import Breadcrumbs from "../ui/bread-crumbs/Breadcrumbs";
 import HeaderOne from "./header-one/HeaderOne";
 import Logo from "./logo/Logo";

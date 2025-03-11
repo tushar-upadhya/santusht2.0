@@ -1,5 +1,3 @@
-"use client";
-
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
