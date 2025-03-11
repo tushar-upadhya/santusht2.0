@@ -24,33 +24,35 @@ const fetchUsers = async (): Promise<UserData[]> => {
         if (!res.ok)
             throw new Error(`Failed to fetch users: ${res.statusText}`);
 
-        const data = await res.json();
-        console.log("Fetched Users Data:", data);
+        const rawData: any[] = await res.json();
+        console.log("Fetched Users Data:", rawData);
 
-        return data.map((user: any, index: number) => ({
-            id: user.id || index,
+        return rawData.map((user, index) => ({
             serialNumber: index + 1,
-            status: user.status || "Unknown",
-            role: user.role || "N/A",
-            adminName: user.adminName || "N/A",
-            instituteName: user.instituteName || "N/A",
-            mobile: user.mobile || "N/A",
-            location: user.location || "N/A",
-        }));
+            status: user.status ?? "Unknown",
+            role: user.role ?? "N/A",
+            adminName: user.adminName ?? "N/A",
+            instituteName: user.instituteName ?? "N/A",
+            mobile: user.mobile ?? "N/A",
+            location: user.location ?? "N/A",
+        })) as UserData[];
     } catch (error) {
         console.error("Error fetching users:", error);
         throw error;
     }
 };
+
 const Index = () => {
-    const { data, isLoading, isError, error } = useQuery({
+    const { data, isLoading, isError, error, refetch } = useQuery({
         queryKey: ["users"],
         queryFn: fetchUsers,
         staleTime: 300000,
     });
 
+    const admins = data?.filter((user) => user.role === "Admin") || [];
+
     return (
-        <div className="flex min-h-screen ">
+        <div className="flex min-h-screen">
             {/* Sidebar */}
             <div className="w-[300px] flex-shrink-0">
                 <Sidebar users={data || []} />
@@ -62,13 +64,17 @@ const Index = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <DialogForm
                         title="SANTUSHT"
-                        formComponent={<SuperAdminAddAdminForm />}
+                        formComponent={
+                            <SuperAdminAddAdminForm onAdminAdded={refetch} />
+                        }
                         buttonLabel="Add Admin"
                     />
 
                     <DialogForm
                         title="SANTUSHT"
-                        formComponent={<SuperAdminAddInstituteForm />}
+                        formComponent={
+                            <SuperAdminAddInstituteForm admins={admins} />
+                        }
                         buttonLabel="Add Institute"
                     />
                 </div>
