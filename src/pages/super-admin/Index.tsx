@@ -1,4 +1,7 @@
 import { DataTable } from "@/components/data-table/data-table";
+import DialogForm from "@/components/forms/dialog-form/DialogForm";
+import SuperAdminAddAdminForm from "@/components/forms/super-admin-forms/super-admin-add-admin-form/SuperAdminAddAdminForm";
+import SuperAdminAddInstituteForm from "@/components/forms/super-admin-forms/super-admin-add-institute-form/SuperAdminAddInstituteForm";
 import Sidebar from "@/components/super-admin/sidebar/Sidebar";
 import { SuperAdminTableColumns } from "@/components/super-admin/SuperAdminTableColumns";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -39,7 +42,6 @@ const fetchUsers = async (): Promise<UserData[]> => {
         throw error;
     }
 };
-
 const Index = () => {
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ["users"],
@@ -48,19 +50,44 @@ const Index = () => {
     });
 
     return (
-        <div className="flex">
-            <Sidebar users={data || []} />
-            <div className="p-6 flex-1">
-                {isLoading ? (
-                    <Skeleton className="h-10 w-full rounded-md" />
-                ) : isError ? (
-                    <div className="text-red-500">Error: {error.message}</div>
-                ) : (
-                    <DataTable
-                        columns={SuperAdminTableColumns}
-                        data={data || []}
+        <div className="flex min-h-screen ">
+            {/* Sidebar */}
+            <div className="w-[300px] flex-shrink-0">
+                <Sidebar users={data || []} />
+            </div>
+
+            {/* Main Content */}
+            <div className="flex-1 p-6 space-y-6">
+                {/* Forms Section */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <DialogForm
+                        title="SANTUSHT"
+                        formComponent={<SuperAdminAddAdminForm />}
+                        buttonLabel="Add Admin"
                     />
-                )}
+
+                    <DialogForm
+                        title="SANTUSHT"
+                        formComponent={<SuperAdminAddInstituteForm />}
+                        buttonLabel="Add Institute"
+                    />
+                </div>
+
+                {/* Table Section */}
+                <div>
+                    {isLoading ? (
+                        <Skeleton className="h-10 w-full max-w-lg rounded-md" />
+                    ) : isError ? (
+                        <div className="text-red-500">
+                            Error: {error.message}
+                        </div>
+                    ) : (
+                        <DataTable
+                            columns={SuperAdminTableColumns}
+                            data={data || []}
+                        />
+                    )}
+                </div>
             </div>
         </div>
     );

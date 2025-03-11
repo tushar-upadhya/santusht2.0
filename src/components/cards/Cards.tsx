@@ -4,25 +4,25 @@ import { Separator } from "../ui/separator";
 
 const features = [
     {
-        icon: <HeartPulse className="w-8 h-8 text-primary" />,
+        icon: <HeartPulse className="w-8 h-8 text-green-400" />,
         title: "Patient Care",
         description:
             "Committed to excellence, we prioritize your well-being with compassionate, personalized care.",
     },
     {
-        icon: <MailCheck className="w-8 h-8 text-primary" />,
+        icon: <MailCheck className="w-8 h-8 text-green-400" />,
         title: "Solve Grievances",
         description:
             "Swiftly resolving concerns, ensuring satisfaction, and fostering positive experiences for all.",
     },
     {
-        icon: <ClipboardCheck className="w-8 h-8 text-primary" />,
+        icon: <ClipboardCheck className="w-8 h-8 text-green-400" />,
         title: "Accept Feedbacks",
         description:
             "Welcome your feedback; it shapes our commitment to continuous improvement",
     },
     {
-        icon: <Clock className="w-8 h-8 text-primary" />,
+        icon: <Clock className="w-8 h-8 text-green-400" />,
         title: "24*7 Available",
         description:
             "Accessible round-the-clock for your convenience, ensuring continuous support and assistance.",

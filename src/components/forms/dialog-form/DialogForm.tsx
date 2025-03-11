@@ -10,7 +10,7 @@ import {
 
 interface DialogFormProps {
     title: string;
-    description: string;
+    description?: string;
     formComponent: React.ReactNode;
     buttonLabel: string;
     logo?: React.ReactNode;

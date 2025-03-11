@@ -6,8 +6,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { ChevronDown, Edit, Menu } from "lucide-react";
+import { ChevronDown, Edit } from "lucide-react";
 import { useState } from "react";
 
 interface UserData {
@@ -34,80 +33,65 @@ const Sidebar = ({ users }: { users: UserData[] }) => {
     };
 
     return (
-        <>
-            {/* Sidebar */}
-            <Sheet>
-                <SheetTrigger asChild>
-                    <Button
-                        variant="default"
-                        className="ml-4 bg-green-400/40 mt-4 border-none cursor-pointer hover:bg-green-400 transition-all duration-300"
+        <div className="w-[300px] p-4 bg-white shadow-md h-screen">
+            <h2 className="text-lg font-semibold mb-4">Admin Panel</h2>
+            <div className="space-y-4">
+                {/* Admins Section */}
+                <div>
+                    <button
+                        onClick={() => toggleDropdown("admins")}
+                        className="flex justify-between items-center w-full py-2 px-3 bg-gray-200 rounded-md"
                     >
-                        <Menu className="w-5 h-5" />
-                    </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-[300px] p-4 bg-white">
-                    <h2 className="text-lg font-semibold mb-4">Admin Panel</h2>
-                    <div className="space-y-4">
-                        {/* Admins Section */}
-                        <div>
-                            <button
-                                onClick={() => toggleDropdown("admins")}
-                                className="flex justify-between items-center w-full py-2 px-3 bg-gray-200 rounded-md"
-                            >
-                                Admins <ChevronDown className="w-4 h-4" />
-                            </button>
-                            {openDropdown === "admins" && (
-                                <ul className="mt-2 space-y-2 pl-4">
-                                    {users
-                                        .filter((user) => user.role === "Admin")
-                                        .map((admin) => (
-                                            <li
-                                                key={admin.id}
-                                                className="flex justify-between items-center py-1"
-                                            >
-                                                {admin.adminName}
-                                                <Edit
-                                                    className="w-4 h-4 cursor-pointer text-blue-500"
-                                                    onClick={() =>
-                                                        handleEditClick(admin)
-                                                    }
-                                                />
-                                            </li>
-                                        ))}
-                                </ul>
-                            )}
-                        </div>
+                        Admins <ChevronDown className="w-4 h-4" />
+                    </button>
+                    {openDropdown === "admins" && (
+                        <ul className="mt-2 space-y-2 pl-4">
+                            {users
+                                .filter((user) => user.role === "Admin")
+                                .map((admin) => (
+                                    <li
+                                        key={admin.id}
+                                        className="flex justify-between items-center py-1"
+                                    >
+                                        {admin.adminName}
+                                        <Edit
+                                            className="w-4 h-4 cursor-pointer text-blue-500"
+                                            onClick={() =>
+                                                handleEditClick(admin)
+                                            }
+                                        />
+                                    </li>
+                                ))}
+                        </ul>
+                    )}
+                </div>
 
-                        {/* Institutes Section */}
-                        <div>
-                            <button
-                                onClick={() => toggleDropdown("institutes")}
-                                className="flex justify-between items-center w-full py-2 px-3 bg-gray-200 rounded-md"
-                            >
-                                Institutes <ChevronDown className="w-4 h-4" />
-                            </button>
-                            {openDropdown === "institutes" && (
-                                <ul className="mt-2 space-y-2 pl-4">
-                                    {users.map((user) => (
-                                        <li
-                                            key={user.id}
-                                            className="flex justify-between items-center py-1"
-                                        >
-                                            {user.location}
-                                            <Edit
-                                                className="w-4 h-4 cursor-pointer text-blue-500"
-                                                onClick={() =>
-                                                    handleEditClick(user)
-                                                }
-                                            />
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </div>
-                    </div>
-                </SheetContent>
-            </Sheet>
+                {/* Institutes Section */}
+                <div>
+                    <button
+                        onClick={() => toggleDropdown("institutes")}
+                        className="flex justify-between items-center w-full py-2 px-3 bg-gray-200 rounded-md"
+                    >
+                        Institutes <ChevronDown className="w-4 h-4" />
+                    </button>
+                    {openDropdown === "institutes" && (
+                        <ul className="mt-2 space-y-2 pl-4">
+                            {users.map((user) => (
+                                <li
+                                    key={user.id}
+                                    className="flex justify-between items-center py-1"
+                                >
+                                    {user.location}
+                                    <Edit
+                                        className="w-4 h-4 cursor-pointer text-blue-500"
+                                        onClick={() => handleEditClick(user)}
+                                    />
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            </div>
 
             {/* Edit Dialog */}
             {editUser && (
@@ -174,7 +158,7 @@ const Sidebar = ({ users }: { users: UserData[] }) => {
                     </DialogContent>
                 </Dialog>
             )}
-        </>
+        </div>
     );
 };
 

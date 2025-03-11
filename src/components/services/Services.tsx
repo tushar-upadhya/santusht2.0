@@ -19,28 +19,28 @@ const stats = {
 const Services: React.FC = () => {
     const statCards = [
         {
-            icon: <UserPlus className="w-8 h-8 text-primary" />,
+            icon: <UserPlus className="w-8 h-8 text-green-400" />,
             number: stats.beneficiaryNo,
             title: "Beneficiaries",
             description:
                 "Patients benefited from dedicated care, support, and services.",
         },
         {
-            icon: <Users className="w-8 h-8 text-primary" />,
+            icon: <Users className="w-8 h-8 text-green-400" />,
             number: stats.skilledTeam,
             title: "Skilled Team Members",
             description:
                 "Skilled team ensuring optimal care for your well-being always.",
         },
         {
-            icon: <CheckCircle className="w-8 h-8 text-primary" />,
+            icon: <CheckCircle className="w-8 h-8 text-green-400" />,
             number: stats.grievancesResolved,
             title: "Grievances Resolved",
             description:
                 "Grievances resolved, ensuring satisfaction and trust in our services.",
         },
         {
-            icon: <MessageSquare className="w-8 h-8 text-primary" />,
+            icon: <MessageSquare className="w-8 h-8 text-green-400" />,
             number: stats.totalFeedback,
             title: "Total Feedback",
             description:
