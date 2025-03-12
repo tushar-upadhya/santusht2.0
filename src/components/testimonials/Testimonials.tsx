@@ -66,7 +66,7 @@ const Testimonials = () => {
                     <AnimatedTestimonials
                         testimonials={testimonials.map((t) => ({
                             key: t.id.toString(),
-                            quote:`<p class="italic">${t.feedback}</p>`,
+                            quote: t.feedback,
                             name: t.name,
                             designation: t.role,
                             src: t.image,
