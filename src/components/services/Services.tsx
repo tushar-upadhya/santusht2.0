@@ -51,10 +51,10 @@ const Services: React.FC = () => {
     return (
         <section className="py-12">
             <div className="container mx-auto text-center capitalize">
-                <h2 className="text-[min(6vw,1.5rem)] leading-relaxed font-bold text-center mb-8 text-foreground dark:text-gray-100">
+                <h2 className="text-[min(6vw,1.5rem)] leading-relaxed font-bold text-center mb-8 text-foreground text-green-500">
                     Services
                 </h2>
-                <Separator className="bg-gray-300 dark:bg-gray-700 mx-auto -mt-4 mb-4 w-24 h-[2px]" />
+                <Separator className="bg-gray-300 mx-auto -mt-4 mb-4 w-24 h-[2px]" />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 ">
                     {statCards.map((stat, index) => (
@@ -64,15 +64,15 @@ const Services: React.FC = () => {
                         >
                             <CardHeader className="flex flex-col items-center">
                                 {stat.icon}
-                                <CardTitle className="text-[min(4vw,1rem)] leading-relaxed font-bold text-foreground dark:text-gray-100">
+                                <CardTitle className="text-[min(4vw,1rem)] leading-relaxed font-bold text-foreground ">
                                     {stat.number}
                                 </CardTitle>
-                                <CardDescription className="text-[min(4vw,1rem)] leading-relaxed font-bold dark:text-gray-100">
+                                <CardDescription className="text-[min(4vw,1rem)] leading-relaxed font-bold ">
                                     {stat.title}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-[min(4vw,1rem)] leading-relaxed dark:text-gray-100">
+                                <p className="text-[min(4vw,1rem)] leading-relaxed">
                                     {stat.description}
                                 </p>
                             </CardContent>

@@ -7,7 +7,7 @@ const AssistanceBanner: React.FC = () => {
     return (
         <section className="py-12">
             <div className="container mx-auto text-center px-4">
-                <h2 className="text-[min(6vw,1.5rem)] font-bold mb-4 capitalize">
+                <h2 className="text-[min(6vw,1.5rem)] font-bold mb-4 capitalize text-green-500">
                     We are here to assist you
                 </h2>
                 <p className="text-[min(4vw,1rem)]  max-w-3xl mx-auto mb-6 leading-relaxed">
@@ -18,6 +18,7 @@ const AssistanceBanner: React.FC = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center  dark:text-gray-300   text-primary items-center gap-4">
                     {/* Raise Grievance  */}
+                   
                     <DialogForm
                         title="SANTUSHT"
                         description="Your well-being is our priority."

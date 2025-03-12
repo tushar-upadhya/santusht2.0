@@ -36,7 +36,7 @@ const Hero: React.FC = () => {
     }, []);
 
     return (
-        <section className="py-1">
+        <section className="py-1 ">
             <div className="container mx-auto text-center px-4">
                 <Carousel className="w-full">
                     <CarouselContent

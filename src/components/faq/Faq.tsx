@@ -35,22 +35,22 @@ const Faq: React.FC = () => {
     return (
         <section className="py-12">
             <div className="container mx-auto text-center px-4">
-                <h2 className="text-[min(6vw,1.5rem)]  font-bold text-center mb-6 dark:text-gray-300">
+                <h2 className="text-[min(6vw,1.5rem)]  font-bold text-center mb-6 text-green-500">
                     Frequently Asked Questions
                 </h2>
-                <Separator className="bg-gray-300 dark:bg-gray-700 mx-auto -mt-4 mb-4 w-24 h-[2px]" />
+                <Separator className="bg-gray-300  mx-auto -mt-4 mb-4 w-24 h-[2px]" />
 
                 <Accordion type="single" collapsible className="space-y-4">
                     {faqs.map((faq, index) => (
                         <AccordionItem
                             key={index}
                             value={`item-${index}`}
-                            className="border-b border-gray-200 dark:border-gray-700"
+                            className="border-b border-gray-200"
                         >
-                            <AccordionTrigger className="text-left text-[min(4vw,1rem)] leading-relaxed capitalize text-muted-foreground dark:text-gray-300">
+                            <AccordionTrigger className="text-left text-[min(4vw,1rem)] leading-relaxed capitalize text-muted-foreground ">
                                 {faq.question}
                             </AccordionTrigger>
-                            <AccordionContent className="text-left text-[min(4vw,1rem)] leading-relaxed capitalize text-muted-foreground dark:text-gray-300">
+                            <AccordionContent className="text-left text-[min(4vw,1rem)] leading-relaxed capitalize text-muted-foreground ">
                                 {faq.answer}
                             </AccordionContent>
                         </AccordionItem>
