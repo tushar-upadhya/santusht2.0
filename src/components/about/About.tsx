@@ -6,11 +6,11 @@ const About: React.FC = () => {
     return (
         <section className="py-12">
             <div className="container mx-auto text-center px-4">
-                <p className="text-[min(6vw,1.5rem)] font-bold text-center mb-6 dark:text-gray-300">
+                <p className="text-[min(6vw,1.5rem)] font-bold text-center mb-6 text-green-500">
                     About Santusht
                 </p>
-                <Separator className="bg-gray-300 dark:bg-gray-700 mx-auto -mt-4 mb-4 w-24 h-[2px]" />
-                <p className="text-left text-[min(4vw,1rem)] leading-relaxed capitalize text-muted-foreground mb-10 dark:text-gray-300">
+                <Separator className="bg-gray-300  mx-auto -mt-4 mb-4 w-24 h-[2px]" />
+                <p className="text-left text-[min(4vw,1rem)] leading-relaxed capitalize text-muted-foreground mb-10 ">
                     SANTUSHT empowers you to voice your concerns and aids in
                     resolving grievances promptly. It is accessible 24/7 as we
                     prioritize your well-being. Share your feedback seamlessly
@@ -31,26 +31,26 @@ const About: React.FC = () => {
 
                     {/* Content Section */}
                     <div className="w-full md:w-1/2 space-y-4">
-                        <p className="text-[min(4.5vw,1rem)] leading-relaxed font-bold text-left text-gray-800 dark:text-gray-300 capitalize">
+                        <p className="text-[min(4.5vw,1rem)] leading-relaxed font-bold text-left text-gray-800  capitalize">
                             Elevating Patient Care with Compassion,
                             Accessibility and Continuous Improvement
                         </p>
-                        <p className="text-gray-600 font-thin text-[min(4vw,1rem)] leading-relaxed text-left mb-8 dark:text-gray-300">
+                        <p className="text-gray-600 font-thin text-[min(4vw,1rem)] leading-relaxed text-left mb-8">
                             Your voice matters. Prompt resolutions 24/7 support.
                             Seamless feedback shapes compassionate care. Your
                             satisfaction, our commitment.
                         </p>
 
-                        <ul className="list-disc pl-5 space-y-2 text-left text-gray-700 dark:text-gray-300 text-[min(4.5vw,1rem)] leading-normal">
+                        <ul className="list-disc pl-5 space-y-2 text-left text-gray-700  text-[min(4.5vw,1rem)] leading-normal">
                             <li>
-                                <span className="font-semibold text-gray-800 dark:text-gray-300 ">
+                                <span className="font-semibold text-gray-800">
                                     Efficient Grievance Resolution:
                                 </span>{" "}
                                 Ensuring swift and satisfactory solutions for
                                 patients.
                             </li>
                             <li>
-                                <span className="font-semibold text-gray-800 dark:text-gray-300 ">
+                                <span className="font-semibold text-gray-800">
                                     Seamless Feedback Collection:
                                 </span>{" "}
                                 Enhancing our services for optimal patient
@@ -58,7 +58,7 @@ const About: React.FC = () => {
                             </li>
                         </ul>
 
-                        <p className="text-gray-700 font-medium capitalize text-left dark:text-gray-300 text-[min(4.5vw,1rem)] leading-relaxed">
+                        <p className="text-gray-700 font-medium capitalize text-left  text-[min(4.5vw,1rem)] leading-relaxed">
                             SANTUSHT our patient grievance and feedback portal,
                             offers round-the-clock support, efficiently
                             resolving grievances, and valuing patient feedback

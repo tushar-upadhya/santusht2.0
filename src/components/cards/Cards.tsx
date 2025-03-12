@@ -33,9 +33,9 @@ const Cards: React.FC = () => {
     return (
         <div className="py-12">
             <div className="container mx-auto text-center px-4 capitalize">
-                <h2 className="text-[min(6vw,1.5rem)]  font-bold text-center mb-8 text-foreground dark:text-gray-100">
+                <h2 className="text-[min(6vw,1.5rem)]  font-bold text-center mb-8 text-foreground text-green-500">
                     Our Key Features
-                    <Separator className="bg-gray-300 dark:bg-gray-700 mx-auto mt-2 w-24 h-[2px]" />
+                    <Separator className="bg-gray-300  mx-auto mt-2 w-24 h-[2px]" />
                 </h2>
                 {/* Responsive Card Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -43,12 +43,12 @@ const Cards: React.FC = () => {
                         <div key={index} className=" ">
                             <CardHeader className="flex items-center gap-3">
                                 {feature.icon}
-                                <CardTitle className="text-[min(4vw,1rem)] leading-relaxed  text-foreground dark:text-gray-100">
+                                <CardTitle className="text-[min(4vw,1rem)] leading-relaxed  text-foreground">
                                     {feature.title}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-[min(4vw,1rem)] leading-relaxed  dark:text-gray-100">
+                                <p className="text-[min(4vw,1rem)] leading-relaxed ">
                                     {feature.description}
                                 </p>
                             </CardContent>

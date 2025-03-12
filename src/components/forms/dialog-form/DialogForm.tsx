@@ -29,30 +29,26 @@ const DialogForm = ({
 }: DialogFormProps) => {
     return (
         <Dialog>
-            <DialogTrigger asChild className="cursor-pointer">
+            <DialogTrigger asChild>
                 <Button
                     variant="outline"
-                    className={`border dark:border-green-500 text-green-500 dark:text-gray-300 font-semibold w-full sm:w-fit px-14 py-5 ${buttonClassName}`}
+                    className={`border text-green-500 font-semibold w-full sm:w-fit px-6 py-3 sm:px-14 sm:py-5 ${buttonClassName}`}
                 >
                     {buttonLabel}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="bg-white dark:bg-gray-800">
+            <DialogContent className="bg-white max-w-sm sm:max-w-md md:max-w-lg w-full p-6 sm:p-8 rounded-lg shadow-lg">
                 <DialogHeader>
                     <div className="flex items-center gap-4">
                         {logo && <div className="w-fit h-fit">{logo}</div>}
                         <div>
-                            <DialogTitle className="text-[min(4vw,1rem)] leading-relaxed">
+                            <DialogTitle className="text-lg sm:text-xl font-semibold">
                                 {title}
                             </DialogTitle>
-                            <DialogDescription className="text-[min(6vw,.8rem)] leading-relaxed text-muted-foreground mt-1">
-                                <span className="font-semibold">
-                                    {description}
-                                </span>
+                            <DialogDescription className="text-sm sm:text-base text-muted-foreground mt-1">
+                                <span className="font-semibold">{description}</span>
                                 {location && (
-                                    <span className="mt-2 block">
-                                        {location}
-                                    </span>
+                                    <span className="mt-2 block">{location}</span>
                                 )}
                             </DialogDescription>
                         </div>

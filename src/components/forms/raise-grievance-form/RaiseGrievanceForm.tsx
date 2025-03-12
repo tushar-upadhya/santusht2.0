@@ -33,7 +33,7 @@ const formSchema = z.object({
     briefing: z.string().min(1, "Briefing is required."),
     uhid: z.string().min(1, "UHID is required."),
     otp: z.string().min(1, "OTP is required."),
-    mediaType: z.string().min(1, "OTP is required."),
+    mediaType: z.string().min(1, "media is required."),
 });
 
 const RaiseGrievanceForm = () => {
@@ -94,19 +94,19 @@ const RaiseGrievanceForm = () => {
     };
 
     return (
-        <ScrollArea className="h-[38rem]">
+        <ScrollArea className="h-[38rem] ">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-4"
+                    className="space-y-4 -mr4"
                 >
                     {/* Institute & Category Dropdown */}
-                    <div className="flex gap-4">
+                    <div className="flex gap-2">
                         <FormField
                             control={form.control}
                             name="institute"
                             render={({ field }) => (
-                                <FormItem className="flex-1">
+                                <FormItem className="flex-1 -mr-1">
                                     <FormLabel>Institute</FormLabel>
                                     <FormControl>
                                         <Select
@@ -116,7 +116,7 @@ const RaiseGrievanceForm = () => {
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Select Institute" />
                                             </SelectTrigger>
-                                            <SelectContent>
+                                            <SelectContent  className="bg-white border shadow-md">
                                                 <SelectItem value="institute1">
                                                     Institute 1
                                                 </SelectItem>
@@ -129,7 +129,7 @@ const RaiseGrievanceForm = () => {
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-red-500"/>
                                 </FormItem>
                             )}
                         />
@@ -149,7 +149,7 @@ const RaiseGrievanceForm = () => {
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Select Category" />
                                             </SelectTrigger>
-                                            <SelectContent>
+                                            <SelectContent  className="bg-white border shadow-md">
                                                 <SelectItem value="category1">
                                                     Category 1
                                                 </SelectItem>
@@ -159,13 +159,13 @@ const RaiseGrievanceForm = () => {
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-red-500"/>
                                 </FormItem>
                             )}
                         />
                     </div>
                     {/* Building and Floor  */}
-                    <div className="flex gap-4">
+                    <div className="flex gap-2">
                         {/* Building Dropdown */}
                         <FormField
                             control={form.control}
@@ -181,7 +181,7 @@ const RaiseGrievanceForm = () => {
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Select Building" />
                                             </SelectTrigger>
-                                            <SelectContent>
+                                            <SelectContent  className="bg-white border shadow-md">
                                                 <SelectItem value="building1">
                                                     Building 1
                                                 </SelectItem>
@@ -191,7 +191,7 @@ const RaiseGrievanceForm = () => {
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -211,7 +211,7 @@ const RaiseGrievanceForm = () => {
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Select Floor" />
                                             </SelectTrigger>
-                                            <SelectContent>
+                                            <SelectContent  className="bg-white border shadow-md">
                                                 <SelectItem value="floor1">
                                                     Floor 1
                                                 </SelectItem>
@@ -221,7 +221,7 @@ const RaiseGrievanceForm = () => {
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-red-500"/>
                                 </FormItem>
                             )}
                         />
@@ -240,7 +240,7 @@ const RaiseGrievanceForm = () => {
                                         {...field}
                                     />
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage className="text-red-500"/>
                             </FormItem>
                         )}
                     />
@@ -258,7 +258,7 @@ const RaiseGrievanceForm = () => {
                                         {...field}
                                     />
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage className="text-red-500"/>
                             </FormItem>
                         )}
                     />
@@ -278,7 +278,7 @@ const RaiseGrievanceForm = () => {
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -297,17 +297,17 @@ const RaiseGrievanceForm = () => {
                                                 {...field}
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage className="text-red-500" />
                                     </FormItem>
                                 )}
                             />
-                            <Button variant="destructive">Get OTP</Button>
+                            <Button variant="default" className="bg-green-400/50 -mt-2">Get OTP</Button>
                         </div>
                     </div>
 
                     {/* MEDIA  */}
 
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex flex-col sm:flex-row gap-2">
                         <FormField
                             control={form.control}
                             name="mediaType"
@@ -325,7 +325,7 @@ const RaiseGrievanceForm = () => {
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Select Media Type" />
                                             </SelectTrigger>
-                                            <SelectContent>
+                                            <SelectContent  className="bg-white border shadow-md -mx-1" >
                                                 <SelectItem value="image">
                                                     Image
                                                 </SelectItem>
@@ -338,7 +338,7 @@ const RaiseGrievanceForm = () => {
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage  />
                                 </FormItem>
                             )}
                         />
@@ -364,7 +364,7 @@ const RaiseGrievanceForm = () => {
                     </div>
 
                     {/* Submit Button */}
-                    <Button type="submit" variant="default" className="w-full ">
+                    <Button type="submit" variant="default" className="w-full bg-red-400/50">
                         Submit
                     </Button>
                 </form>

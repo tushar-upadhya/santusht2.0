@@ -44,14 +44,14 @@ const Testimonials = () => {
     }, []);
 
     return (
-        <section className="py-12 bg-primary/20 dark:bg-accent/10 rounded-md">
+        <section className="py-12 bg-primary/20  rounded-md">
             <div className="container mx-auto text-center px-4">
-                <h2 className="text-[min(6vw,1.5rem)] font-semibold text-foreground dark:text-gray-100">
+                <h2 className="text-[min(6vw,1.5rem)] font-semibold text-foreground text-green-500 ">
                     TESTIMONIALS
-                    <Separator className="bg-gray-300 dark:bg-gray-700 mx-auto mt-2 w-24 h-[2px]" />
+                    <Separator className="bg-gray-300  mx-auto mt-2 w-24 h-[2px]" />
                 </h2>
 
-                <p className="text-gray-700 dark:text-gray-300 mt-4 text-[min(4.5vw,1rem)] text-left leading-6 mb-12 capitalize">
+                <p className=" text-gray-700 mt-4 text-[min(4.5vw,1rem)] text-left leading-6 mb-12 capitalize">
                     Our faithful testimonials reflect the heart of our
                     commitment satisfied patients sharing their positive
                     experiences. At SANTUSHT, real stories testify to our
