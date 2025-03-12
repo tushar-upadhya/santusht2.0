@@ -20,8 +20,15 @@ const AppRoutes = () => {
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/login" element={<LoginPage />} />
 
-                {/* Admin Routes */}
-                <Route path="/admin" element={<AdminLayout />}>
+                {/* Admin Routes (Protected) */}
+                <Route
+                    path="/admin"
+                    element={
+                        <ProtectedRoute allowedRoles={["admin"]}>
+                            <AdminLayout />
+                        </ProtectedRoute>
+                    }
+                >
                     <Route index element={<ContactRequestPage />} />
                     <Route
                         path="user-management"
@@ -35,15 +42,12 @@ const AppRoutes = () => {
                     <Route path="feedback" element={<FeedbackPage />} />
                 </Route>
 
-                {/*SUPER-ADMIN */}
-                <Route path="/super-admin" element={<Index />} />
-
-                {/* Protected Routes */}
+                {/* Super Admin Route (Protected) */}
                 <Route
-                    path="/protected"
+                    path="/super-admin"
                     element={
-                        <ProtectedRoute allowedRoles={["admin", "viewer"]}>
-                            <div>Protected Content</div>
+                        <ProtectedRoute allowedRoles={["super-admin"]}>
+                            <Index />
                         </ProtectedRoute>
                     }
                 />

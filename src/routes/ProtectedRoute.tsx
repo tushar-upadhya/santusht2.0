@@ -1,27 +1,21 @@
 import { useAuth } from "@/components/auth/AuthProvider";
-import { User } from "@/lib/types/auth/user";
-import { PropsWithChildren } from "react";
+import { ReactNode } from "react";
+import { Navigate } from "react-router-dom";
 
-type ProtectedRouteProps = PropsWithChildren & {
-    allowedRoles?: User["role"][];
-};
-
-export default function ProtectedRoute({
+const ProtectedRoute = ({
     allowedRoles,
     children,
-}: ProtectedRouteProps) {
-    const { currentUser } = useAuth();
+}: {
+    allowedRoles: string[];
+    children: ReactNode;
+}) => {
+    const { role } = useAuth();
 
-    if (currentUser === undefined) {
-        return <div>Loading...</div>;
-    }
-
-    if (
-        currentUser === null ||
-        (allowedRoles && !allowedRoles.includes(currentUser.role))
-    ) {
-        return <div>Permission denied</div>;
+    if (!role || !allowedRoles.includes(role)) {
+        return <Navigate to="/login" replace />;
     }
 
     return children;
-}
+};
+
+export default ProtectedRoute;
