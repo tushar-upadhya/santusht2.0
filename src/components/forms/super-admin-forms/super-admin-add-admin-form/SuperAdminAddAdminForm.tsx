@@ -22,6 +22,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
@@ -57,7 +58,7 @@ const SuperAdminAddAdminForm: React.FC<SuperAdminAddAdminFormProps> = ({
             email: "",
             gender: "Male",
             dateOfBirth: new Date(),
-            status: true, // ✅ Default: Online
+            status: true, // ✅ Default: active
             role: "admin",
         },
     });
@@ -214,13 +215,14 @@ const SuperAdminAddAdminForm: React.FC<SuperAdminAddAdminFormProps> = ({
                                         onCheckedChange={field.onChange}
                                     />
                                     <span
-                                        className={
+                                        className={cn(
+                                            "text-xs font-semibold animate-pulse rounded-full px-2 py-1",
                                             field.value
-                                                ? "text-green-600"
-                                                : "text-red-600"
-                                        }
+                                                ? "text-green-700 bg-green-200"
+                                                : "text-red-700 bg-red-200"
+                                        )}
                                     >
-                                        {field.value ? "Online" : "Offline"}
+                                        {field.value ? "active" : "inactive"}
                                     </span>
                                 </div>
                                 <FormMessage />

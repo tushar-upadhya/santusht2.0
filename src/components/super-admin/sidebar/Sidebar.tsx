@@ -6,7 +6,8 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { ChevronDown, Edit } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Edit } from "lucide-react";
 import { useState } from "react";
 
 interface UserData {
@@ -21,12 +22,7 @@ interface UserData {
 }
 
 const Sidebar = ({ users }: { users: UserData[] }) => {
-    const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const [editUser, setEditUser] = useState<UserData | null>(null);
-
-    const toggleDropdown = (dropdown: string) => {
-        setOpenDropdown(openDropdown === dropdown ? null : dropdown);
-    };
 
     const handleEditClick = (user: UserData) => {
         setEditUser(user);
@@ -34,63 +30,74 @@ const Sidebar = ({ users }: { users: UserData[] }) => {
 
     return (
         <div className="w-[300px] p-4 bg-white shadow-md h-screen">
-            <h2 className="text-lg font-semibold mb-4">Admin Panel</h2>
-            <div className="space-y-4">
-                {/* Admins Section */}
-                <div>
-                    <button
-                        onClick={() => toggleDropdown("admins")}
-                        className="flex justify-between items-center w-full py-2 px-3 bg-gray-200 rounded-md"
-                    >
-                        Admins <ChevronDown className="w-4 h-4" />
-                    </button>
-                    {openDropdown === "admins" && (
-                        <ul className="mt-2 space-y-2 pl-4">
-                            {users
-                                .filter((user) => user.role === "Admin")
-                                .map((admin) => (
-                                    <li
-                                        key={admin.id}
-                                        className="flex justify-between items-center py-1"
-                                    >
+            {/* Admins Section */}
+            <div className="mb-6">
+                <h3 className="text-md font-medium mb-2 text-center">Admins</h3>
+                <ul className="space-y-2">
+                    {users
+                        .filter((user) => user.role === "Admin")
+                        .map((admin) => (
+                            <li
+                                key={admin.id}
+                                className="flex justify-between items-center py-2 px-3 bg-gray-100 rounded-md"
+                            >
+                                <div className="flex items-center gap-2">
+                                    <span className="font-medium">
                                         {admin.adminName}
-                                        <Edit
-                                            className="w-4 h-4 cursor-pointer text-blue-500"
-                                            onClick={() =>
-                                                handleEditClick(admin)
-                                            }
-                                        />
-                                    </li>
-                                ))}
-                        </ul>
-                    )}
-                </div>
+                                    </span>
+                                    <span
+                                        className={cn(
+                                            "text-xs font-semibold rounded-full px-2 animate-pulse py-1",
+                                            admin.status === "Active"
+                                                ? "text-green-700 bg-green-200"
+                                                : "text-red-700 bg-red-200"
+                                        )}
+                                    >
+                                        {admin.status}
+                                    </span>
+                                </div>
+                                <Edit
+                                    className="w-4 h-4 cursor-pointer text-blue-500"
+                                    onClick={() => handleEditClick(admin)}
+                                />
+                            </li>
+                        ))}
+                </ul>
+            </div>
 
-                {/* Institutes Section */}
-                <div>
-                    <button
-                        onClick={() => toggleDropdown("institutes")}
-                        className="flex justify-between items-center w-full py-2 px-3 bg-gray-200 rounded-md"
-                    >
-                        Institutes <ChevronDown className="w-4 h-4" />
-                    </button>
-                    {openDropdown === "institutes" && (
-                        <ul className="mt-2 space-y-2 pl-4">
-                            {users.map((user) => (
-                                <li
-                                    key={user.id}
-                                    className="flex justify-between items-center py-1"
-                                >
+            {/* Institutes Section */}
+            <div>
+                <h3 className="text-md font-medium mb-2 text-center">
+                    Institutes
+                </h3>
+                <ul className="space-y-2">
+                    {users.map((user) => (
+                        <li
+                            key={user.id}
+                            className="flex justify-between items-center py-2 px-3 bg-gray-100 rounded-md"
+                        >
+                            <div className="flex items-center gap-2">
+                                <span className="font-medium">
                                     {user.location}
-                                    <Edit
-                                        className="w-4 h-4 cursor-pointer text-blue-500"
-                                        onClick={() => handleEditClick(user)}
-                                    />
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                </div>
+                                </span>
+                                <span
+                                    className={cn(
+                                        "text-xs font-semibold rounded-full px-2 py-1 animate-pulse",
+                                        user.status === "Active"
+                                            ? "text-green-700 bg-green-200"
+                                            : "text-red-700 bg-red-200"
+                                    )}
+                                >
+                                    {user.status}
+                                </span>
+                            </div>
+                            <Edit
+                                className="w-4 h-4 cursor-pointer text-blue-500"
+                                onClick={() => handleEditClick(user)}
+                            />
+                        </li>
+                    ))}
+                </ul>
             </div>
 
             {/* Edit Dialog */}
@@ -127,7 +134,7 @@ const Sidebar = ({ users }: { users: UserData[] }) => {
                             </div>
                             <div>
                                 <label className="text-sm font-medium">
-                                    Description
+                                    Location
                                 </label>
                                 <Input
                                     type="text"
