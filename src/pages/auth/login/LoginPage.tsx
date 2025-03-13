@@ -17,7 +17,7 @@ const LoginPage = () => {
         onSuccess: (data) => {
             setAuth(data.token, data.role, data.username);
 
-            if (data.role === "super-admin") {
+            if (data.role === "SUPER_ADMIN") {
                 navigate("/super-admin");
             } else if (data.role === "admin") {
                 navigate("/admin");
