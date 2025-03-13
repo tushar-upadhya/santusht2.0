@@ -1,11 +1,27 @@
-import axios from "axios";
+import { User } from "../../lib/types/auth/user";
 
-const API_URL = "http://192.168.30.88:8080/santusht/auth";
-
-export const login = async (credentials: {
-    username: string;
-    password: string;
-}) => {
-    const response = await axios.post(`${API_URL}/login`, credentials);
-    return response.data; // Expected response: { token, role, username }
+const testUser: User = {
+    id: 1,
+    email: "test@email.com",
+    role: "viewer",
 };
+
+export async function getUser() {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    const authToken = generateAuthToken();
+
+    return [200, { authToken, user: testUser }] as const;
+}
+
+export async function login() {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    const authToken = generateAuthToken();
+
+    return [200, { authToken, user: testUser }] as const;
+}
+
+function generateAuthToken() {
+    return Math.random().toString(36).substring(2);
+}

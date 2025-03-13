@@ -23,7 +23,7 @@ async function fetchEmployeeData(type: string): Promise<Employee[]> {
     });
 }
 
-const Index = () => {
+const AdminPage = () => {
     return (
         <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
             <div className="mt-4 flex flex-col items-center sm:items-start">
@@ -47,4 +47,4 @@ const Index = () => {
     );
 };
 
-export default Index;
+export default AdminPage;

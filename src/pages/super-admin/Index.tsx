@@ -42,7 +42,7 @@ const fetchUsers = async (): Promise<UserData[]> => {
     }
 };
 
-const Index = () => {
+const SuperAdminPage = () => {
     const { data, isLoading, isError, error, refetch } = useQuery({
         queryKey: ["users"],
         queryFn: fetchUsers,
@@ -99,4 +99,4 @@ const Index = () => {
     );
 };
 
-export default Index;
+export default SuperAdminPage;

@@ -1,13 +1,8 @@
 import Header from "@/components/header/Header";
-import { AdminLayout } from "@/layout/Layout";
-import ContactRequestPage from "@/pages/admin/contact-request/ContactRequestPage";
-import FeedbackPage from "@/pages/admin/feedback/FeedbackPage";
-import QrPage from "@/pages/admin/qr/QrPage";
-import UserManagementPage from "@/pages/admin/user-management/UserManagementPage";
+import Index from "@/pages/admin";
 import LoginPage from "@/pages/auth/login/LoginPage";
-import ContactPage from "@/pages/contact/ContactPage";
 import HomePage from "@/pages/home/HomePage";
-import Index from "@/pages/super-admin/Index";
+import SuperAdminPage from "@/pages/super-admin/Index";
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -17,42 +12,21 @@ const AppRoutes = () => {
             <Header />
             <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="/contact" element={<ContactPage />} />
                 <Route path="/login" element={<LoginPage />} />
 
-                {/* Admin Routes (Protected) */}
-                <Route
-                    path="/admin"
-                    element={
-                        <ProtectedRoute allowedRoles={["admin"]}>
-                            <AdminLayout />
-                        </ProtectedRoute>
-                    }
-                >
-                    <Route index element={<ContactRequestPage />} />
-                    <Route
-                        path="user-management"
-                        element={<UserManagementPage />}
-                    />
-                    <Route path="qr" element={<QrPage />} />
-                    <Route
-                        path="contact-request"
-                        element={<ContactRequestPage />}
-                    />
-                    <Route path="feedback" element={<FeedbackPage />} />
+                {/* Admin Routes */}
+                <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+                    <Route path="/admin" element={<Index />} />
                 </Route>
 
-                {/* Super Admin Route (Protected) */}
+                {/* Super Admin Routes */}
                 <Route
-                    path="/super-admin"
-                    element={
-                        <ProtectedRoute allowedRoles={["super-admin"]}>
-                            <Index />
-                        </ProtectedRoute>
-                    }
-                />
+                    element={<ProtectedRoute allowedRoles={["SUPER_ADMIN"]} />}
+                >
+                    <Route path="/super-admin" element={<SuperAdminPage />} />
+                </Route>
 
-                {/* Redirect unknown routes */}
+                {/* Redirect all unknown routes to Home */}
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </>

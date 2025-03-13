@@ -1,61 +1,89 @@
-import Cookies from "js-cookie";
-import { createContext, useContext, useEffect, useState } from "react";
+import { getUser, login } from "@/api/auth/auth";
+import { User } from "@/lib/types/auth/user";
+import {
+    createContext,
+    PropsWithChildren,
+    useContext,
+    useEffect,
+    useState,
+} from "react";
 
-interface AuthContextType {
-    token: string | null;
-    role: string | null;
-    username: string | null;
-    login: (token: string, role: string, username: string) => void;
-    logout: () => void;
-}
+type AuthContext = {
+    authToken?: string | null;
+    currentUser?: User | null;
+    role?: string | null;
+    handleLogin: (mobile: string, password: string) => Promise<void>;
+    handleLogout: () => void;
+};
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContext | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [token, setToken] = useState<string | null>(
-        Cookies.get("token") || null
-    );
-    const [role, setRole] = useState<string | null>(
-        Cookies.get("role") || null
-    );
-    const [username, setUsername] = useState<string | null>(
-        Cookies.get("username") || null
-    );
+type AuthProviderProps = PropsWithChildren;
+
+export default function AuthProvider({ children }: AuthProviderProps) {
+    const [authToken, setAuthToken] = useState<string | null>(null);
+    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [role, setRole] = useState<string | null>(null);
 
     useEffect(() => {
-        if (token) {
-            Cookies.set("token", token, { expires: 1 });
-            Cookies.set("role", role || "", { expires: 1 });
-            Cookies.set("username", username || "", { expires: 1 });
+        async function fetchUser() {
+            try {
+                const response = await getUser();
+
+                const { token, username, role } = response;
+
+                setAuthToken(token);
+                setCurrentUser({ username });
+                setRole(role);
+                localStorage.setItem("authToken", token);
+                localStorage.setItem("role", role);
+            } catch {
+                setAuthToken(null);
+                setCurrentUser(null);
+                setRole(null);
+            }
         }
-    }, [token, role, username]);
 
-    const login = (token: string, role: string, username: string) => {
-        setToken(token);
-        setRole(role);
-        setUsername(username);
-    };
+        fetchUser();
+    }, []);
 
-    const logout = () => {
-        Cookies.remove("token");
-        Cookies.remove("role");
-        Cookies.remove("username");
-        setToken(null);
+    async function handleLogin(mobile: string, password: string) {
+        try {
+            const response = await login(mobile, password);
+
+            const { token, username, role } = response;
+
+            setAuthToken(token);
+            setCurrentUser({ username });
+            setRole(role);
+            localStorage.setItem("authToken", token);
+            localStorage.setItem("role", role);
+        } catch {
+            setAuthToken(null);
+            setCurrentUser(null);
+            setRole(null);
+        }
+    }
+
+    function handleLogout() {
+        setAuthToken(null);
+        setCurrentUser(null);
         setRole(null);
-        setUsername(null);
-    };
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("role");
+    }
 
     return (
-        <AuthContext.Provider value={{ token, role, username, login, logout }}>
+        <AuthContext.Provider
+            value={{ authToken, currentUser, role, handleLogin, handleLogout }}
+        >
             {children}
         </AuthContext.Provider>
     );
-};
+}
 
-export const useAuth = () => {
+export function useAuth() {
     const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error("useAuth must be used within an AuthProvider");
-    }
+    if (!context) throw new Error("useAuth must be used inside AuthProvider");
     return context;
-};
+}

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { login } from "@/api/auth/auth";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useMutation } from "@tanstack/react-query";
@@ -34,45 +35,15 @@ const LoginPage = () => {
         e.preventDefault();
         mutation.mutate(credentials);
     };
+=======
+import AuthForm from "@/components/forms/auth-form/AuthForm";
+import React from "react";
+>>>>>>> d0dc776 (FIX : Login-issue)
 
+const LoginPage: React.FC = () => {
     return (
-        <div className="flex items-center justify-center h-screen">
-            <form
-                onSubmit={handleSubmit}
-                className="bg-white p-6 shadow-lg rounded-lg w-96"
-            >
-                <h2 className="text-xl font-bold mb-4">Login</h2>
-                <input
-                    type="text"
-                    placeholder="Username"
-                    className="border p-2 w-full mb-3"
-                    value={credentials.username}
-                    onChange={(e) =>
-                        setCredentials({
-                            ...credentials,
-                            username: e.target.value,
-                        })
-                    }
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    className="border p-2 w-full mb-3"
-                    value={credentials.password}
-                    onChange={(e) =>
-                        setCredentials({
-                            ...credentials,
-                            password: e.target.value,
-                        })
-                    }
-                />
-                <button
-                    type="submit"
-                    className="bg-blue-500 text-white px-4 py-2 w-full"
-                >
-                    {mutation.isPending ? "Logging in..." : "Login"}
-                </button>
-            </form>
+        <div className="">
+            <AuthForm />
         </div>
     );
 };
