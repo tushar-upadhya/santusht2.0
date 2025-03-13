@@ -22,7 +22,7 @@ const authFormSchema = z.object({
         .string()
         .min(10, "Invalid mobile number")
         .max(15, "Invalid mobile number"),
-    password: z.string().min(4, "Password must be at least 6 characters"),
+    password: z.string().min(2, "Password must be at least 6 characters"),
 });
 
 type AuthFormValues = z.infer<typeof authFormSchema>;
