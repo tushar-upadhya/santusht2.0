@@ -10,11 +10,13 @@ interface AuthState {
     error: string | null;
 }
 
+const getSessionValue = (key: string) => sessionStorage.getItem(key);
+
 const initialState: AuthState = {
-    fullname: sessionStorage.getItem("fullname") || null,
-    role: sessionStorage.getItem("role") || null,
-    token: sessionStorage.getItem("token") || null,
-    isAuthenticated: !!sessionStorage.getItem("token"),
+    fullname: getSessionValue("fullname"),
+    role: getSessionValue("role"),
+    token: getSessionValue("token"),
+    isAuthenticated: !!getSessionValue("token"),
     loading: false,
     error: null,
 };
@@ -24,14 +26,13 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         logout: (state) => {
-            state.fullname = null;
-            state.role = null;
-            state.token = null;
-            state.isAuthenticated = false;
-
-            sessionStorage.removeItem("token");
-            sessionStorage.removeItem("role");
-            sessionStorage.removeItem("fullname");
+            Object.assign(state, {
+                fullname: null,
+                role: null,
+                token: null,
+                isAuthenticated: false,
+            });
+            ["token", "role", "fullname"].forEach(sessionStorage.removeItem);
         },
     },
     extraReducers: (builder) => {
@@ -42,25 +43,18 @@ const authSlice = createSlice({
             })
             .addCase(
                 loginUser.fulfilled,
-                (
-                    state,
-                    action: PayloadAction<{
-                        token: string;
-                        role: string;
-                        fullname: string;
-                    }>
-                ) => {
-                    console.log("Login Payload:", action.payload); // ✅ Debug payload
-
-                    state.fullname = action.payload.fullname; // Ensure correct key usage
-                    state.role = action.payload.role;
-                    state.token = action.payload.token;
-                    state.isAuthenticated = true;
-                    state.loading = false;
-
-                    sessionStorage.setItem("token", action.payload.token);
-                    sessionStorage.setItem("role", action.payload.role);
-                    sessionStorage.setItem("fullname", action.payload.fullname);
+                (state, action: PayloadAction<AuthState>) => {
+                    const { fullname, role, token } = action.payload;
+                    Object.assign(state, {
+                        fullname,
+                        role,
+                        token,
+                        isAuthenticated: true,
+                        loading: false,
+                    });
+                    Object.entries({ token, role, fullname }).forEach(
+                        ([key, value]) => sessionStorage.setItem(key, value!)
+                    );
                 }
             )
             .addCase(loginUser.rejected, (state, action) => {

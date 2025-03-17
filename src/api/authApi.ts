@@ -10,12 +10,11 @@ export const loginUser = createAsyncThunk(
         { rejectWithValue }
     ) => {
         try {
-            const response = await axios.post(`${BASE_URL}/login`, {
+            const { data } = await axios.post(`${BASE_URL}/login`, {
                 username,
                 password,
             });
-
-            return response.data;
+            return data;
         } catch (error: any) {
             return rejectWithValue(
                 error.response?.data?.message || "Login failed"
