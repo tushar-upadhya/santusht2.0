@@ -44,7 +44,6 @@ export default function Breadcrumbs() {
 
     return (
         <div className="flex items-center space-x-3">
-            {/* Avatar with Click Event */}
             {avatarInitials && (
                 <Avatar
                     onClick={() => setOpen(true)}

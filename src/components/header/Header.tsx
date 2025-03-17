@@ -1,6 +1,7 @@
 import { adminLinks, userLinks } from "@/lib/links/NavLinks";
 import LogoutButton from "@/LogoutButton";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import Breadcrumbs from "../ui/bread-crumbs/Breadcrumbs";
 import HeaderOne from "./header-one/HeaderOne";
@@ -11,6 +12,9 @@ import Nav from "./nav/Nav";
 const Header: React.FC = () => {
     const [header, setHeader] = useState<boolean>(false);
     const location = useLocation();
+    const isAuthenticated = useSelector(
+        (state: any) => state.auth.isAuthenticated
+    );
 
     useEffect(() => {
         const handleScroll = () => {
@@ -52,8 +56,9 @@ const Header: React.FC = () => {
                             linkStyles="relative hover:text-primary transition-all"
                             underlineStyles="absolute left-0 top-full h-[2px] bg-primary w-full"
                         />
-                        <LogoutButton />
-                        {/* ✅ Mobile Navigation */}
+
+                        {isAuthenticated && <LogoutButton />}
+
                         <div className="xl:hidden mr-4">
                             <MobileNav
                                 links={isAdminRoute ? adminLinks : userLinks}
@@ -63,7 +68,6 @@ const Header: React.FC = () => {
                 </div>
             </div>
 
-            {/* ✅ Breadcrumbs Section */}
             <div className="flex justify-center mt-2">
                 <Breadcrumbs />
             </div>

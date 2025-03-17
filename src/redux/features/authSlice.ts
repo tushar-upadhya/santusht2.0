@@ -2,6 +2,7 @@ import { loginUser } from "@/api/authApi";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {
+    fullname: string | null;
     role: string | null;
     token: string | null;
     isAuthenticated: boolean;
@@ -10,9 +11,10 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-    role: localStorage.getItem("role") || null,
-    token: localStorage.getItem("token") || null,
-    isAuthenticated: !!localStorage.getItem("token"),
+    fullname: sessionStorage.getItem("fullname") || null,
+    role: sessionStorage.getItem("role") || null,
+    token: sessionStorage.getItem("token") || null,
+    isAuthenticated: !!sessionStorage.getItem("token"),
     loading: false,
     error: null,
 };
@@ -22,11 +24,14 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         logout: (state) => {
+            state.fullname = null;
             state.role = null;
             state.token = null;
             state.isAuthenticated = false;
-            localStorage.removeItem("token");
-            localStorage.removeItem("role");
+
+            sessionStorage.removeItem("token");
+            sessionStorage.removeItem("role");
+            sessionStorage.removeItem("fullname");
         },
     },
     extraReducers: (builder) => {
@@ -39,15 +44,23 @@ const authSlice = createSlice({
                 loginUser.fulfilled,
                 (
                     state,
-                    action: PayloadAction<{ token: string; role: string }>
+                    action: PayloadAction<{
+                        token: string;
+                        role: string;
+                        fullname: string;
+                    }>
                 ) => {
+                    console.log("Login Payload:", action.payload); // ✅ Debug payload
+
+                    state.fullname = action.payload.fullname; // Ensure correct key usage
                     state.role = action.payload.role;
                     state.token = action.payload.token;
                     state.isAuthenticated = true;
                     state.loading = false;
 
-                    localStorage.setItem("token", action.payload.token);
-                    localStorage.setItem("role", action.payload.role);
+                    sessionStorage.setItem("token", action.payload.token);
+                    sessionStorage.setItem("role", action.payload.role);
+                    sessionStorage.setItem("fullname", action.payload.fullname);
                 }
             )
             .addCase(loginUser.rejected, (state, action) => {

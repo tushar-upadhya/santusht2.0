@@ -133,7 +133,7 @@ const AuthForm = () => {
                 <Button
                     type="submit"
                     disabled={mutation.isPending}
-                    className="rounded-full sm:h-14 h-10 text-[min(4vw,1rem)] leading-relaxed cursor-pointer bg-[#FA7275] hover:bg-[#FA7275]/40 text-white"
+                    className="rounded-full sm:h-14 h-10  text-[min(4vw,1rem)] leading-relaxed cursor-pointer bg-[#FA7275] hover:bg-[#FA7275]/40 text-white"
                 >
                     {mutation.isPending ? "Logging in..." : "Log In"}
                 </Button>
