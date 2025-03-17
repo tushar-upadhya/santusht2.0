@@ -2,10 +2,14 @@ import contactImage from "@/assets/contact.svg";
 import ContactForm from "@/components/forms/contact-form/ContactForm";
 import { Button } from "@/components/ui/button";
 import React from "react";
+import { Toaster, toast } from "sonner";
 
 const ContactPage: React.FC = () => {
     const handleCopy = (phoneNumber: string) => {
         navigator.clipboard.writeText(phoneNumber);
+        toast.success(`Copied: ${phoneNumber}`, {
+            description: "Phone number copied to clipboard",
+        });
     };
 
     const handleMail = (email: string) => {
@@ -15,6 +19,7 @@ const ContactPage: React.FC = () => {
     return (
         <section className="py-12">
             <div className="container mx-auto">
+                <Toaster position="bottom-right" />
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:h-[480px] mb-6 xl:mb-24">
                     <div className="flex flex-col justify-center text-center xl:text-left">
                         {/* Image */}
@@ -24,7 +29,6 @@ const ContactPage: React.FC = () => {
                                     src={contactImage}
                                     alt="About Santusht"
                                     className="w-full h-auto rounded-lg"
-                                    // priority
                                 />
                             </div>
 
@@ -33,7 +37,7 @@ const ContactPage: React.FC = () => {
                                 Say Hello 👋
                             </div>
 
-                            {/* Heading Text - Responsive Alignment */}
+                            {/* Heading Text */}
                             <h1 className="text-[min(4vw,1rem)] md:text-[min(4vw,1rem)] leading-relaxed font-bold max-w-lg mb-4 sm:mb-8 capitalize text-center md:text-center lg:text-left">
                                 For personalized assistance, our Contact Us
                                 section ensures swift communication. Reach out
@@ -44,13 +48,14 @@ const ContactPage: React.FC = () => {
                                 priority, and we&apos;re here for you.
                             </h1>
                         </div>
+
                         {/* Contact Info (Phone Numbers) */}
                         <div className="flex items-center gap-x-4 sm:gap-x-8 justify-center xl:justify-start">
                             <div className="text-sm sm:text-base">
                                 <Button
                                     variant={"link"}
                                     onClick={() => handleCopy("011-26588500")}
-                                    className="text-primary font-medium rounded-md text-[min(4vw,1rem)] leading-relaxed dark:border-orange-500 dark:text-gray-300"
+                                    className="font-medium cursor-pointer hover:bg-green-200 text-slate-700 rounded-md text-[min(4vw,1rem)] leading-relaxed dark:border-orange-500 dark:text-gray-300"
                                 >
                                     011-26588500
                                 </Button>
@@ -58,12 +63,13 @@ const ContactPage: React.FC = () => {
                                 <Button
                                     variant={"link"}
                                     onClick={() => handleCopy("011-26588900")}
-                                    className="text-primary font-medium rounded-md text-[min(4vw,1rem)] leading-relaxed dark:border-orange-500 dark:text-gray-300"
+                                    className="hover:bg-green-200 text-slate-700 font-medium rounded-md text-[min(4vw,1rem)] leading-relaxed cursor-pointer dark:border-orange-500 dark:text-gray-300"
                                 >
                                     011-26588900
                                 </Button>
                             </div>
                         </div>
+
                         {/* Email Info */}
                         <div className="flex items-center gap-x-1 sm:gap-x-1 justify-center xl:justify-start mt-4">
                             <Button
@@ -71,7 +77,7 @@ const ContactPage: React.FC = () => {
                                 onClick={() =>
                                     handleMail("contact@santusht.com")
                                 }
-                                className="text-primary font-medium rounded-md text-[min(4vw,1rem)] leading-relaxed dark:border-orange-500 dark:text-gray-300"
+                                className="hover:bg-green-200 text-slate-700 font-medium rounded-md text-[min(4vw,1rem)] cursor-pointer leading-relaxed dark:border-orange-500 dark:text-gray-300"
                             >
                                 contact@santusht.com
                             </Button>
@@ -81,7 +87,7 @@ const ContactPage: React.FC = () => {
                                 onClick={() =>
                                     handleMail("contact@santusht.com")
                                 }
-                                className="text-primary font-medium rounded-md text-[min(4vw,1rem)] leading-relaxed dark:border-orange-500 dark:text-gray-300"
+                                className="hover:bg-green-200 text-slate-700 font-medium rounded-md text-[min(4vw,1rem)] cursor-pointer leading-relaxed dark:border-orange-500 dark:text-gray-300"
                             >
                                 contact@santusht.com
                             </Button>

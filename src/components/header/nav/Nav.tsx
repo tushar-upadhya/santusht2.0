@@ -25,12 +25,13 @@ const Nav = ({
                 <NavLink
                     to={link.path}
                     key={link.path}
+                    end
                     className={({ isActive }) =>
                         `relative text-gray-600 dark:text-gray-300 hover:text-primary transition-all duration-300
                         ${linkStyles} ${
                             isActive
-                                ? "text-primary font-semibold after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[2px] after:bg-primary after:rounded-full after:scale-100 after:transition-all after:duration-300"
-                                : "text-gray-600 dark:text-gray-300 after:scale-0"
+                                ? "text-primary font-semibold after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[2px] after:bg-primary after:rounded-full after:scale-100 after:transition-transform after:duration-300"
+                                : "after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[2px] after:bg-primary after:rounded-full after:scale-0 after:transition-transform after:duration-300"
                         }`
                     }
                     onClick={onClick}

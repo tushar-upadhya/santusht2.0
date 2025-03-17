@@ -9,11 +9,10 @@ export const userLinks: NavLink[] = [
 // Admin Panel Links
 export const adminLinks: NavLink[] = [
     { name: "Dashboard", path: "/admin" },
-    { name: "User Management", path: "/admin/user-management" },
-    { name: "QR Codes", path: "/admin/qr" },
-    { name: "Contact Request", path: "/admin/contact-request" },
+    { name: "Users", path: "/admin/user-management" },
+    { name: "QR", path: "/admin/qr" },
+    { name: "Contacts", path: "/admin/contact-request" },
     { name: "Feedback", path: "/admin/feedback" },
-    { name: "Logout", path: "/logout" },
 ];
 // super Admin Panel Links
 export const SuperAdminLinks: NavLink[] = [
@@ -22,4 +21,12 @@ export const SuperAdminLinks: NavLink[] = [
     { name: "QR Codes", path: "/super-admin/qr" },
     { name: "Reports", path: "/super-admin/reports" },
     { name: "Logout", path: "/logout" },
+];
+
+export const levelOneLinks: NavLink[] = [
+    { name: "Dashboard", path: "/level-one" },
+];
+
+export const levelTwoLinks: NavLink[] = [
+    { name: "Dashboard", path: "/level-one" },
 ];

@@ -1,15 +1,15 @@
-import { Button } from "@/components/ui/button";
+import { logout } from "@/redux/features/authSlice";
 import { useDispatch } from "react-redux";
-import { logout } from "./redux/features/authSlice";
 
-const LogoutButton = () => {
+export default function LogoutButton() {
     const dispatch = useDispatch();
 
-    const handleLogout = () => {
-        dispatch(logout());
-    };
-
-    return <Button onClick={handleLogout}>Logout</Button>;
-};
-
-export default LogoutButton;
+    return (
+        <button
+            onClick={() => dispatch(logout())}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+        >
+            Logout
+        </button>
+    );
+}

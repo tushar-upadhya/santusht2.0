@@ -1,3 +1,4 @@
+import { loginUser } from "@/api/authApi";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -8,30 +9,28 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { loginUser } from "@/redux/features/authSlice";
-import { RootState } from "@/redux/store";
+import { PASSWORD_REGEX, USERNAME_REGEX } from "@/lib/regexs/regex";
+import { AppDispatch, RootState } from "@/redux/store";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
-// Zod validation schema
 const authFormSchema = z.object({
-    username: z
-        .string()
-        .min(10, "Invalid username number")
-        .max(15, "Invalid username number"),
-    password: z.string().min(4, "Password must be at least 6 characters"),
+    username: z.string().regex(USERNAME_REGEX, "Invalid mobile number"),
+    password: z.string().regex(PASSWORD_REGEX, "Invalid password format"),
 });
 
 type AuthFormValues = z.infer<typeof authFormSchema>;
 
 const AuthForm = () => {
-    const dispatch = useDispatch<any>();
+    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-    const { role, isAuthenticated, loading, error } = useSelector(
+    const { role, isAuthenticated } = useSelector(
         (state: RootState) => state.auth
     );
 
@@ -40,40 +39,69 @@ const AuthForm = () => {
         defaultValues: { username: "", password: "" },
     });
 
-    const onSubmit = async (values: AuthFormValues) => {
-        console.log("Submitting:", values); // Debug log
-        dispatch(loginUser(values));
+    const mutation = useMutation({
+        mutationFn: async (values: AuthFormValues) => {
+            try {
+                const resultAction = await dispatch(loginUser(values));
+                unwrapResult(resultAction);
+            } catch (error: any) {
+                throw new Error(error.message || "Login failed");
+            }
+        },
+    });
+
+    const onSubmit = (values: AuthFormValues) => {
+        mutation.mutate(values);
     };
 
-    // Redirect based on role after login
     useEffect(() => {
         if (isAuthenticated) {
-            console.log("Redirecting Role:", role);
-            if (role === "ADMIN") navigate("/admin");
-            else if (role === "SUPER_ADMIN") navigate("/super-admin");
-            else navigate("/");
+            navigate(
+                role === "ADMIN"
+                    ? "/admin"
+                    : role === "SUPER_ADMIN"
+                    ? "/super-admin"
+                    : "/"
+            );
         }
     }, [isAuthenticated, role, navigate]);
+
+    //   const handleGetOtp = () => {
+    //       const mobile = form.getValues("mobile");
+    //       if (!mobile || mobile.length < 10) {
+    //           setError("Enter a valid mobile number to get OTP");
+    //           return;
+    //       }
+    //       console.log("Sending OTP to:", mobile);
+    //   };
+
+    const handleForgotPassword = () => {
+        navigate("/forgot-password");
+    };
 
     return (
         <Form {...form}>
             <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="flex flex-col space-y-6"
+                className="flex max-h-[800px] w-full max-w-[580px] flex-col justify-center space-y-6 transition-all lg:h-full lg:space-y-8"
             >
                 <FormField
                     control={form.control}
                     name="username"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Mobile Number</FormLabel>
+                            <FormLabel className="ml-6 text-[min(4vw,1rem)] leading-relaxed">
+                                Mobile Number
+                            </FormLabel>
                             <FormControl>
                                 <Input
-                                    placeholder="Enter your username number"
+                                    type="text"
+                                    placeholder="Enter your mobile number"
                                     {...field}
+                                    className="rounded-full h-14 px-6 text-[min(4vw,1rem)] leading-relaxed placeholder:text-[min(4vw,1rem)] placeholder:leading-relaxed"
                                 />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-rose-600 font-semibold ml-4" />
                         </FormItem>
                     )}
                 />
@@ -82,22 +110,52 @@ const AuthForm = () => {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel className="ml-6 text-[min(4vw,1rem)] leading-relaxed">
+                                Password
+                            </FormLabel>
                             <FormControl>
                                 <Input
                                     type="password"
                                     placeholder="Enter your password"
                                     {...field}
+                                    className="rounded-full h-14 px-6 text-[min(4vw,1rem)] leading-relaxed placeholder:text-[min(4vw,1rem)] placeholder:leading-relaxed outline-1"
                                 />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-rose-600 font-semibold ml-4" />
                         </FormItem>
                     )}
                 />
-                {error && <p className="text-red-500">{error}</p>}
-                <Button type="submit" disabled={loading}>
-                    {loading ? "Logging in..." : "Log In"}
+                {mutation.isError && (
+                    <p className="text-red-500 text-sm">
+                        {mutation.error?.message}
+                    </p>
+                )}
+                <Button
+                    type="submit"
+                    variant="outline"
+                    disabled={mutation.isPending}
+                    className="rounded-full sm:h-14 h-10 text-[min(4vw,1rem)] leading-relaxed cursor-pointer"
+                >
+                    {mutation.isPending ? "Logging in..." : "Log In"}
                 </Button>
+                <div className="flex w-full gap-4 ">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        // onClick={handleGetOtp}
+                        className="w-1/2 rounded-full text-[min(3vw,.8rem)] cursor-pointer leading-relaxed"
+                    >
+                        GET OTP
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleForgotPassword}
+                        className="w-1/2 rounded-full text-[min(3vw,.8rem)] cursor-pointer leading-relaxed"
+                    >
+                        Forget Password
+                    </Button>
+                </div>
             </form>
         </Form>
     );

@@ -40,7 +40,10 @@ const ContactForm: React.FC = () => {
                 />
                 <MessageSquare className="absolute top-4 right-6" size={20} />
             </div>
-            <Button className="flex items-center gap-x-1 max-w-[166px]">
+            <Button
+                className="flex bg-rose-400 text-white font-medium animate-pulse items-center gap-x-1 max-w-[166px] "
+                variant={"secondary"}
+            >
                 Send Message
                 <ArrowRightIcon size={20} />
             </Button>
