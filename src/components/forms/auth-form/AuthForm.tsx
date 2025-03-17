@@ -89,7 +89,7 @@ const AuthForm = () => {
                     control={form.control}
                     name="username"
                     render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="flex h-[78px] flex-col justify-center  px-4">
                             <FormLabel className="ml-6 text-[min(4vw,1rem)] leading-relaxed">
                                 Mobile Number
                             </FormLabel>
@@ -98,7 +98,7 @@ const AuthForm = () => {
                                     type="text"
                                     placeholder="Enter your mobile number"
                                     {...field}
-                                    className="rounded-full h-14 px-6 text-[min(4vw,1rem)] leading-relaxed placeholder:text-[min(4vw,1rem)] placeholder:leading-relaxed"
+                                    className="rounded-full h-14 px-6 text-[min(4vw,1rem)] bg-gray-200 leading-relaxed placeholder:text-[min(4vw,1rem)] placeholder:leading-relaxed border-none"
                                 />
                             </FormControl>
                             <FormMessage className="text-rose-600 font-semibold ml-4" />
@@ -109,7 +109,7 @@ const AuthForm = () => {
                     control={form.control}
                     name="password"
                     render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="flex h-[78px] flex-col justify-center  px-4">
                             <FormLabel className="ml-6 text-[min(4vw,1rem)] leading-relaxed">
                                 Password
                             </FormLabel>
@@ -118,7 +118,7 @@ const AuthForm = () => {
                                     type="password"
                                     placeholder="Enter your password"
                                     {...field}
-                                    className="rounded-full h-14 px-6 text-[min(4vw,1rem)] leading-relaxed placeholder:text-[min(4vw,1rem)] placeholder:leading-relaxed outline-1"
+                                    className="rounded-full h-14 px-6 text-[min(4vw,1rem)] bg-gray-200 leading-relaxed placeholder:text-[min(4vw,1rem)] placeholder:leading-relaxed border-none"
                                 />
                             </FormControl>
                             <FormMessage className="text-rose-600 font-semibold ml-4" />
@@ -132,16 +132,14 @@ const AuthForm = () => {
                 )}
                 <Button
                     type="submit"
-                    variant="outline"
                     disabled={mutation.isPending}
-                    className="rounded-full sm:h-14 h-10 text-[min(4vw,1rem)] leading-relaxed cursor-pointer"
+                    className="rounded-full sm:h-14 h-10 text-[min(4vw,1rem)] leading-relaxed cursor-pointer bg-[#FA7275] hover:bg-[#FA7275]/40 text-white"
                 >
                     {mutation.isPending ? "Logging in..." : "Log In"}
                 </Button>
                 <div className="flex w-full gap-4 ">
                     <Button
                         type="button"
-                        variant="outline"
                         // onClick={handleGetOtp}
                         className="w-1/2 rounded-full text-[min(3vw,.8rem)] cursor-pointer leading-relaxed"
                     >
@@ -149,7 +147,6 @@ const AuthForm = () => {
                     </Button>
                     <Button
                         type="button"
-                        variant="outline"
                         onClick={handleForgotPassword}
                         className="w-1/2 rounded-full text-[min(3vw,.8rem)] cursor-pointer leading-relaxed"
                     >

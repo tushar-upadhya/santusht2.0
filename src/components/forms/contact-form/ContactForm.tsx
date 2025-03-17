@@ -36,12 +36,12 @@ const ContactForm: React.FC = () => {
             <div className="relative flex items-center">
                 <Textarea
                     placeholder="Type Your Message Here."
-                    className="flex min-h-[180px] w-full dark:border-primary/50 rounded-[30px] border border-input bg-background px-8 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex min-h-[180px] w-full dark:border-primary/50 rounded-[30px] border border-input bg-background px-8 py-4 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 />
                 <MessageSquare className="absolute top-4 right-6" size={20} />
             </div>
             <Button
-                className="flex bg-rose-400 text-white font-medium animate-pulse items-center gap-x-1 max-w-[166px] "
+                className="flex text-white font-medium  bg-[#FA7275] hover:bg-[#FA7275]/40hover:animate-none cursor-pointer items-center gap-x-1 max-w-[166px] "
                 variant={"secondary"}
             >
                 Send Message
