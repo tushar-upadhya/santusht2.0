@@ -17,24 +17,33 @@ const initialState: AuthState = {
     error: null,
 };
 
+// API Base URL
+const BASE_URL = "http://192.168.30.88:8080/santusht/auth";
+
 // Async thunk for login
 export const loginUser = createAsyncThunk(
     "auth/loginUser",
     async (
-        { mobile, password }: { mobile: string; password: string },
+        { username, password }: { username: string; password: string },
         { rejectWithValue }
     ) => {
         try {
             const response = await axios.post(
-                "http://192.168.30.88:8080/santusht/auth/login",
+                `${BASE_URL}/login`,
+                { username, password },
                 {
-                    mobile,
-                    password,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
                 }
             );
-
-            return response.data; // { token, role, username }
+            // console.log("Login Success:", response.data); // Debug log
+            return response.data;
         } catch (error: any) {
+            console.error(
+                "Login Error:",
+                error.response?.data || error.message
+            );
             return rejectWithValue(
                 error.response?.data?.message || "Login failed"
             );

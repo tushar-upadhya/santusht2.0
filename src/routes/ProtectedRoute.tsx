@@ -11,7 +11,6 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
         (state: RootState) => state.auth
     );
 
-    // Check if user is logged in and has an allowed role
     if (!isAuthenticated) return <Navigate to="/login" replace />;
     if (!allowedRoles.includes(role || "")) return <Navigate to="/" replace />;
 

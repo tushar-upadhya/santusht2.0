@@ -7,5 +7,5 @@ export const login = async (mobile: string, password: string) => {
 
     if (!response.ok) throw new Error("Invalid credentials");
 
-    return response.json(); // Must return `{ role, token }`
+    return response.json();
 };
