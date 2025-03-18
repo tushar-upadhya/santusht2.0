@@ -50,7 +50,7 @@ export default function LogoutButton() {
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="bg-white">
                     <DialogHeader>
-                        <h2 className="  capitalize text-[min(4vw,1.2rem)] text-slate-800 font-medium">
+                        <h2 className="capitalize text-[min(4vw,1.2rem)] text-slate-800 font-medium">
                             {fullname || "User"}
                         </h2>
                         <p className="text-sm text-gray-500">
