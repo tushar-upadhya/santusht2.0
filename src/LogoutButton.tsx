@@ -27,6 +27,7 @@ export default function LogoutButton() {
     const handleLogout = () => {
         console.log("Logout button clicked!");
         dispatch(logout());
+
         setOpen(false);
     };
 
@@ -35,7 +36,7 @@ export default function LogoutButton() {
             console.log("User logged out. Redirecting to login page...");
             navigate("/login");
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, navigate]);
 
     return (
         <>
@@ -49,8 +50,8 @@ export default function LogoutButton() {
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="bg-white">
                     <DialogHeader>
-                        <h2 className="text-lg font-semibold">
-                            {fullname || "User"}, are you sure?
+                        <h2 className="  capitalize text-[min(4vw,1.2rem)] text-slate-800 font-medium">
+                            {fullname || "User"}
                         </h2>
                         <p className="text-sm text-gray-500">
                             Do you really want to log out?
@@ -60,7 +61,7 @@ export default function LogoutButton() {
                         <Button
                             onClick={() => setOpen(false)}
                             variant="outline"
-                            className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                            className="border-gray-300 text-slate-700 hover:bg-gray-100"
                         >
                             Cancel
                         </Button>
