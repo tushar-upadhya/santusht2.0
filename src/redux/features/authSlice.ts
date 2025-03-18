@@ -32,7 +32,10 @@ const authSlice = createSlice({
                 token: null,
                 isAuthenticated: false,
             });
-            ["token", "role", "fullname"].forEach(sessionStorage.removeItem);
+
+            ["token", "role", "fullname"].forEach((key) =>
+                sessionStorage.removeItem(key)
+            );
         },
     },
     extraReducers: (builder) => {

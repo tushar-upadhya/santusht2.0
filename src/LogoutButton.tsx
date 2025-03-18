@@ -27,6 +27,14 @@ export default function LogoutButton() {
     const handleLogout = () => {
         console.log("Logout button clicked!");
         dispatch(logout());
+
+        setTimeout(() => {
+            console.log(
+                "Auth state after logout:",
+                JSON.parse(JSON.stringify(store.getState().auth))
+            );
+        }, 500);
+
         setOpen(false);
     };
 
@@ -35,7 +43,7 @@ export default function LogoutButton() {
             console.log("User logged out. Redirecting to login page...");
             navigate("/login");
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, navigate]);
 
     return (
         <>
