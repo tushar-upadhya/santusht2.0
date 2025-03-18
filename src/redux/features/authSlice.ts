@@ -10,7 +10,7 @@ interface AuthState {
     error: string | null;
 }
 
-const getSessionValue = (key: string) => sessionStorage.getItem(key);
+const getSessionValue = (key: string) => sessionStorage.getItem(key) || null;
 
 const initialState: AuthState = {
     fullname: getSessionValue("fullname"),
@@ -26,12 +26,10 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         logout: (state) => {
-            Object.assign(state, {
-                fullname: null,
-                role: null,
-                token: null,
-                isAuthenticated: false,
-            });
+            state.fullname = null;
+            state.role = null;
+            state.token = null;
+            state.isAuthenticated = false;
 
             ["token", "role", "fullname"].forEach((key) =>
                 sessionStorage.removeItem(key)
@@ -46,18 +44,20 @@ const authSlice = createSlice({
             })
             .addCase(
                 loginUser.fulfilled,
-                (state, action: PayloadAction<AuthState>) => {
+                (state, action: PayloadAction<Partial<AuthState>>) => {
                     const { fullname, role, token } = action.payload;
-                    Object.assign(state, {
-                        fullname,
-                        role,
-                        token,
-                        isAuthenticated: true,
-                        loading: false,
-                    });
-                    Object.entries({ token, role, fullname }).forEach(
-                        ([key, value]) => sessionStorage.setItem(key, value!)
-                    );
+
+                    state.fullname = fullname || null;
+                    state.role = role || null;
+                    state.token = token || null;
+                    state.isAuthenticated = !!token;
+                    state.loading = false;
+
+                    if (token) {
+                        sessionStorage.setItem("token", token);
+                        sessionStorage.setItem("role", role || "");
+                        sessionStorage.setItem("fullname", fullname || "");
+                    }
                 }
             )
             .addCase(loginUser.rejected, (state, action) => {

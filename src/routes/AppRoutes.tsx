@@ -1,3 +1,4 @@
+import AuthChecker from "@/components/AuthChecker";
 import Header from "@/components/header/Header";
 import Index from "@/pages/admin";
 import ContactRequestPage from "@/pages/admin/contact-request/ContactRequestPage";
@@ -57,7 +58,7 @@ const AppRoutes = () => {
     ];
 
     return (
-        <>
+        <AuthChecker>
             <Header />
             <Routes>
                 <Route path="/" element={<HomePage />} />
@@ -121,7 +122,7 @@ const AppRoutes = () => {
                 {/* Redirect unknown routes to Home */}
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
-        </>
+        </AuthChecker>
     );
 };
 
