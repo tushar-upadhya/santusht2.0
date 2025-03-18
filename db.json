@@ -6,7 +6,8 @@
             "status": "Active",
             "role": "Admin",
             "adminName": "John Doe",
-            "instituteName": "Handles system operations",
+            "instituteName": "Aiims",
+            "instituteHindiName": "aiims", 
             "mobile": 9876543210,
             "location": "Bangalore"
         },
@@ -16,9 +17,28 @@
             "status": "Inactive",
             "role": "User",
             "adminName": "Jane Smith",
-            "instituteName": "HR Specialist",
+            "instituteName": "Safderjung",
+            "instituteHindiName": "safderjung", 
             "mobile": 9876543222,
             "location": "Bangalore"
+        }
+    ],
+    "institutes": [
+        {
+            "id": 1,
+            "serialNumber": 1,
+            "instituteName": "Aiims",
+            "instituteHindiName": "aiims",  
+            "status": "Active",
+            "assignAdmin": "John Doe"
+        },
+        {
+            "id": 2,
+            "serialNumber": 2,
+            "instituteName": "Safderjung",
+            "instituteHindiName": "safderjung",  
+            "status": "Inactive",
+            "assignAdmin": "Jane Smith"
         }
     ]
 }
