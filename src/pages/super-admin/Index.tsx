@@ -68,7 +68,11 @@ const SuperAdminPage = () => {
                             <SuperAdminAddAdminForm onAdminAdded={refetch} />
                         }
                         buttonLabel="Add Admin"
+<<<<<<< HEAD
                         buttonClassName="hover:bg-rose-400"
+=======
+                        buttonClassName="hover:border-[#FA7275] hover:text-[#FA7275]"
+>>>>>>> f6d2743 (STYLE: improve UI consistency in LogoutButton and DialogForm; enhance button hover effects in SuperAdminPage)
                     />
 
                     <DialogForm
@@ -77,6 +81,7 @@ const SuperAdminPage = () => {
                             <SuperAdminAddInstituteForm admins={admins} />
                         }
                         buttonLabel="Add Institute"
+                        buttonClassName="hover:border-[#FA7275] hover:text-[#FA7275]"
                     />
                 </div>
 

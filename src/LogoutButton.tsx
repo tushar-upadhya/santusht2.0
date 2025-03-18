@@ -49,7 +49,11 @@ export default function LogoutButton() {
 
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="bg-white">
+<<<<<<< HEAD
                     <DialogHeader className="">
+=======
+                    <DialogHeader>
+>>>>>>> f6d2743 (STYLE: improve UI consistency in LogoutButton and DialogForm; enhance button hover effects in SuperAdminPage)
                         <h2 className="capitalize text-[min(4vw,1.2rem)] text-slate-800 font-medium">
                             {fullname || "User"}
                         </h2>
