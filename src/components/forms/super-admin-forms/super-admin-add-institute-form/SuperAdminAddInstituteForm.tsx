@@ -1,103 +1,136 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { useState } from "react";
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { addInstitute } from "@/redux/features/instituteSlice";
+import { AppDispatch } from "@/redux/store";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import * as z from "zod";
 
-interface Admin {
-    id: string;
-    adminName: string;
-}
+const formSchema = z.object({
+    instituteName: z
+        .string()
+        .min(3, "Institute name must be at least 3 characters"),
 
-interface SuperAdminAddInstituteFormProps {
-    admins: Admin[];
-}
+    instituteNameHindi: z.string().optional(),
+    status: z.boolean().default(false),
+});
 
-const SuperAdminAddInstituteForm: React.FC<SuperAdminAddInstituteFormProps> = ({
-    admins,
-}) => {
-    const [instituteData, setInstituteData] = useState({
-        instituteName: "",
-        adminName: "",
-        location: "",
+const SuperAdminAddInstituteForm: React.FC = () => {
+    const dispatch = useDispatch<AppDispatch>();
+
+    const form = useForm({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            instituteName: "",
+            instituteNameHindi: "",
+            status: false,
+        },
     });
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => {
-        setInstituteData({ ...instituteData, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        try {
-            const res = await fetch("http://localhost:5000/add-institute", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(instituteData),
-            });
-            if (res.ok) {
-                setInstituteData({
-                    instituteName: "",
-                    adminName: "",
-                    location: "",
-                });
+    const mutation = useMutation({
+        mutationFn: async (values: z.infer<typeof formSchema>) => {
+            const payload = {
+                name: values.instituteName,
+                nameHindi: values.instituteNameHindi,
+                status: values.status ? "ACTIVE" : "INACTIVE",
+            };
+            const response = await fetch(
+                "http://192.168.30.88:8080/santusht/superadmin/add-update-institute",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                }
+            );
+            if (!response.ok) {
+                throw new Error("Failed to add institute");
             }
-        } catch (error) {
-            console.error("Failed to add institute:", error);
-        }
+            return response.json();
+        },
+        onSuccess: (data) => {
+            dispatch(addInstitute(data));
+            form.reset();
+        },
+    });
+
+    const handleSubmit = (values: z.infer<typeof formSchema>) => {
+        mutation.mutate(values);
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <Label>Institute Name</Label>
-            <Input
-                type="text"
-                name="instituteName"
-                placeholder="Institute Name"
-                value={instituteData.instituteName}
-                onChange={handleChange}
-                required
-            />
-
-            <Label>Admin</Label>
-            <Select
-                onValueChange={(value) =>
-                    setInstituteData({ ...instituteData, adminName: value })
-                }
+        <Form {...form}>
+            <form
+                onSubmit={form.handleSubmit(handleSubmit)}
+                className="space-y-4 bg-white p-6 rounded-lg shadow-md"
             >
-                <SelectTrigger>
-                    <SelectValue placeholder="Select Admin" />
-                </SelectTrigger>
-                <SelectContent>
-                    {admins.map((admin) => (
-                        <SelectItem key={admin.id} value={admin.adminName}>
-                            {admin.adminName}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
+                <FormField
+                    control={form.control}
+                    name="instituteName"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Institute Name</FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...field}
+                                    placeholder="Enter Institute Name"
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="instituteNameHindi"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Institute Name Hindi</FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...field}
+                                    placeholder="Enter Institute Name Hindi"
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
-            <Label>Location</Label>
-            <Input
-                type="text"
-                name="location"
-                placeholder="Location"
-                value={instituteData.location}
-                onChange={handleChange}
-                required
-            />
-
-            <Button type="submit" className="bg-green-500 text-white">
-                Add Institute
-            </Button>
-        </form>
+                <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Status</FormLabel>
+                            <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                            />
+                        </FormItem>
+                    )}
+                />
+                <Button
+                    type="submit"
+                    className="w-full bg-green-500 hover:bg-green-600 text-white"
+                    disabled={mutation.isPending}
+                >
+                    {mutation.isPending ? "Adding..." : "Add Institute"}
+                </Button>
+            </form>
+        </Form>
     );
 };
 

@@ -32,7 +32,7 @@ const DialogForm = ({
             <DialogTrigger asChild>
                 <Button
                     variant="outline"
-                    className={`border text-green-500 font-semibold w-full sm:w-fit px-6 py-3 sm:px-14 sm:py-5 ${buttonClassName}`}
+                    className={`border text-green-500  font-semibold w-full cursor-pointer sm:w-fit px-6 py-3 sm:px-14 sm:py-5 ${buttonClassName}`}
                 >
                     {buttonLabel}
                 </Button>
@@ -46,9 +46,13 @@ const DialogForm = ({
                                 {title}
                             </DialogTitle>
                             <DialogDescription className="text-sm sm:text-base text-muted-foreground mt-1">
-                                <span className="font-semibold">{description}</span>
+                                <span className="font-semibold">
+                                    {description}
+                                </span>
                                 {location && (
-                                    <span className="mt-2 block">{location}</span>
+                                    <span className="mt-2 block">
+                                        {location}
+                                    </span>
                                 )}
                             </DialogDescription>
                         </div>

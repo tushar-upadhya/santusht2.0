@@ -1,4 +1,3 @@
-import AuthChecker from "@/components/AuthChecker";
 import Header from "@/components/header/Header";
 import Index from "@/pages/admin";
 import ContactRequestPage from "@/pages/admin/contact-request/ContactRequestPage";
@@ -11,12 +10,12 @@ import HomePage from "@/pages/home/HomePage";
 import LevelOnePage from "@/pages/level-one/LevelOnePage";
 import LevelThreePage from "@/pages/level-three/LevelThreePage";
 import LevelTwoPage from "@/pages/level-two/LevelTwoPage";
+import GrievancePage from "@/pages/patient-grievance/GrievancePage";
 import SuperAdminPage from "@/pages/super-admin/Index";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
-import GrievancePage from "@/pages/patient-grievance/GrievancePage";
 
 const AppRoutes = () => {
     const { isAuthenticated, role } = useSelector(
@@ -59,7 +58,8 @@ const AppRoutes = () => {
     ];
 
     return (
-        <AuthChecker>
+        // <AuthChecker> </AuthChecker>
+        <>
             <Header />
             <Routes>
                 <Route path="/" element={<HomePage />} />
@@ -119,12 +119,14 @@ const AppRoutes = () => {
 
                 {/* Public Routes */}
                 <Route path="/contact" element={<ContactPage />} />
-                <Route path="/grievance" element={<GrievancePage />} />
+                <Route
+                    path="/grievance-page/:userId"
+                    element={<GrievancePage />}
+                />
 
-                {/* Redirect unknown routes to Home */}
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
-        </AuthChecker>
+        </>
     );
 };
 

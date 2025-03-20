@@ -28,7 +28,6 @@ import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-// ✅ Define Schema using zod
 const adminSchema = z.object({
     adminName: z.string().min(2, "Admin Name is required"),
     username: z.string().min(2, "Username is required"),
@@ -36,7 +35,7 @@ const adminSchema = z.object({
     email: z.string().email("Invalid email address"),
     gender: z.enum(["Male", "Female", "Other"]),
     dateOfBirth: z.date(),
-    status: z.boolean(), // ✅ Updated to boolean
+    status: z.boolean(),
     role: z.enum(["admin", "manager", "supervisor"]),
 });
 
@@ -58,7 +57,7 @@ const SuperAdminAddAdminForm: React.FC<SuperAdminAddAdminFormProps> = ({
             email: "",
             gender: "Male",
             dateOfBirth: new Date(),
-            status: true, // ✅ Default: active
+            status: true,
             role: "admin",
         },
     });
