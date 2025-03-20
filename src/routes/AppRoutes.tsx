@@ -16,6 +16,7 @@ import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
+import GrievancePage from "@/pages/patient-grievance/GrievancePage";
 
 const AppRoutes = () => {
     const { isAuthenticated, role } = useSelector(
@@ -118,6 +119,7 @@ const AppRoutes = () => {
 
                 {/* Public Routes */}
                 <Route path="/contact" element={<ContactPage />} />
+                <Route path="/grievance" element={<GrievancePage />} />
 
                 {/* Redirect unknown routes to Home */}
                 <Route path="*" element={<Navigate to="/" />} />
