@@ -1,3 +1,5 @@
+
+
 import GrievanceCard from "@/components/grievance-info/grievance-card/GrievanceCard";
 import { motion } from "framer-motion";
 import { useState } from "react";
