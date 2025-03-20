@@ -1,4 +1,5 @@
-import GrievanceCard from "@/components/cards/GrievanceCard";
+
+import GrievanceCard from "@/components/grievance-info/GrievanceCard";
 import { useState } from "react";
 
 const GrievancePage = () => {
