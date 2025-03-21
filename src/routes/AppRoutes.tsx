@@ -51,7 +51,7 @@ const AppRoutes = () => {
     const superAdminRoutes = [
         { path: "/super-admin", element: <SuperAdminPage /> },
     ];
-    const levelOneRoutes = [{ path: "/level-one", element: <LevelOnePage /> }];
+    // const levelOneRoutes = [{ path: "/level-one", element: <LevelOnePage /> }];
     const levelTwoRoutes = [{ path: "/level-two", element: <LevelTwoPage /> }];
     const levelThreeRoutes = [
         { path: "/level-three", element: <LevelThreePage /> },
@@ -91,13 +91,13 @@ const AppRoutes = () => {
                 </Route>
 
                 {/* Level One Routes */}
-                <Route
+                {/* <Route
                     element={<ProtectedRoute allowedRoles={["LEVEL_ONE"]} />}
                 >
                     {levelOneRoutes.map(({ path, element }) => (
                         <Route key={path} path={path} element={element} />
                     ))}
-                </Route>
+                </Route> */}
 
                 {/* Level Two Routes */}
                 <Route
@@ -123,7 +123,7 @@ const AppRoutes = () => {
                     path="/grievance-page/:userId"
                     element={<GrievancePage />}
                 />
-
+ <Route path="/level1" element={<LevelOnePage />} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </>
