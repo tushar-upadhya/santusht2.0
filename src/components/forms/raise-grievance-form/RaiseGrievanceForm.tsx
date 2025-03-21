@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -21,6 +23,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ImageIcon, MicIcon, VideoIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { z } from "zod";
 import AudioRecording from "./recording/audio-recording/AudioRecording";
 import VideoRecording from "./recording/video-recording/VideoRecording";
@@ -34,10 +38,12 @@ const formSchema = z.object({
     briefing: z.string().min(1, "Required"),
     uhid: z.string().min(1, "Required"),
     otp: z.string().min(1, "Required"),
-    mediaType: z.string().min(1, "Required"),
+    audio: z.string().optional(),
+    video: z.string().optional(),
 });
 
 const RaiseGrievanceForm = () => {
+    const navigate = useNavigate();
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -49,50 +55,119 @@ const RaiseGrievanceForm = () => {
             briefing: "",
             uhid: "",
             otp: "",
-            mediaType: "",
+            audio: "",
+            video: "",
         },
     });
 
-    const [mediaType, setMediaType] = useState<string | null>(null);
+    const [mediaTypes, setMediaTypes] = useState({
+        image: false,
+        audio: false,
+        video: false,
+    });
     const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
+    const [images, setImages] = useState<File[]>([]);
     const videoRef = useRef<HTMLVideoElement>(null);
+    const imageInputRef = useRef<HTMLInputElement>(null);
 
-    const handleMediaChange = async (value: string) => {
-        form.setValue("mediaType", value);
-        setMediaType(value);
+    const handleMediaChange = async (type: "image" | "audio" | "video") => {
+        setMediaTypes((prev) => ({
+            ...prev,
+            [type]: !prev[type], // Toggle the selected media type
+        }));
 
-        if (mediaStream) {
-            mediaStream.getTracks().forEach((track) => track.stop());
-            setMediaStream(null);
-        }
-
-        try {
-            if (value === "video") {
+        if (type === "video" && !mediaTypes.video && !mediaStream) {
+            try {
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: true,
                     audio: true,
                 });
                 setMediaStream(stream);
-                if (videoRef.current) {
-                    videoRef.current.srcObject = stream;
-                }
+                if (videoRef.current) videoRef.current.srcObject = stream;
+            } catch (error) {
+                console.error(`Error accessing ${type}:`, error);
+                toast.error(
+                    "Failed to access camera/microphone. Please allow permissions."
+                );
+                setMediaTypes((prev) => ({ ...prev, video: false }));
             }
+        } else if (type === "video" && mediaStream) {
+            mediaStream.getTracks().forEach((track) => track.stop());
+            setMediaStream(null);
+        }
+    };
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files) {
+            const newImages = Array.from(files).slice(0, 2 - images.length);
+            setImages((prev) => [...prev, ...newImages].slice(0, 2));
+            if (files.length > 2)
+                toast.warning(
+                    "Only 2 images are allowed. Extra images ignored."
+                );
+        }
+    };
+
+    const onSubmit = (data: any) => {
+        const grievance = {
+            id: Date.now(),
+            userId: data.uhid,
+            images: images.map((file) => URL.createObjectURL(file)),
+            video: data.video || null,
+            audio: data.audio || null,
+            raisedDate: new Date().toISOString().split("T")[0],
+            message: data.briefing,
+            status: "raised",
+            location: {
+                institute: data.institute,
+                building: data.building,
+                floor: data.floor,
+                landmark: data.landmark,
+            },
+            category: data.category,
+            rating: 0,
+        };
+
+        try {
+            const existingGrievances = JSON.parse(
+                localStorage.getItem("grievances") || "[]"
+            );
+            localStorage.setItem(
+                "grievances",
+                JSON.stringify([...existingGrievances, grievance])
+            );
+            toast.success("Grievance Submitted!", {
+                description: `Your grievance (ID: ${grievance.id}) has been successfully raised.`,
+                action: {
+                    label: "",
+                    onClick: () => {},
+                },
+            });
+            form.reset();
+            setImages([]);
+            setMediaTypes({ image: false, audio: false, video: false });
+            if (mediaStream) {
+                mediaStream.getTracks().forEach((track) => track.stop());
+                setMediaStream(null);
+            }
+            if (imageInputRef.current) imageInputRef.current.value = ""; // Clear file input
+            navigate(`/grievance-page/${data.uhid}`);
         } catch (error) {
-            console.error(`Error accessing ${value}:`, error);
+            console.error("Error saving to localStorage:", error);
+            toast.error("Submission Failed", {
+                description:
+                    "Failed to submit grievance. Storage might be full.",
+            });
         }
     };
 
     useEffect(() => {
         return () => {
-            if (mediaStream) {
+            if (mediaStream)
                 mediaStream.getTracks().forEach((track) => track.stop());
-            }
         };
     }, [mediaStream]);
-
-    const onSubmit = (data: unknown): void => {
-        console.log(data);
-    };
 
     return (
         <ScrollArea className="h-[38rem] bg-white">
@@ -101,7 +176,6 @@ const RaiseGrievanceForm = () => {
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-3 p-4 max-w-xl mx-auto"
                 >
-                    {/* Institute & Category */}
                     <div className="grid grid-cols-2 gap-2">
                         <FormField
                             control={form.control}
@@ -116,17 +190,26 @@ const RaiseGrievanceForm = () => {
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
-                                            <SelectTrigger className="w-full h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500">
+                                            <SelectTrigger className="w-full h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500 cursor-pointer">
                                                 <SelectValue placeholder="Select" />
                                             </SelectTrigger>
-                                            <SelectContent className="bg-white border-gray-300">
-                                                <SelectItem value="institute1">
+                                            <SelectContent className="bg-white border-gray-300 ">
+                                                <SelectItem
+                                                    value="institute1"
+                                                    className=" cursor-pointer"
+                                                >
                                                     Institute 1
                                                 </SelectItem>
-                                                <SelectItem value="institute2">
+                                                <SelectItem
+                                                    value="institute2"
+                                                    className=" cursor-pointer"
+                                                >
                                                     Institute 2
                                                 </SelectItem>
-                                                <SelectItem value="institute3">
+                                                <SelectItem
+                                                    value="institute3"
+                                                    className=" cursor-pointer"
+                                                >
                                                     Institute 3
                                                 </SelectItem>
                                             </SelectContent>
@@ -149,14 +232,20 @@ const RaiseGrievanceForm = () => {
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
-                                            <SelectTrigger className="w-full h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500">
+                                            <SelectTrigger className="w-full h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500 cursor-pointer">
                                                 <SelectValue placeholder="Select" />
                                             </SelectTrigger>
                                             <SelectContent className="bg-white border-gray-300">
-                                                <SelectItem value="category1">
+                                                <SelectItem
+                                                    value="category1"
+                                                    className=" cursor-pointer"
+                                                >
                                                     Category 1
                                                 </SelectItem>
-                                                <SelectItem value="category2">
+                                                <SelectItem
+                                                    value="category2"
+                                                    className=" cursor-pointer"
+                                                >
                                                     Category 2
                                                 </SelectItem>
                                             </SelectContent>
@@ -167,8 +256,6 @@ const RaiseGrievanceForm = () => {
                             )}
                         />
                     </div>
-
-                    {/* Building & Floor */}
                     <div className="grid grid-cols-2 gap-2">
                         <FormField
                             control={form.control}
@@ -183,14 +270,20 @@ const RaiseGrievanceForm = () => {
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
-                                            <SelectTrigger className="w-full h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500">
+                                            <SelectTrigger className="w-full h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500 cursor-pointer">
                                                 <SelectValue placeholder="Select" />
                                             </SelectTrigger>
                                             <SelectContent className="bg-white border-gray-300">
-                                                <SelectItem value="building1">
+                                                <SelectItem
+                                                    value="building1"
+                                                    className=" cursor-pointer"
+                                                >
                                                     Building 1
                                                 </SelectItem>
-                                                <SelectItem value="building2">
+                                                <SelectItem
+                                                    value="building2"
+                                                    className=" cursor-pointer"
+                                                >
                                                     Building 2
                                                 </SelectItem>
                                             </SelectContent>
@@ -213,14 +306,20 @@ const RaiseGrievanceForm = () => {
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
                                         >
-                                            <SelectTrigger className="w-full h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500">
+                                            <SelectTrigger className="w-full h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500 cursor-pointer">
                                                 <SelectValue placeholder="Select" />
                                             </SelectTrigger>
                                             <SelectContent className="bg-white border-gray-300">
-                                                <SelectItem value="floor1">
+                                                <SelectItem
+                                                    value="floor1"
+                                                    className=" cursor-pointer"
+                                                >
                                                     Floor 1
                                                 </SelectItem>
-                                                <SelectItem value="floor2">
+                                                <SelectItem
+                                                    value="floor2"
+                                                    className=" cursor-pointer"
+                                                >
                                                     Floor 2
                                                 </SelectItem>
                                             </SelectContent>
@@ -231,8 +330,6 @@ const RaiseGrievanceForm = () => {
                             )}
                         />
                     </div>
-
-                    {/* Landmark */}
                     <FormField
                         control={form.control}
                         name="landmark"
@@ -252,8 +349,6 @@ const RaiseGrievanceForm = () => {
                             </FormItem>
                         )}
                     />
-
-                    {/* Briefing */}
                     <FormField
                         control={form.control}
                         name="briefing"
@@ -273,8 +368,6 @@ const RaiseGrievanceForm = () => {
                             </FormItem>
                         )}
                     />
-
-                    {/* UHID & OTP */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <FormField
                             control={form.control}
@@ -293,8 +386,9 @@ const RaiseGrievanceForm = () => {
                                             />
                                         </FormControl>
                                         <Button
+                                            type="button"
                                             variant="default"
-                                            className="h-9 bg-green-600 text-white hover:bg-green-700 rounded-md px-3"
+                                            className="h-9 bg-green-600 text-white hover:bg-green-700 rounded-md px-3 cursor-pointer transition-all duration-300"
                                         >
                                             Get OTP
                                         </Button>
@@ -323,90 +417,107 @@ const RaiseGrievanceForm = () => {
                             )}
                         />
                     </div>
-
-                    {/* Media */}
-                    <FormField
-                        control={form.control}
-                        name="mediaType"
-                        render={() => (
-                            <FormItem>
-                                <FormLabel className="text-sm text-gray-700">
-                                    Media
-                                </FormLabel>
-                                <div className="flex gap-2">
-                                    <Button
-                                        variant={
-                                            mediaType === "image"
-                                                ? "default"
-                                                : "outline"
-                                        }
-                                        size="icon"
-                                        className={`h-9 w-9 rounded-md ${
-                                            mediaType === "image"
-                                                ? "bg-gray-800 text-white"
-                                                : "border-gray-300 text-gray-700 hover:bg-gray-100"
-                                        }`}
-                                        onClick={() =>
-                                            handleMediaChange("image")
-                                        }
-                                    >
-                                        <ImageIcon className="w-4 h-4" />
-                                    </Button>
-                                    <Button
-                                        variant={
-                                            mediaType === "audio"
-                                                ? "default"
-                                                : "outline"
-                                        }
-                                        size="icon"
-                                        className={`h-9 w-9 rounded-md ${
-                                            mediaType === "audio"
-                                                ? "bg-gray-800 text-white"
-                                                : "border-gray-300 text-gray-700 hover:bg-gray-100"
-                                        }`}
-                                        onClick={() =>
-                                            handleMediaChange("audio")
-                                        }
-                                    >
-                                        <MicIcon className="w-4 h-4" />
-                                    </Button>
-                                    <Button
-                                        variant={
-                                            mediaType === "video"
-                                                ? "default"
-                                                : "outline"
-                                        }
-                                        size="icon"
-                                        className={`h-9 w-9 rounded-md ${
-                                            mediaType === "video"
-                                                ? "bg-gray-800 text-white"
-                                                : "border-gray-300 text-gray-700 hover:bg-gray-100"
-                                        }`}
-                                        onClick={() =>
-                                            handleMediaChange("video")
-                                        }
-                                    >
-                                        <VideoIcon className="w-4 h-4" />
-                                    </Button>
-                                </div>
-                                <FormMessage className="text-red-500 text-xs" />
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* Media Display */}
-                    {mediaType && (
+                    <div className="space-y-2">
+                        <FormLabel className="text-sm text-gray-700">
+                            Media
+                        </FormLabel>
+                        <div className="flex gap-2">
+                            <Button
+                                type="button"
+                                variant={
+                                    mediaTypes.image ? "default" : "outline"
+                                }
+                                size="icon"
+                                className={`h-9 w-9 rounded-md cursor-pointer transition-all duration-300 ${
+                                    mediaTypes.image
+                                        ? "bg-[#FA7275] hover:bg-[#FA7275]/80 text-white"
+                                        : "border-[#FA7275] text-slate-700 hover:bg-gray-100"
+                                }`}
+                                onClick={() => handleMediaChange("image")}
+                            >
+                                <ImageIcon className="w-4 h-4" />
+                            </Button>
+                            <Button
+                                type="button"
+                                variant={
+                                    mediaTypes.audio ? "default" : "outline"
+                                }
+                                size="icon"
+                                className={`h-9 w-9 rounded-md cursor-pointer transition-all duration-300 ${
+                                    mediaTypes.audio
+                                        ? "bg-[#FA7275] hover:bg-[#FA7275]/80 text-white"
+                                        : "border-[#FA7275] text-slate-700 hover:bg-gray-100"
+                                }`}
+                                onClick={() => handleMediaChange("audio")}
+                            >
+                                <MicIcon className="w-4 h-4" />
+                            </Button>
+                            <Button
+                                type="button"
+                                variant={
+                                    mediaTypes.video ? "default" : "outline"
+                                }
+                                size="icon"
+                                className={`h-9 w-9 rounded-md cursor-pointer transition-all duration-300 ${
+                                    mediaTypes.video
+                                        ? "bg-[#FA7275] hover:bg-[#FA7275]/80 text-white"
+                                        : "border-[#FA7275] text-slate-700 hover:bg-gray-100"
+                                }`}
+                                onClick={() => handleMediaChange("video")}
+                            >
+                                <VideoIcon className="w-4 h-4" />
+                            </Button>
+                        </div>
+                    </div>
+                    {mediaTypes.image && (
                         <div className="p-2 bg-gray-50 rounded-md">
-                            {mediaType === "video" && <VideoRecording />}
-                            {mediaType === "audio" && <AudioRecording />}
+                            <input
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                ref={imageInputRef}
+                                onChange={handleImageUpload}
+                                className="mb-2"
+                            />
+                            <p className="text-xs text-gray-600">
+                                Max 2 images
+                            </p>
+                            {images.length > 0 && (
+                                <div className="flex gap-2">
+                                    {images.map((img, idx) => (
+                                        <img
+                                            key={idx}
+                                            src={URL.createObjectURL(img)}
+                                            alt={`Uploaded ${idx}`}
+                                            className="w-20 h-20 object-cover rounded-md"
+                                        />
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
-
-                    {/* Submit */}
+                    {mediaTypes.audio && (
+                        <div className="p-2 bg-gray-50 rounded-md">
+                            <AudioRecording
+                                setAudio={(url: string) =>
+                                    form.setValue("audio", url)
+                                }
+                            />
+                        </div>
+                    )}
+                    {mediaTypes.video && (
+                        <div className="p-2 bg-gray-50 rounded-md">
+                            <VideoRecording
+                                setVideo={(url: string) =>
+                                    form.setValue("video", url)
+                                }
+                            />
+                        </div>
+                    )}
                     <Button
                         type="submit"
                         variant="default"
-                        className="w-full h-10 bg-gray-800 text-white hover:bg-gray-900 rounded-md"
+                        className="w-full h-10 cursor-pointer bg-[#FA7275] hover:bg-[#FA7275]/80 text-white transition-all duration-300"
                     >
                         Submit
                     </Button>

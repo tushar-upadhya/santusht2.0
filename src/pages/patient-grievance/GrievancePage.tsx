@@ -1,8 +1,6 @@
-
-
 import GrievanceCard from "@/components/grievance-info/grievance-card/GrievanceCard";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -10,131 +8,88 @@ interface Location {
     institute: string;
     building: string;
     floor: string;
+    landmark?: string;
 }
 
 interface Grievance {
     id: number;
     userId: string;
-    image?: string;
+    images?: string[];
     video?: string;
     audio?: string;
     raisedDate: string;
     message: string;
     status: string;
     location?: Location;
+    category: string;
     rating?: number;
 }
 
 const GrievancePage: React.FC = () => {
     const { userId } = useParams<{ userId: string }>();
+    const [grievances, setGrievances] = useState<Grievance[]>([]);
 
-    const [grievances, setGrievances] = useState<Grievance[]>([
-        {
-            id: 1,
-            userId: "user123",
-            image: undefined,
-            video: "https://www.example.com/sample-video.mp4",
-            audio: "https://www.example.com/sample-audio.mp3",
-            raisedDate: "2025-02-18",
-            message: "Streetlights are not working properly in my area.",
-            status: "temp-closed",
-            location: {
-                institute: "ABC Institute",
-                building: "Main Block",
-                floor: "2nd Floor",
-            },
-            rating: 0,
-        },
-        {
-            id: 8,
-            userId: "user123",
-            image: undefined,
-            video: "https://www.example.com/sample-video.mp4",
-            audio: "https://www.example.com/sample-audio.mp3",
-            raisedDate: "2025-02-18",
-            message: "Streetlights are not working properly in my area.",
-            status: "temp-closed",
-            location: {
-                institute: "ABC Institute",
-                building: "Main Block",
-                floor: "2nd Floor",
-            },
-            rating: 0,
-        },
-        {
-            id: 9,
-            userId: "user123",
-            image: undefined,
-            video: "https://www.example.com/sample-video.mp4",
-            audio: "https://www.example.com/sample-audio.mp3",
-            raisedDate: "2025-02-18",
-            message: "Streetlights are not working properly in my area.",
-            status: "temp-closed",
-            location: {
-                institute: "ABC Institute",
-                building: "Main Block",
-                floor: "2nd Floor",
-            },
-            rating: 0,
-        },
-        {
-            id: 2,
-            userId: "user456",
-            image: undefined,
-            video: "https://www.example.com/sample-video.mp4",
-            audio: undefined,
-            raisedDate: "2025-02-15",
-            message: "Road maintenance issue needs urgent attention.",
-            status: "in-progress",
-            location: {
-                institute: "XYZ School",
-                building: "Science Wing",
-                floor: "Ground Floor",
-            },
-            rating: 0,
-        },
-        {
-            id: 3,
-            userId: "user123",
-            image: undefined,
-            video: undefined,
-            audio: "https://www.example.com/sample-audio.mp3",
-            raisedDate: "2025-02-10",
-            message: "Garbage collection is not happening regularly.".repeat(9),
-            status: "closed",
-            location: {
-                institute: "City College",
-                building: "Admin Block",
-                floor: "1st Floor",
-            },
-            rating: 4,
-        },
-    ]);
+    useEffect(() => {
+        try {
+            const storedGrievances = JSON.parse(
+                localStorage.getItem("grievances") || "[]"
+            );
+            if (!Array.isArray(storedGrievances))
+                throw new Error("Invalid data");
+            setGrievances(storedGrievances);
+        } catch (error) {
+            console.error("Error loading grievances:", error);
+            toast.error("Failed to load grievances. Data may be corrupted.");
+            setGrievances([]);
+        }
+    }, [userId]); // Re-run if userId changes
 
     const userGrievances = grievances.filter(
         (grievance) => grievance.userId === userId
     );
 
     const handleRate = (id: number, newRating: number) => {
-        setGrievances((prev) =>
-            prev.map((grievance) =>
-                grievance.id === id
-                    ? { ...grievance, rating: newRating }
-                    : grievance
-            )
+        const updatedGrievances = grievances.map((grievance) =>
+            grievance.id === id
+                ? { ...grievance, rating: newRating }
+                : grievance
         );
+        setGrievances(updatedGrievances);
+        try {
+            localStorage.setItem(
+                "grievances",
+                JSON.stringify(updatedGrievances)
+            );
+        } catch (error) {
+            console.error("Error saving rating:", error);
+            toast.error("Failed to save rating.");
+        }
     };
 
     const handleReopen = (id: number) => {
-        setGrievances((prev) =>
-            prev.map((grievance) =>
-                grievance.id === id
-                    ? { ...grievance, status: "in-progress" }
-                    : grievance
-            )
+        const updatedGrievances = grievances.map((grievance) =>
+            grievance.id === id
+                ? { ...grievance, status: "in-progress" }
+                : grievance
         );
-        toast.success(`Grievance #${id} reopened!`);
+        setGrievances(updatedGrievances);
+        try {
+            localStorage.setItem(
+                "grievances",
+                JSON.stringify(updatedGrievances)
+            );
+            toast.success(`Grievance #${id} reopened!`);
+        } catch (error) {
+            console.error("Error reopening grievance:", error);
+            toast.error("Failed to reopen grievance.");
+        }
     };
+
+    if (!userId) {
+        return (
+            <p className="text-center text-red-500 py-10">Invalid user ID.</p>
+        );
+    }
 
     return (
         <div className="p-4 sm:p-6 md:p-8 space-y-6 max-w-full sm:max-w-3xl md:max-w-4xl mx-auto bg-gray-50 min-h-screen">

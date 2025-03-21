@@ -9,13 +9,13 @@ import {
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
 import {
-    AlertCircle, // For "Temp Closed"
+    AlertCircle,
     Check,
-    CheckCircle, // For "Received"
+    CheckCircle,
     Clock,
-    Image as ImageIcon, // For "Raised"
+    Image as ImageIcon,
     Mail,
-    Music, // For "In Progress"
+    Music,
     PauseCircle,
     Star,
     Video,
@@ -27,11 +27,12 @@ interface Location {
     institute?: string;
     building?: string;
     floor?: string;
+    landmark?: string;
 }
 
 interface Grievance {
     id: number;
-    image?: string;
+    images?: string[];
     video?: string;
     audio?: string;
     raisedDate: string;
@@ -54,7 +55,7 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
 }) => {
     const {
         id,
-        image,
+        images,
         video,
         audio,
         raisedDate,
@@ -69,46 +70,57 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
     const [isAudioDialogOpen, setIsAudioDialogOpen] = useState(false);
     const [tempRating, setTempRating] = useState(rating);
 
-    const imageContent: ReactNode = image ? (
-        <img
-            src={image}
-            alt="Grievance"
-            className="w-full max-h-[200px] sm:max-h-[300px] md:max-h-[400px] object-contain rounded-lg"
-            onError={(e) => (e.currentTarget.src = "/fallback-image.jpg")}
-        />
-    ) : null;
+    const imageContent: ReactNode =
+        images && images.length > 0 ? (
+            <div className="flex gap-2">
+                {images.map((img, idx) => (
+                    <img
+                        key={idx}
+                        src={img}
+                        alt={`Grievance Image ${idx}`}
+                        className="w-full max-h-[200px] sm:max-h-[300px] md:max-h-[400px] object-contain rounded-lg"
+                        onError={(e) =>
+                            (e.currentTarget.src = "/fallback-image.jpg")
+                        }
+                    />
+                ))}
+            </div>
+        ) : null;
 
     const videoContent: ReactNode = video ? (
         <video
             className="w-full max-h-[200px] sm:max-h-[300px] md:max-h-[400px] rounded-lg"
             controls
         >
-            <source src={video} type="video/mp4" />
+            <source src={video} type="video/webm" />
             Your browser does not support the video tag.
         </video>
     ) : null;
 
     const audioContent: ReactNode = audio ? (
         <audio controls className="w-full">
-            <source src={audio} type="audio/mpeg" />
+            <source src={audio} type="audio/webm" />
             Your browser does not support the audio tag.
         </audio>
     ) : null;
 
     let cardMediaContent: ReactNode | null = null;
-    if (image) {
+    if (images && images.length > 0) {
         cardMediaContent = (
             <div className="relative">
                 <img
-                    src={image}
+                    src={images[0]}
                     alt="Grievance"
                     className="w-full h-20 sm:h-24 md:h-28 object-cover rounded-md border border-gray-200"
                     onError={(e) =>
                         (e.currentTarget.src = "/fallback-image.jpg")
                     }
                 />
-                {(video || audio) && (
+                {(video || audio || images.length > 1) && (
                     <div className="absolute bottom-1 right-1 flex gap-1">
+                        {images.length > 1 && (
+                            <ImageIcon className="w-4 h-4 text-[#FA7275]" />
+                        )}
                         {video && <Video className="w-4 h-4 text-[#FA7275]" />}
                         {audio && <Music className="w-4 h-4 text-[#FA7275]" />}
                     </div>
@@ -121,7 +133,7 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                 className="w-full h-20 sm:h-24 md:h-28 rounded-md border border-gray-200"
                 controls
             >
-                <source src={video} type="video/mp4" />
+                <source src={video} type="video/webm" />
             </video>
         );
     } else if (audio) {
@@ -172,15 +184,14 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
     ];
 
     const handleRatingClick = (newRating: number) => {
+        if (tempRating === newRating) return; // Prevent redundant updates
         setTempRating(newRating);
         onRate(id, newRating);
         toast.success(
             `Rated Grievance #${id} with ${newRating} star${
                 newRating !== 1 ? "s" : ""
             }!`,
-            {
-                description: "Thank you for your feedback.",
-            }
+            { description: "Thank you for your feedback." }
         );
     };
 
@@ -234,7 +245,8 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                                     </span>{" "}
                                     {location.institute || "N/A"},{" "}
                                     {location.building || "N/A"},{" "}
-                                    {location.floor || "N/A"}
+                                    {location.floor || "N/A"},{" "}
+                                    {location.landmark || "N/A"}
                                 </p>
                             )}
                             <p className="text-sm sm:text-base md:text-lg font-medium text-gray-900 break-words line-clamp-3">
@@ -268,7 +280,7 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                                     <Button
                                         size="sm"
                                         variant="outline"
-                                        className="text-white hover:text-[#FA7275]  border-[#FA7275] bg-[#FA7275] hover:bg-[#FA7275]/80 w-full sm:w-auto text-xs sm:text-sm"
+                                        className="text-white hover:text-[#FA7275] border-[#FA7275] bg-[#FA7275] hover:bg-[#FA7275]/80 w-full sm:w-auto text-xs sm:text-sm"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleReopen();
@@ -374,8 +386,7 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                                                         : "text-gray-500"
                                                 }`}
                                             >
-                                                {step.icon}
-                                                {step.label}
+                                                {step.icon} {step.label}
                                             </p>
                                             {step.date && (
                                                 <p className="text-xs text-gray-500">
@@ -404,17 +415,18 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                                     <p className="text-xs sm:text-sm text-slate-700 font-semibold bg-[#FA7275]/20 p-2 sm:p-3 rounded-md mt-1">
                                         {location.institute || "N/A"},{" "}
                                         {location.building || "N/A"},{" "}
-                                        {location.floor || "N/A"}
+                                        {location.floor || "N/A"},{" "}
+                                        {location.landmark || "N/A"}
                                     </p>
                                 </div>
                             )}
-                            {(image || video || audio) && (
+                            {(images || video || audio) && (
                                 <div>
                                     <span className="text-xs sm:text-sm font-normal text-slate-700">
                                         Media
                                     </span>
                                     <div className="flex flex-col sm:flex-row gap-2 mt-1">
-                                        {image && (
+                                        {images && images.length > 0 && (
                                             <Dialog
                                                 open={isImageDialogOpen}
                                                 onOpenChange={
@@ -433,13 +445,13 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                                                         }
                                                     >
                                                         <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5 text-[#FA7275]" />
-                                                        <span>View Image</span>
+                                                        <span>View Images</span>
                                                     </Button>
                                                 </DialogTrigger>
                                                 <DialogContent className="w-[95vw] sm:max-w-[500px] md:max-w-[600px] bg-white rounded-xl shadow-lg p-3 sm:p-4 border border-gray-100">
                                                     <DialogHeader>
                                                         <DialogTitle className="text-base sm:text-lg font-semibold text-gray-900">
-                                                            Image for Grievance
+                                                            Images for Grievance
                                                             #{id}
                                                         </DialogTitle>
                                                     </DialogHeader>

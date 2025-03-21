@@ -39,7 +39,6 @@ const AppRoutes = () => {
         }
     };
 
-    // role based routes
     const adminRoutes = [
         { path: "/admin", element: <Index /> },
         { path: "/admin/user-management", element: <UserManagementPage /> },
@@ -58,7 +57,6 @@ const AppRoutes = () => {
     ];
 
     return (
-        // <AuthChecker> </AuthChecker>
         <>
             <Header />
             <Routes>
@@ -73,15 +71,11 @@ const AppRoutes = () => {
                         )
                     }
                 />
-
-                {/* Admin Routes */}
                 <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
                     {adminRoutes.map(({ path, element }) => (
                         <Route key={path} path={path} element={element} />
                     ))}
                 </Route>
-
-                {/* Super Admin Routes */}
                 <Route
                     element={<ProtectedRoute allowedRoles={["SUPER_ADMIN"]} />}
                 >
@@ -89,8 +83,6 @@ const AppRoutes = () => {
                         <Route key={path} path={path} element={element} />
                     ))}
                 </Route>
-
-                {/* Level One Routes */}
                 <Route
                     element={<ProtectedRoute allowedRoles={["LEVEL_ONE"]} />}
                 >
@@ -98,8 +90,6 @@ const AppRoutes = () => {
                         <Route key={path} path={path} element={element} />
                     ))}
                 </Route>
-
-                {/* Level Two Routes */}
                 <Route
                     element={<ProtectedRoute allowedRoles={["LEVEL_TWO"]} />}
                 >
@@ -107,8 +97,6 @@ const AppRoutes = () => {
                         <Route key={path} path={path} element={element} />
                     ))}
                 </Route>
-
-                {/* Level Three Routes */}
                 <Route
                     element={<ProtectedRoute allowedRoles={["LEVEL_THREE"]} />}
                 >
@@ -116,14 +104,11 @@ const AppRoutes = () => {
                         <Route key={path} path={path} element={element} />
                     ))}
                 </Route>
-
-                {/* Public Routes */}
                 <Route path="/contact" element={<ContactPage />} />
                 <Route
                     path="/grievance-page/:userId"
                     element={<GrievancePage />}
                 />
-
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </>
