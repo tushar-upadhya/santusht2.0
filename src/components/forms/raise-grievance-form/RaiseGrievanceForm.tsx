@@ -237,16 +237,16 @@ const RaiseGrievanceForm = () => {
                                             </SelectTrigger>
                                             <SelectContent className="bg-white border-gray-300">
                                                 <SelectItem
-                                                    value="category1"
+                                                    value="Sanitation"
                                                     className=" cursor-pointer"
                                                 >
-                                                    Category 1
+                                                    Sanitation
                                                 </SelectItem>
                                                 <SelectItem
-                                                    value="category2"
+                                                    value="Civil"
                                                     className=" cursor-pointer"
                                                 >
-                                                    Category 2
+                                                    Civil
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
