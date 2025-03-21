@@ -32,7 +32,7 @@ const DialogForm = ({
             <DialogTrigger asChild>
                 <Button
                     variant="outline"
-                    className={`border text-green-500  font-semibold w-full cursor-pointer sm:w-fit px-6 py-3 sm:px-14 sm:py-5 ${buttonClassName}`}
+                    className={`border hover:border-[#FA7275] text-green-500 hover:text-[#FA7275]   transition-all duration-300 font-semibold w-full cursor-pointer sm:w-fit px-6 py-3 sm:px-14 sm:py-5 ${buttonClassName}`}
                 >
                     {buttonLabel}
                 </Button>

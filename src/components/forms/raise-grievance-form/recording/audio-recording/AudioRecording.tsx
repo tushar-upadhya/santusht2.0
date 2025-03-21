@@ -1,38 +1,35 @@
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
-interface AudioData {
-    id: string;
-    url: string;
+interface AudioRecordingProps {
+    setAudio: (url: string) => void;
 }
 
-const AudioRecording: React.FC = () => {
-    const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+const AudioRecording: React.FC<AudioRecordingProps> = ({ setAudio }) => {
     const [audioUrl, setAudioUrl] = useState<string | null>(null);
-    const [uploadedAudios, setUploadedAudios] = useState<AudioData[]>([]);
-    const [uploadedAudioUrl, setUploadedAudioUrl] = useState<string | null>(
-        null
-    );
     const [isRecording, setIsRecording] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(60);
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const recordedChunksRef = useRef<BlobPart[]>([]);
-    const currentAudioElement = useRef<HTMLAudioElement | null>(null);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const streamRef = useRef<MediaStream | null>(null);
 
-    // Start recording
     const startRecording = async () => {
+        if (isRecording) return;
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: true,
             });
+            streamRef.current = stream;
             const mediaRecorder = new MediaRecorder(stream);
             mediaRecorderRef.current = mediaRecorder;
 
             mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
+                if (event.data.size > 0)
                     recordedChunksRef.current.push(event.data);
-                }
             };
 
             mediaRecorder.onstop = () => {
@@ -40,186 +37,153 @@ const AudioRecording: React.FC = () => {
                     type: "audio/webm",
                 });
                 recordedChunksRef.current = [];
-                setAudioBlob(audioBlob);
-                setAudioUrl(URL.createObjectURL(audioBlob));
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const dataUrl = reader.result as string;
+                    setAudioUrl(dataUrl);
+                    setAudio(dataUrl); // Pass persistent URL to form
+                    uploadAudio();
+                };
+                reader.readAsDataURL(audioBlob);
+                cleanup();
             };
 
             mediaRecorder.start();
             setIsRecording(true);
             setIsPaused(false);
+            setTimeLeft(60);
+
+            if (timerRef.current) clearInterval(timerRef.current);
+            timerRef.current = setInterval(() => {
+                setTimeLeft((prev) => {
+                    if (prev <= 1) {
+                        stopRecording();
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
         } catch (error) {
             console.error("Error accessing microphone: ", error);
+            toast.error(
+                "Failed to access microphone. Please allow permissions."
+            );
+            cleanup();
         }
     };
 
-    // Pause recording
     const pauseRecording = () => {
         if (mediaRecorderRef.current && isRecording && !isPaused) {
             mediaRecorderRef.current.pause();
             setIsPaused(true);
+            if (timerRef.current) clearInterval(timerRef.current);
         }
     };
 
-    // Resume recording
     const resumeRecording = () => {
         if (mediaRecorderRef.current && isPaused) {
             mediaRecorderRef.current.resume();
             setIsPaused(false);
+            timerRef.current = setInterval(() => {
+                setTimeLeft((prev) => {
+                    if (prev <= 1) {
+                        stopRecording();
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
         }
     };
 
-    // Stop recording
     const stopRecording = () => {
         if (mediaRecorderRef.current && isRecording) {
             mediaRecorderRef.current.stop();
-            setIsRecording(false);
-            setIsPaused(false);
+            cleanup();
         }
     };
 
-    // Upload audio
-    const uploadAudio = async () => {
-        if (!audioBlob) {
-            alert("No audio recorded!");
-            return;
+    const cleanup = () => {
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach((track) => track.stop());
+            streamRef.current = null;
         }
-
-        const formData = new FormData();
-        formData.append("audioFile", audioBlob, "recorded_audio.webm");
-
-        try {
-            const response = await fetch("/api/audio/upload", {
-                method: "POST",
-                body: formData,
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                alert(`Audio uploaded successfully! Audio ID: ${data.id}`);
-                loadAllAudios();
-            } else {
-                console.error("Upload failed");
-            }
-        } catch (error) {
-            console.error("Upload error: ", error);
-        }
+        setIsRecording(false);
+        setIsPaused(false);
+        if (timerRef.current) clearInterval(timerRef.current);
     };
 
-    // Load all audios
-    const loadAllAudios = async () => {
-        try {
-            const response = await fetch("/api/audio/audios");
-            if (response.ok) {
-                const data: AudioData[] = await response.json();
-                setUploadedAudios(
-                    data.map((audio) => ({
-                        id: audio.id,
-                        url: `/api/audio/play/${audio.id}`,
-                    }))
-                );
-            }
-        } catch (error) {
-            console.error("Error fetching audios:", error);
-        }
+    const uploadAudio = () => {
+        const audioId = Date.now().toString();
+        toast.success(`Audio uploaded successfully! Audio ID: ${audioId}`, {
+            description: "Your audio has been saved.",
+        });
     };
 
-    // Play selected audio
-    const playSelectedAudio = (
-        audioId: string,
-        event: React.MouseEvent<HTMLAudioElement>
-    ) => {
-        if (currentAudioElement.current) {
-            currentAudioElement.current.pause();
-            currentAudioElement.current.currentTime = 0;
-        }
-        setUploadedAudioUrl(`/api/audio/play/${audioId}`);
-        currentAudioElement.current = event.currentTarget;
-    };
-
-    // Fetch audios on component mount
     useEffect(() => {
-        loadAllAudios();
+        return () => {
+            cleanup();
+        };
     }, []);
 
     return (
         <div className="p-4">
-            {/* Recording Controls */}
-            <div className="mt-4 flex gap-3 ">
+            <div className="mt-4 flex gap-3">
                 {!isRecording && (
                     <Button
-                        variant={"default"}
+                        type="button" // Prevent form submission
+                        variant="default"
                         onClick={startRecording}
-                        className="bg-green-500 flex-1 w-full text-white px-4 py-2 rounded"
+                        className="h-9 bg-green-600 text-white w-full hover:bg-green-700 rounded-md px-3 cursor-pointer transition-all duration-300"
                     >
                         Start Recording
                     </Button>
                 )}
                 {isRecording && !isPaused && (
                     <Button
-                        variant={"outline"}
+                        type="button" // Prevent form submission
+                        variant="default"
                         onClick={pauseRecording}
-                        className="bg-yellow-500 flex-1 w-full text-white px-4 py-2 rounded"
+                        className="bg-yellow-500/80 hover:bg-yellow-500 uppercase cursor-pointer w-full text-slate-700 px-6 py-3 rounded-lg"
                     >
                         Pause
                     </Button>
                 )}
                 {isPaused && (
                     <Button
-                        variant={"default"}
+                        type="button" // Prevent form submission
+                        variant="default"
                         onClick={resumeRecording}
-                        className="flex-1 w-full text-white px-4 py-2 rounded"
+                        className="bg-green-500/80 hover:bg-green-500 uppercase cursor-pointer w-full text-slate-700 px-6 py-3 rounded-lg"
                     >
                         Resume
                     </Button>
                 )}
                 {isRecording && (
                     <Button
-                        variant={"destructive"}
+                        type="button" // Prevent form submission
+                        variant="default"
                         onClick={stopRecording}
-                        className="flex-1 w-full"
+                        className="bg-rose-500/55 uppercase hover:bg-rose-500/45 cursor-pointer w-full text-slate-700 px-6 py-3 rounded-lg"
                     >
                         Stop
                     </Button>
                 )}
             </div>
-
-            {/* Recorded Audio */}
+            {isRecording && (
+                <p className="text-sm text-slate-700 mt-2 font-medium">
+                    Time Left: {timeLeft}s
+                </p>
+            )}
             {audioUrl && (
                 <div className="mt-4">
-                    {/* <h2 className="text-lg font-semibold">Recorded Audio</h2> */}
                     <audio
                         src={audioUrl}
-                        className="max-w-full mt-2 "
+                        className="max-w-full mt-2"
                         controls
-                    ></audio>
-                    <Button
-                        onClick={uploadAudio}
-                        className=" text-white px-4 py-2 mt-2 rounded w-full"
-                    >
-                        Upload Audio
-                    </Button>
+                    />
                 </div>
             )}
-
-            {/* Uploaded Audios */}
-            <div className="mt-6">
-                <h2 className="text-lg font-semibold">Uploaded Audios</h2>
-                {uploadedAudios.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-4">
-                        {uploadedAudios.map((audio) => (
-                            <audio
-                                key={audio.id}
-                                src={audio.url}
-                                className="w-full cursor-pointer border"
-                                onClick={(e) => playSelectedAudio(audio.id, e)}
-                                controls
-                            ></audio>
-                        ))}
-                    </div>
-                ) : (
-                    <p>No audios uploaded yet.</p>
-                )}
-            </div>
         </div>
     );
 };

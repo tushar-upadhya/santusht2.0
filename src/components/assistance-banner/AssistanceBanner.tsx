@@ -18,7 +18,7 @@ const AssistanceBanner: React.FC = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center  dark:text-gray-300   text-primary items-center gap-4">
                     {/* Raise Grievance  */}
-                   
+
                     <DialogForm
                         title="SANTUSHT"
                         description="Your well-being is our priority."

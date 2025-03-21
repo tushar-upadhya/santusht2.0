@@ -48,29 +48,30 @@ const CategoryMasterForm = () => {
             <h1 className="text-[min(4vw,1rem)] leading-relaxed capitalize font-semibold text-center">
                 Category Master
             </h1>
-            <Separator className="w-full mb-4 dark:bg-gray-100 " />
+            <Separator className="w-full mb-4 dark:bg-gray-100" />
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-6"
+                    className="space-y-3 max-w-xl mx-auto"
                 >
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {/* Category Name */}
                         <FormField
                             control={form.control}
                             name="categoryName"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="font-medium">
+                                    <FormLabel className="text-sm text-gray-700">
                                         Category Name
                                     </FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder="Enter Category Name"
+                                            className="h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500"
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-red-500 text-xs" />
                                 </FormItem>
                             )}
                         />
@@ -81,47 +82,52 @@ const CategoryMasterForm = () => {
                             name="categoryNameHindi"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="font-medium">
+                                    <FormLabel className="text-sm text-gray-700">
                                         Category Name Hindi
                                     </FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder="Enter Category Name Hindi"
+                                            className="h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500"
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-red-500 text-xs" />
                                 </FormItem>
                             )}
                         />
                     </div>
-                    {/* add button */}
-                    <Button
-                        type="submit"
-                        variant="default"
-                        className="w-full text-white font-semibold py-2 rounded-md transition duration-300"
-                    >
-                        Add
-                    </Button>
+                    {/* Add Button */}
+                    <div>
+                        <Button
+                            type="submit"
+                            variant="default"
+                            className="w-full h-10 cursor-pointer bg-[#FA7275] hover:bg-[#FA7275]/80 text-white transition-all duration-300"
+                        >
+                            Add
+                        </Button>
+                    </div>
 
                     {/* Category Assignment */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                         {/* Building Dropdown */}
                         <FormField
                             control={form.control}
                             name="building"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Building Name</FormLabel>
+                                    <FormLabel className="text-sm text-gray-700">
+                                        Building Name
+                                    </FormLabel>
                                     <FormControl>
                                         <Select
                                             onValueChange={field.onChange}
                                             value={field.value}
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger className="w-full h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500">
                                                 <SelectValue placeholder="Select Building" />
                                             </SelectTrigger>
-                                            <SelectContent>
+                                            <SelectContent className="bg-white border-gray-300">
                                                 <SelectItem value="building1">
                                                     Building 1
                                                 </SelectItem>
@@ -131,27 +137,29 @@ const CategoryMasterForm = () => {
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-red-500 text-xs" />
                                 </FormItem>
                             )}
                         />
 
-                        {/* category Dropdown */}
+                        {/* Category Dropdown */}
                         <FormField
                             control={form.control}
                             name="category"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Category</FormLabel>
+                                    <FormLabel className="text-sm text-gray-700">
+                                        Category
+                                    </FormLabel>
                                     <FormControl>
                                         <Select
                                             onValueChange={field.onChange}
                                             value={field.value}
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger className="w-full h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500">
                                                 <SelectValue placeholder="Select Floor" />
                                             </SelectTrigger>
-                                            <SelectContent>
+                                            <SelectContent className="bg-white border-gray-300">
                                                 <SelectItem value="floor1">
                                                     Floor 1
                                                 </SelectItem>
@@ -161,17 +169,17 @@ const CategoryMasterForm = () => {
                                             </SelectContent>
                                         </Select>
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-red-500 text-xs" />
                                 </FormItem>
                             )}
                         />
                     </div>
-                    {/* assign Button */}
+                    {/* Assign Button */}
                     <div>
                         <Button
                             type="submit"
                             variant="default"
-                            className="w-full text-white font-semibold py-2 rounded-md transition duration-300"
+                            className="w-full h-10 cursor-pointer bg-[#FA7275] hover:bg-[#FA7275]/80 text-white transition-all duration-300"
                         >
                             Assign
                         </Button>

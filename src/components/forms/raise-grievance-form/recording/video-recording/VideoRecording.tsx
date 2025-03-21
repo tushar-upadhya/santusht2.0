@@ -1,44 +1,40 @@
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
-interface VideoData {
-    id: string;
-    url: string;
+interface VideoRecordingProps {
+    setVideo: (url: string) => void;
 }
 
-const VideoRecording: React.FC = () => {
-    const [videoBlob, setVideoBlob] = useState<Blob | null>(null);
+const VideoRecording: React.FC<VideoRecordingProps> = ({ setVideo }) => {
     const [videoUrl, setVideoUrl] = useState<string | null>(null);
-    const [uploadedVideos, setUploadedVideos] = useState<VideoData[]>([]);
-    const [uploadedVideoUrl, setUploadedVideoUrl] = useState<string | null>(
-        null
-    );
     const [isRecording, setIsRecording] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(60);
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const recordedChunksRef = useRef<BlobPart[]>([]);
     const videoPreviewRef = useRef<HTMLVideoElement | null>(null);
-    const currentVideoElement = useRef<HTMLVideoElement | null>(null);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const streamRef = useRef<MediaStream | null>(null);
 
-    // Start recording
     const startRecording = async () => {
+        if (isRecording) return;
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: true,
                 audio: true,
             });
-            if (videoPreviewRef.current) {
+            streamRef.current = stream;
+            if (videoPreviewRef.current)
                 videoPreviewRef.current.srcObject = stream;
-            }
 
             const mediaRecorder = new MediaRecorder(stream);
             mediaRecorderRef.current = mediaRecorder;
 
             mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
+                if (event.data.size > 0)
                     recordedChunksRef.current.push(event.data);
-                }
             };
 
             mediaRecorder.onstop = () => {
@@ -46,207 +42,157 @@ const VideoRecording: React.FC = () => {
                     type: "video/webm",
                 });
                 recordedChunksRef.current = [];
-                setVideoBlob(videoBlob);
-                setVideoUrl(URL.createObjectURL(videoBlob));
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const dataUrl = reader.result as string;
+                    setVideoUrl(dataUrl);
+                    setVideo(dataUrl); // Pass persistent URL to form
+                    uploadVideo();
+                };
+                reader.readAsDataURL(videoBlob);
+                cleanup();
             };
 
             mediaRecorder.start();
             setIsRecording(true);
             setIsPaused(false);
+            setTimeLeft(60);
+
+            if (timerRef.current) clearInterval(timerRef.current);
+            timerRef.current = setInterval(() => {
+                setTimeLeft((prev) => {
+                    if (prev <= 1) {
+                        stopRecording();
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
         } catch (error) {
             console.error("Error accessing camera: ", error);
+            toast.error(
+                "Failed to access camera/microphone. Please allow permissions."
+            );
+            cleanup();
         }
     };
 
-    // Pause recording
     const pauseRecording = () => {
         if (mediaRecorderRef.current && isRecording && !isPaused) {
             mediaRecorderRef.current.pause();
             setIsPaused(true);
+            if (timerRef.current) clearInterval(timerRef.current);
         }
     };
 
-    // Resume recording
     const resumeRecording = () => {
         if (mediaRecorderRef.current && isPaused) {
             mediaRecorderRef.current.resume();
             setIsPaused(false);
+            timerRef.current = setInterval(() => {
+                setTimeLeft((prev) => {
+                    if (prev <= 1) {
+                        stopRecording();
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
         }
     };
 
-    // Stop recording
     const stopRecording = () => {
         if (mediaRecorderRef.current && isRecording) {
             mediaRecorderRef.current.stop();
-            setIsRecording(false);
-            setIsPaused(false);
+            cleanup();
         }
     };
 
-    // Upload video
-    const uploadVideo = async () => {
-        if (!videoBlob) {
-            alert("No video recorded!");
-            return;
+    const cleanup = () => {
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach((track) => track.stop());
+            streamRef.current = null;
         }
-
-        const formData = new FormData();
-        formData.append("videoFile", videoBlob, "recorded_video.webm");
-
-        try {
-            const response = await fetch("/api/video/upload", {
-                method: "POST",
-                body: formData,
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                alert(`Video uploaded successfully! Video ID: ${data.id}`);
-                loadAllVideos();
-            } else {
-                console.error("Upload failed");
-            }
-        } catch (error) {
-            console.error("Upload error: ", error);
-        }
+        setIsRecording(false);
+        setIsPaused(false);
+        if (timerRef.current) clearInterval(timerRef.current);
     };
 
-    // Load all videos
-    const loadAllVideos = async () => {
-        try {
-            const response = await fetch("/api/video/videos");
-            if (response.ok) {
-                const data: VideoData[] = await response.json();
-                setUploadedVideos(
-                    data.map((video) => ({
-                        id: video.id,
-                        url: `/api/video/play/${video.id}`,
-                    }))
-                );
-            }
-        } catch (error) {
-            console.error("Error fetching videos:", error);
-        }
+    const uploadVideo = () => {
+        const videoId = Date.now().toString();
+        toast.success(`Video uploaded successfully! Video ID: ${videoId}`, {
+            description: "Your video has been saved.",
+        });
     };
 
-    // Play selected video
-    const playSelectedVideo = (
-        videoId: string,
-        event: React.MouseEvent<HTMLVideoElement>
-    ) => {
-        if (currentVideoElement.current) {
-            currentVideoElement.current.pause();
-            currentVideoElement.current.currentTime = 0;
-        }
-        setUploadedVideoUrl(`/api/video/play/${videoId}`);
-        currentVideoElement.current = event.currentTarget;
-    };
-
-    // Fetch videos on component mount
     useEffect(() => {
-        loadAllVideos();
+        return () => {
+            cleanup();
+        };
     }, []);
 
     return (
         <div className="p-4">
-            <h1 className="text-xl font-bold mb-4">Video Recorder</h1>
-
-            {/* Video Preview */}
             <video
                 ref={videoPreviewRef}
                 className="w-full border"
                 autoPlay
                 playsInline
-            ></video>
-
-            {/* Recording Controls */}
-            <div className="mt-4 flex gap-3 ">
+            />
+            <div className="mt-4 flex gap-3">
                 {!isRecording && (
                     <Button
-                        variant={"default"}
+                        type="button" // Prevent form submission
+                        variant="default"
                         onClick={startRecording}
-                        className="bg-green-500 flex-1 w-full text-white px-4 py-2 rounded"
+                        className="bg-green-600 hover:bg-green-700 w-full cursor-pointer text-white font-medium px-6 py-3 rounded-lg"
                     >
                         Start Recording
                     </Button>
                 )}
                 {isRecording && !isPaused && (
                     <Button
-                        variant={"outline"}
+                        type="button" // Prevent form submission
+                        variant="default"
                         onClick={pauseRecording}
-                        className="bg-yellow-500 flex-1 w-full text-white px-4 py-2 rounded"
+                        className="bg-yellow-500/80 hover:bg-yellow-500 uppercase cursor-pointer w-full text-slate-700 px-6 py-3 rounded-lg"
                     >
                         Pause
                     </Button>
                 )}
                 {isPaused && (
                     <Button
-                        variant={"default"}
+                        type="button" // Prevent form submission
+                        variant="default"
                         onClick={resumeRecording}
-                        className="flex-1 w-full text-white px-4 py-2 rounded"
+                        className="bg-green-500/80 hover:bg-green-500 uppercase cursor-pointer w-full text-slate-700 px-6 py-3 rounded-lg"
                     >
                         Resume
                     </Button>
                 )}
                 {isRecording && (
                     <Button
-                        variant={"destructive"}
+                        type="button" // Prevent form submission
+                        variant="default"
                         onClick={stopRecording}
-                        className="flex-1 w-full"
+                        className="bg-rose-500/55 uppercase hover:bg-rose-500/45 cursor-pointer w-full text-slate-700 px-6 py-3 rounded-lg"
                     >
                         Stop
                     </Button>
                 )}
             </div>
-
-            {/* Recorded Video */}
+            {isRecording && (
+                <p className="text-sm text-slate-700 mt-2 font-medium">
+                    Time Left: {timeLeft}s
+                </p>
+            )}
             {videoUrl && (
                 <div className="mt-4">
-                    <h2 className="text-lg font-semibold">Recorded Video</h2>
                     <video
                         src={videoUrl}
                         className="w-full border mt-2"
                         controls
-                    ></video>
-                    <button
-                        onClick={uploadVideo}
-                        className="bg-purple-500 text-white px-4 py-2 mt-2 rounded"
-                    >
-                        Upload Video
-                    </button>
-                </div>
-            )}
-
-            {/* Uploaded Videos */}
-            <div className="mt-6">
-                <h2 className="text-lg font-semibold">Uploaded Videos</h2>
-                {uploadedVideos.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-4">
-                        {uploadedVideos.map((video) => (
-                            <video
-                                key={video.id}
-                                src={video.url}
-                                className="w-full cursor-pointer border"
-                                onClick={(e) => playSelectedVideo(video.id, e)}
-                                controls
-                            ></video>
-                        ))}
-                    </div>
-                ) : (
-                    <p>No videos uploaded yet.</p>
-                )}
-            </div>
-
-            {/* Selected Video Playback */}
-            {uploadedVideoUrl && (
-                <div className="mt-6">
-                    <h2 className="text-lg font-semibold">Playing Video</h2>
-                    <video
-                        src={uploadedVideoUrl}
-                        className="w-full border"
-                        controls
-                        autoPlay
-                    ></video>
+                    />
                 </div>
             )}
         </div>
