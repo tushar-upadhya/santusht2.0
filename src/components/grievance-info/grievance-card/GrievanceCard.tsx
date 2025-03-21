@@ -448,7 +448,7 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="flex items-center gap-2 border-[#FA7275] text-[#FA7275] hover:bg-[#FA7275] hover:text-white transition-all duration-300 text-xs sm:text-sm h-9 rounded-md"
+                                                        className="flex cursor-pointer items-center gap-2 border-[#FA7275] text-[#FA7275] hover:bg-[#FA7275] hover:text-white transition-all duration-300 text-xs sm:text-sm h-9 rounded-md"
                                                         onClick={() =>
                                                             setIsImageDialogOpen(
                                                                 true
@@ -483,7 +483,7 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="flex items-center gap-2 border-[#FA7275] text-[#FA7275] hover:bg-[#FA7275] hover:text-white transition-all duration-300 text-xs sm:text-sm h-9 rounded-md"
+                                                        className="flex cursor-pointer items-center gap-2 border-[#FA7275] text-[#FA7275] hover:bg-[#FA7275] hover:text-white transition-all duration-300 text-xs sm:text-sm h-9 rounded-md"
                                                         onClick={() =>
                                                             setIsVideoDialogOpen(
                                                                 true
@@ -518,7 +518,7 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="flex items-center gap-2 border-[#FA7275] text-[#FA7275] hover:bg-[#FA7275] hover:text-white transition-all duration-300 text-xs sm:text-sm h-9 rounded-md"
+                                                        className="flex items-center gap-2 border-[#FA7275] text-[#FA7275] cursor-pointer hover:bg-[#FA7275] hover:text-white transition-all duration-300 text-xs sm:text-sm h-9 rounded-md"
                                                         onClick={() =>
                                                             setIsAudioDialogOpen(
                                                                 true
