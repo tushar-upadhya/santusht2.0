@@ -7,6 +7,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area"; // Added import
 import { motion } from "framer-motion";
 import {
     AlertCircle,
@@ -72,13 +73,13 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
 
     const imageContent: ReactNode =
         images && images.length > 0 ? (
-            <div className="flex gap-2">
+            <div className="space-y-3">
                 {images.map((img, idx) => (
                     <img
                         key={idx}
                         src={img}
-                        alt={`Grievance Image ${idx}`}
-                        className="w-full max-h-[200px] sm:max-h-[300px] md:max-h-[400px] object-contain rounded-lg"
+                        alt={`Grievance #${id} - Image ${idx + 1}`}
+                        className="w-full h-auto max-h-[40vh] rounded-md object-contain border border-gray-300"
                         onError={(e) =>
                             (e.currentTarget.src = "/fallback-image.jpg")
                         }
@@ -89,7 +90,7 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
 
     const videoContent: ReactNode = video ? (
         <video
-            className="w-full max-h-[200px] sm:max-h-[300px] md:max-h-[400px] rounded-lg"
+            className="w-full h-auto max-h-[40vh] rounded-md border border-gray-300"
             controls
         >
             <source src={video} type="video/webm" />
@@ -110,7 +111,7 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
             <div className="relative">
                 <img
                     src={images[0]}
-                    alt="Grievance"
+                    alt={`Grievance #${id} Preview`}
                     className="w-full h-20 sm:h-24 md:h-28 object-cover rounded-md border border-gray-200"
                     onError={(e) =>
                         (e.currentTarget.src = "/fallback-image.jpg")
@@ -149,13 +150,13 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
             label: "Raised",
             date: raisedDate,
             completed: true,
-            icon: <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />,
+            icon: <AlertCircle className="w-5 h-5" />,
         },
         {
             label: "Received",
             date: status !== "raised" ? "2025-03-19" : null,
             completed: status !== "raised",
-            icon: <Mail className="w-4 h-4 sm:w-5 sm:h-5" />,
+            icon: <Mail className="w-5 h-5" />,
         },
         {
             label: "In Progress",
@@ -165,26 +166,24 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
             completed: ["in-progress", "temp-closed", "closed"].includes(
                 status
             ),
-            icon: <Clock className="w-4 h-4 sm:w-5 sm:h-5" />,
+            icon: <Clock className="w-5 h-5" />,
         },
         {
             label: "Temp Closed",
             date: status === "temp-closed" ? "2025-03-21" : null,
             completed: status === "temp-closed",
-            icon: (
-                <PauseCircle className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
-            ),
+            icon: <PauseCircle className="w-5 h-5 text-orange-500" />,
         },
         {
             label: "Close",
             date: status === "closed" ? "2025-03-22" : null,
             completed: status === "closed",
-            icon: <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />,
+            icon: <Check className="w-5 h-5 text-green-500" />,
         },
     ];
 
     const handleRatingClick = (newRating: number) => {
-        if (tempRating === newRating) return; // Prevent redundant updates
+        if (tempRating === newRating) return;
         setTempRating(newRating);
         onRate(id, newRating);
         toast.success(
@@ -193,6 +192,13 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
             }!`,
             { description: "Thank you for your feedback." }
         );
+    };
+
+    const handleRatingKeyDown = (e: React.KeyboardEvent, newRating: number) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleRatingClick(newRating);
+        }
     };
 
     const handleReopen = () => {
@@ -272,6 +278,13 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                                                         index + 1
                                                     );
                                                 }}
+                                                onKeyDown={(e) =>
+                                                    handleRatingKeyDown(
+                                                        e,
+                                                        index + 1
+                                                    )
+                                                }
+                                                tabIndex={0}
                                             />
                                         ))}
                                     </div>
@@ -280,7 +293,7 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                                     <Button
                                         size="sm"
                                         variant="outline"
-                                        className="text-white hover:text-[#FA7275] border-[#FA7275] bg-[#FA7275] hover:bg-[#FA7275]/80 w-full sm:w-auto text-xs sm:text-sm"
+                                        className="text-white hover:text-[#FA7275] border-[#FA7275] bg-[#FA7275] hover:bg-[#FA7275]/80 w-full sm:w-auto text-xs sm:text-sm h-9 rounded-md"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleReopen();
@@ -293,10 +306,10 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                         </div>
                     </div>
                 </DialogTrigger>
-                <DialogContent className="w-[95vw] sm:max-w-[450px] md:max-w-[500px] bg-white rounded-xl shadow-lg p-0 border border-gray-100">
-                    <DialogHeader className="p-3 sm:p-4 border-b border-gray-100 bg-gray-50">
-                        <div className="flex justify-between items-center w-full">
-                            <DialogTitle className="text-base sm:text-lg font-semibold text-gray-900">
+                <DialogContent className="w-[95vw] sm:max-w-[450px] md:max-w-[500px] bg-white rounded-md p-0 border border-gray-300 shadow-md">
+                    <DialogHeader className="p-3 sm:p-4 border-b border-gray-300 bg-gray-50">
+                        <div className="flex sm:justify-between items-center w-full mt-4">
+                            <DialogTitle className="text-sm sm:text-base font-semibold text-gray-700">
                                 Grievance #{id}
                             </DialogTitle>
                             <span
@@ -310,109 +323,107 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                             </span>
                         </div>
                     </DialogHeader>
-                    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-                        <div className="relative">
-                            <div className="space-y-4 sm:space-y-6">
-                                {trackingSteps.map((step, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex items-start relative"
+                    <ScrollArea className="max-h-[70vh] p-4 sm:p-6 space-y-4 sm:space-y-6">
+                        <div className="space-y-4 sm:space-y-6">
+                            {trackingSteps.map((step, index) => (
+                                <div
+                                    key={index}
+                                    className="flex items-start relative"
+                                >
+                                    <motion.div
+                                        className="flex-shrink-0"
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        transition={{
+                                            delay: index * 0.2,
+                                            type: "spring",
+                                            stiffness: 200,
+                                            damping: 10,
+                                        }}
                                     >
-                                        <motion.div
-                                            className="flex-shrink-0"
-                                            initial={{ scale: 0 }}
-                                            animate={{ scale: 1 }}
-                                            transition={{
-                                                delay: index * 0.2,
-                                                type: "spring",
-                                                stiffness: 200,
-                                                damping: 10,
-                                            }}
+                                        <div
+                                            className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                                                step.completed
+                                                    ? step.label ===
+                                                      "Temp Closed"
+                                                        ? "bg-orange-500"
+                                                        : "bg-green-500"
+                                                    : "bg-gray-300"
+                                            }`}
                                         >
-                                            <div
-                                                className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full flex items-center justify-center ${
-                                                    step.completed
-                                                        ? step.label ===
-                                                          "Temp Closed"
-                                                            ? "bg-orange-500"
-                                                            : "bg-green-500"
-                                                        : "bg-gray-300"
-                                                }`}
-                                            >
-                                                {step.completed && (
-                                                    <CheckCircle className="w-2 h-2 sm:w-3 sm:h-3 text-white" />
-                                                )}
-                                            </div>
-                                        </motion.div>
-                                        {index < trackingSteps.length - 1 && (
-                                            <motion.div
-                                                className={`absolute top-3 sm:top-4 left-1 sm:left-1.5 w-0.5 border-l-2 border-dashed ${
-                                                    step.completed
-                                                        ? step.label ===
-                                                          "Temp Closed"
-                                                            ? "border-orange-500"
-                                                            : "border-green-500"
-                                                        : "border-gray-300"
-                                                }`}
-                                                initial={{ height: 0 }}
-                                                animate={{
-                                                    height: step.completed
-                                                        ? "1.5rem"
-                                                        : "0",
-                                                }}
-                                                transition={{
-                                                    delay: index * 0.2 + 0.1,
-                                                    duration: 0.5,
-                                                    ease: "easeInOut",
-                                                }}
-                                            />
-                                        )}
-                                        <motion.div
-                                            className="ml-3 sm:ml-4"
-                                            initial={{ opacity: 0, x: -20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            transition={{
-                                                delay: index * 0.2,
-                                                duration: 0.3,
-                                            }}
-                                        >
-                                            <p
-                                                className={`text-xs sm:text-sm font-medium flex gap-2 items-center ${
-                                                    step.completed
-                                                        ? step.label ===
-                                                          "Temp Closed"
-                                                            ? "text-orange-600"
-                                                            : "text-green-600"
-                                                        : "text-gray-500"
-                                                }`}
-                                            >
-                                                {step.icon} {step.label}
-                                            </p>
-                                            {step.date && (
-                                                <p className="text-xs text-gray-500">
-                                                    {step.date}
-                                                </p>
+                                            {step.completed && (
+                                                <CheckCircle className="w-3 h-3 text-white" />
                                             )}
-                                        </motion.div>
-                                    </div>
-                                ))}
-                            </div>
+                                        </div>
+                                    </motion.div>
+                                    {index < trackingSteps.length - 1 && (
+                                        <motion.div
+                                            className={`absolute top-4 left-1.5 w-0.5 border-l-2 border-dashed ${
+                                                step.completed
+                                                    ? step.label ===
+                                                      "Temp Closed"
+                                                        ? "border-orange-500"
+                                                        : "border-green-500"
+                                                    : "border-gray-300"
+                                            }`}
+                                            initial={{ height: 0 }}
+                                            animate={{
+                                                height: step.completed
+                                                    ? "1.5rem"
+                                                    : "0",
+                                            }}
+                                            transition={{
+                                                delay: index * 0.2 + 0.1,
+                                                duration: 0.5,
+                                                ease: "easeInOut",
+                                            }}
+                                        />
+                                    )}
+                                    <motion.div
+                                        className="ml-4"
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{
+                                            delay: index * 0.2,
+                                            duration: 0.3,
+                                        }}
+                                    >
+                                        <p
+                                            className={`text-xs sm:text-sm font-medium flex gap-2 items-center ${
+                                                step.completed
+                                                    ? step.label ===
+                                                      "Temp Closed"
+                                                        ? "text-orange-600"
+                                                        : "text-green-600"
+                                                    : "text-gray-500"
+                                            }`}
+                                        >
+                                            {step.icon} {step.label}
+                                        </p>
+                                        {step.date && (
+                                            <p className="text-xs text-gray-500">
+                                                {step.date}
+                                            </p>
+                                        )}
+                                    </motion.div>
+                                </div>
+                            ))}
                         </div>
                         <div className="space-y-3 sm:space-y-4">
                             <div>
-                                <span className="text-xs sm:text-sm font-normal text-slate-700">
+                                <span className="text-xs sm:text-sm font-normal text-gray-700">
                                     Message
                                 </span>
-                                <p className="text-xs sm:text-sm text-slate-700 font-semibold bg-[#FA7275]/20 p-2 sm:p-3 rounded-md mt-1 break-words">
+                                <p className="text-xs sm:text-sm text-gray-700 font-semibold bg-[#FA7275]/20 p-2 sm:p-3 rounded-md mt-1 break-words">
                                     {message}
                                 </p>
                             </div>
                             {location && (
                                 <div>
-                                    <span className="text-xs sm:text-sm font-normal text-slate-700">
+                                    <span className="text-xs sm:text-sm font-normal text-gray-700">
                                         Location
                                     </span>
-                                    <p className="text-xs sm:text-sm text-slate-700 font-semibold bg-[#FA7275]/20 p-2 sm:p-3 rounded-md mt-1">
+                                    <p className="text-xs sm:text-sm text-gray-700 font-semibold bg-[#FA7275]/20 p-2 sm:p-3 rounded-md mt-1">
                                         {location.institute || "N/A"},{" "}
                                         {location.building || "N/A"},{" "}
                                         {location.floor || "N/A"},{" "}
@@ -422,7 +433,7 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                             )}
                             {(images || video || audio) && (
                                 <div>
-                                    <span className="text-xs sm:text-sm font-normal text-slate-700">
+                                    <span className="text-xs sm:text-sm font-normal text-gray-700">
                                         Media
                                     </span>
                                     <div className="flex flex-col sm:flex-row gap-2 mt-1">
@@ -437,27 +448,27 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="flex items-center gap-2 text-[#FA7275] border-[#FA7275] hover:bg-[#FA7275]/80 text-xs sm:text-sm"
+                                                        className="flex items-center gap-2 border-[#FA7275] text-[#FA7275] hover:bg-[#FA7275] hover:text-white transition-all duration-300 text-xs sm:text-sm h-9 rounded-md"
                                                         onClick={() =>
                                                             setIsImageDialogOpen(
                                                                 true
                                                             )
                                                         }
                                                     >
-                                                        <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5 text-[#FA7275]" />
+                                                        <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                                                         <span>View Images</span>
                                                     </Button>
                                                 </DialogTrigger>
-                                                <DialogContent className="w-[95vw] sm:max-w-[500px] md:max-w-[600px] bg-white rounded-xl shadow-lg p-3 sm:p-4 border border-gray-100">
+                                                <DialogContent className="w-[95vw] max-w-[425px] sm:max-w-[500px] md:max-w-[600px] bg-white rounded-md p-4 border border-gray-300 shadow-md">
                                                     <DialogHeader>
-                                                        <DialogTitle className="text-base sm:text-lg font-semibold text-gray-900">
+                                                        <DialogTitle className="text-sm sm:text-base font-semibold text-gray-700">
                                                             Images for Grievance
                                                             #{id}
                                                         </DialogTitle>
                                                     </DialogHeader>
-                                                    <div className="mt-3 sm:mt-4">
+                                                    <ScrollArea className="max-h-[60vh] mt-3">
                                                         {imageContent}
-                                                    </div>
+                                                    </ScrollArea>
                                                 </DialogContent>
                                             </Dialog>
                                         )}
@@ -472,25 +483,25 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="flex items-center gap-2 text-[#FA7275] border-[#FA7275] hover:bg-[#FA7275]/80 text-xs sm:text-sm"
+                                                        className="flex items-center gap-2 border-[#FA7275] text-[#FA7275] hover:bg-[#FA7275] hover:text-white transition-all duration-300 text-xs sm:text-sm h-9 rounded-md"
                                                         onClick={() =>
                                                             setIsVideoDialogOpen(
                                                                 true
                                                             )
                                                         }
                                                     >
-                                                        <Video className="w-4 h-4 sm:w-5 sm:h-5 text-[#FA7275]" />
+                                                        <Video className="w-4 h-4 sm:w-5 sm:h-5" />
                                                         <span>View Video</span>
                                                     </Button>
                                                 </DialogTrigger>
-                                                <DialogContent className="w-[95vw] sm:max-w-[500px] md:max-w-[600px] bg-white rounded-xl shadow-lg p-3 sm:p-4 border border-gray-100">
+                                                <DialogContent className="w-[95vw] max-w-[425px] sm:max-w-[500px] md:max-w-[600px] bg-white rounded-md p-4 border border-gray-300 shadow-md">
                                                     <DialogHeader>
-                                                        <DialogTitle className="text-base sm:text-lg font-semibold text-gray-900">
+                                                        <DialogTitle className="text-sm sm:text-base font-semibold text-gray-700">
                                                             Video for Grievance
                                                             #{id}
                                                         </DialogTitle>
                                                     </DialogHeader>
-                                                    <div className="mt-3 sm:mt-4">
+                                                    <div className="mt-3">
                                                         {videoContent}
                                                     </div>
                                                 </DialogContent>
@@ -507,25 +518,25 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        className="flex items-center gap-2 text-[#FA7275] border-[#FA7275] hover:bg-[#FA7275]/80 text-xs sm:text-sm"
+                                                        className="flex items-center gap-2 border-[#FA7275] text-[#FA7275] hover:bg-[#FA7275] hover:text-white transition-all duration-300 text-xs sm:text-sm h-9 rounded-md"
                                                         onClick={() =>
                                                             setIsAudioDialogOpen(
                                                                 true
                                                             )
                                                         }
                                                     >
-                                                        <Music className="w-4 h-4 sm:w-5 sm:h-5 text-[#FA7275]" />
+                                                        <Music className="w-4 h-4 sm:w-5 sm:h-5" />
                                                         <span>View Audio</span>
                                                     </Button>
                                                 </DialogTrigger>
-                                                <DialogContent className="w-[95vw] sm:max-w-[500px] md:max-w-[600px] bg-white rounded-xl shadow-lg p-3 sm:p-4 border border-gray-100">
+                                                <DialogContent className="w-[95vw] max-w-[425px] sm:max-w-[500px] md:max-w-[600px] bg-white rounded-md p-4 border border-gray-300 shadow-md">
                                                     <DialogHeader>
-                                                        <DialogTitle className="text-base sm:text-lg font-semibold text-gray-900">
+                                                        <DialogTitle className="text-sm sm:text-base font-semibold text-gray-700">
                                                             Audio for Grievance
                                                             #{id}
                                                         </DialogTitle>
                                                     </DialogHeader>
-                                                    <div className="mt-3 sm:mt-4">
+                                                    <div className="mt-3">
                                                         {audioContent}
                                                     </div>
                                                 </DialogContent>
@@ -537,14 +548,14 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                             {status === "temp-closed" && (
                                 <Button
                                     size="sm"
-                                    className="bg-[#FA7275] hover:bg-[#FA7275]/80 cursor-pointer text-white w-full text-xs sm:text-sm"
+                                    className="bg-[#FA7275] hover:bg-[#FA7275]/80 cursor-pointer text-white w-full sm:w-auto text-xs sm:text-sm h-9 rounded-md"
                                     onClick={handleReopen}
                                 >
                                     Reopen Grievance
                                 </Button>
                             )}
                             <div>
-                                <span className="text-xs sm:text-sm font-medium text-gray-900">
+                                <span className="text-xs sm:text-sm font-medium text-gray-700">
                                     Rate our service
                                 </span>
                                 <div className="flex items-center space-x-1 mt-1">
@@ -559,12 +570,19 @@ const GrievanceCard: React.FC<GrievanceCardProps> = ({
                                             onClick={() =>
                                                 handleRatingClick(index + 1)
                                             }
+                                            onKeyDown={(e) =>
+                                                handleRatingKeyDown(
+                                                    e,
+                                                    index + 1
+                                                )
+                                            }
+                                            tabIndex={0}
                                         />
                                     ))}
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </ScrollArea>
                 </DialogContent>
             </Dialog>
         </Card>

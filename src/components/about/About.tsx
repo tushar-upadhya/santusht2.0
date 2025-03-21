@@ -35,7 +35,7 @@ const About: React.FC = () => {
                             Elevating Patient Care with Compassion,
                             Accessibility and Continuous Improvement
                         </p>
-                        <p className="text-gray-600 font-thin text-[min(4vw,1rem)] leading-relaxed text-left mb-8">
+                        <p className="text-slate-600 text-[min(4vw,1rem)] leading-relaxed text-left mb-8">
                             Your voice matters. Prompt resolutions 24/7 support.
                             Seamless feedback shapes compassionate care. Your
                             satisfaction, our commitment.

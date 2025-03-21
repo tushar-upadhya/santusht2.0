@@ -40,14 +40,14 @@ const Faq: React.FC = () => {
                 </h2>
                 <Separator className="bg-gray-300  mx-auto -mt-4 mb-4 w-24 h-[2px]" />
 
-                <Accordion type="single" collapsible className="space-y-4">
+                <Accordion type="single" collapsible className="space-y-4 ">
                     {faqs.map((faq, index) => (
                         <AccordionItem
                             key={index}
                             value={`item-${index}`}
-                            className="border-b border-gray-200"
+                            className="border-b border-gray-200 "
                         >
-                            <AccordionTrigger className="text-left text-[min(4vw,1rem)] leading-relaxed capitalize text-muted-foreground ">
+                            <AccordionTrigger className="text-left text-[min(4vw,1rem)] leading-relaxed capitalize text-muted-foreground cursor-pointer">
                                 {faq.question}
                             </AccordionTrigger>
                             <AccordionContent className="text-left text-[min(4vw,1rem)] leading-relaxed capitalize text-muted-foreground ">

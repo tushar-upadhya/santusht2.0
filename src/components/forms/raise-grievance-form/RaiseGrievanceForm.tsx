@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ImageIcon, MicIcon, VideoIcon } from "lucide-react";
+import { ImageIcon, MicIcon, Upload, VideoIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -471,14 +471,24 @@ const RaiseGrievanceForm = () => {
                     </div>
                     {mediaTypes.image && (
                         <div className="p-2 bg-gray-50 rounded-md">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                multiple
-                                ref={imageInputRef}
-                                onChange={handleImageUpload}
-                                className="mb-2"
-                            />
+                            <div className="flex items-center gap-2 mb-2">
+                                <label
+                                    htmlFor="image-upload"
+                                    className="flex items-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100 cursor-pointer transition-all duration-300"
+                                >
+                                    <Upload className="w-4 h-4 text-[#FA7275]" />
+                                    <span>Upload Images</span>
+                                </label>
+                                <Input
+                                    id="image-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    multiple
+                                    ref={imageInputRef}
+                                    onChange={handleImageUpload}
+                                    className="hidden" // Hide the default input
+                                />
+                            </div>
                             <p className="text-xs text-gray-600">
                                 Max 2 images
                             </p>

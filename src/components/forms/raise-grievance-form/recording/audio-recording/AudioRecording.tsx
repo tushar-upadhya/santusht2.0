@@ -171,7 +171,7 @@ const AudioRecording: React.FC<AudioRecordingProps> = ({ setAudio }) => {
                 )}
             </div>
             {isRecording && (
-                <p className="text-sm text-gray-600 mt-2">
+                <p className="text-sm text-slate-700 mt-2 font-medium">
                     Time Left: {timeLeft}s
                 </p>
             )}
