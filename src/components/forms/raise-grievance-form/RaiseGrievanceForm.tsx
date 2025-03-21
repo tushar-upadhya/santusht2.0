@@ -170,11 +170,11 @@ const RaiseGrievanceForm = () => {
     }, [mediaStream]);
 
     return (
-        <ScrollArea className="h-[38rem] bg-white">
+        <ScrollArea className="h-[33rem] bg-white">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-3 p-4 max-w-xl mx-auto"
+                    className="space-y-3 max-w-xl mx-auto"
                 >
                     <div className="grid grid-cols-2 gap-2">
                         <FormField
