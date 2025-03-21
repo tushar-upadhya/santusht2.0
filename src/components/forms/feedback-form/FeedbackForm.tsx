@@ -49,21 +49,29 @@ const FeedbackForm = () => {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="flex gap-4">
+            <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-3 p-4 max-w-xl mx-auto"
+            >
+                <div className="grid grid-cols-2 gap-2">
                     {/* Institute Dropdown */}
                     <FormField
                         control={form.control}
                         name="institute"
                         render={({ field }) => (
-                            <FormItem className="flex-1">
-                                <FormLabel>Institute</FormLabel>
+                            <FormItem>
+                                <FormLabel className="text-sm text-gray-700">
+                                    Institute
+                                </FormLabel>
                                 <FormControl>
-                                    <Select {...field}>
-                                        <SelectTrigger>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                    >
+                                        <SelectTrigger className="w-full h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500">
                                             <SelectValue placeholder="Select Institute" />
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent className="bg-white border-gray-300">
                                             <SelectItem value="building1">
                                                 1
                                             </SelectItem>
@@ -73,24 +81,29 @@ const FeedbackForm = () => {
                                         </SelectContent>
                                     </Select>
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage className="text-red-500 text-xs" />
                             </FormItem>
                         )}
                     />
 
-                    {/* Floor Dropdown */}
+                    {/* Feedback For Dropdown */}
                     <FormField
                         control={form.control}
                         name="feedbackFor"
                         render={({ field }) => (
-                            <FormItem className="flex-1">
-                                <FormLabel>Feedback for </FormLabel>
+                            <FormItem>
+                                <FormLabel className="text-sm text-gray-700">
+                                    Feedback For
+                                </FormLabel>
                                 <FormControl>
-                                    <Select {...field}>
-                                        <SelectTrigger className="capitalize">
-                                            <SelectValue placeholder="feedback For" />
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                    >
+                                        <SelectTrigger className="w-full h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500 capitalize">
+                                            <SelectValue placeholder="Feedback For" />
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent className="bg-white border-gray-300">
                                             <SelectItem value="floor1">
                                                 Floor 1
                                             </SelectItem>
@@ -100,46 +113,40 @@ const FeedbackForm = () => {
                                         </SelectContent>
                                     </Select>
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage className="text-red-500 text-xs" />
                             </FormItem>
                         )}
                     />
                 </div>
 
-                {/* Briefing Textarea */}
-                {/* <FormField
-                    control={form.control}
-                    name="briefing"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Briefing</FormLabel>
-                            <FormControl>
-                                <Textarea
-                                    placeholder="Provide a brief description"
-                                    {...field}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                /> */}
-
                 {/* UHID, OTP Input, Get OTP Button */}
-                <div className="flex items-center gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {/* UHID Input */}
                     <FormField
                         control={form.control}
                         name="uhid"
                         render={({ field }) => (
-                            <FormItem className="flex-1">
-                                <FormLabel>UHID</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        placeholder="Enter UHID"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
+                            <FormItem>
+                                <FormLabel className="text-sm text-gray-700">
+                                    UHID
+                                </FormLabel>
+                                <div className="flex gap-2">
+                                    <FormControl>
+                                        <Input
+                                            placeholder="Enter UHID"
+                                            className="h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500 flex-1"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <Button
+                                        type="button"
+                                        variant="default"
+                                        className="h-9 bg-green-600 text-white hover:bg-green-700 rounded-md px-3 cursor-pointer transition-all duration-300"
+                                    >
+                                        Get OTP
+                                    </Button>
+                                </div>
+                                <FormMessage className="text-red-500 text-xs" />
                             </FormItem>
                         )}
                     />
@@ -149,24 +156,30 @@ const FeedbackForm = () => {
                         control={form.control}
                         name="otp"
                         render={({ field }) => (
-                            <FormItem className="flex-1 mt-8">
+                            <FormItem>
+                                <FormLabel className="text-sm text-gray-700">
+                                    OTP
+                                </FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Enter OTP" {...field} />
+                                    <Input
+                                        placeholder="Enter OTP"
+                                        className="h-9 border-gray-300 rounded-md focus:ring-0 focus:border-gray-500"
+                                        {...field}
+                                    />
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage className="text-red-500 text-xs" />
                             </FormItem>
                         )}
                     />
-
-                    {/* Get OTP Button */}
-                    <Button className="self-end" variant={"destructive"}>
-                        Get OTP
-                    </Button>
                 </div>
 
                 {/* Submit Button */}
                 <div className="justify-center max-w-full">
-                    <Button type="submit" variant="default" className="w-full">
+                    <Button
+                        type="submit"
+                        variant="default"
+                        className="w-full h-10 cursor-pointer bg-[#FA7275] hover:bg-[#FA7275]/80 text-white transition-all duration-300"
+                    >
                         Submit
                     </Button>
                 </div>
