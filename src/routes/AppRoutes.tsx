@@ -95,7 +95,7 @@ const AppRoutes = () => {
                 </Route> */}
 
                 {/* Level Two Routes */}
-                </Route>
+                {/* </Route> */}
                 <Route
                     element={<ProtectedRoute allowedRoles={["LEVEL_TWO"]} />}
                 >
@@ -115,7 +115,7 @@ const AppRoutes = () => {
                     path="/grievance-page/:userId"
                     element={<GrievancePage />}
                 />
- <Route path="/level1" element={<LevelOnePage />} />
+                <Route path="/level1" element={<LevelOnePage />} />
                 <Route path="*" element={<Navigate to="/" />} />
             </Routes>
         </>
