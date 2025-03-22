@@ -36,44 +36,49 @@ const DynamicTabs = <T,>({
     };
 
     return (
-        <div className="px-4 py-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 container mx-auto">
+        <div className="py-6 md:py-12 px-4 md:px-6 max-w-full md:max-w-6xl mx-auto">
             <Tabs value={activeTab} onValueChange={handleTabChange}>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                    <TabsList className="flex flex-wrap gap-2 mb-4 sm:mb-0 sm:flex-row sm:gap-4">
+                <div className="flex flex-col gap-6">
+                    <TabsList className="flex flex-wrap gap-2 sm:gap-4 bg-transparent">
                         {tabOptions.map((tab) => (
                             <TabsTrigger
                                 key={tab}
                                 value={tab}
-                                className="w-full sm:w-auto px-6 bg-primary/20 cursor-pointer"
+                                className="flex items-center gap-2 px-4 py-2 text-sm sm:text-base font-medium text-slate-700 cursor-pointer bg-gray-100 rounded-md hover:bg-[#FA7275]/20 data-[state=active]:bg-[#FA7275] data-[state=active]:text-white transition-all duration-300"
                             >
                                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                                {loading ? (
-                                    <Skeleton className="ml-1 h-4 w-6 rounded-full" />
+                                {loading && activeTab === tab ? (
+                                    <Skeleton className="h-5 w-6 rounded-full" />
                                 ) : (
-                                    <Badge className="ml-1 rounded-full px-3">
+                                    <Badge
+                                        variant="secondary"
+                                        className="ml-2 px-2 py-0.5 text-xs bg-[#FA7275]  text-white rounded-full"
+                                    >
                                         {counts[tab] || 0}
                                     </Badge>
                                 )}
                             </TabsTrigger>
                         ))}
                     </TabsList>
-                </div>
 
-                <div className="mt-10 overflow-x-auto">
-                    {loading ? (
-                        <div className="space-y-2">
-                            {Array(5)
-                                .fill(0)
-                                .map((_, index) => (
-                                    <Skeleton
-                                        key={index}
-                                        className="h-12 w-full rounded-md mt-auto"
-                                    />
-                                ))}
-                        </div>
-                    ) : (
-                        <DataTable columns={columns} data={tabData} />
-                    )}
+                    <div className="mt-4">
+                        {loading ? (
+                            <div className="space-y-3">
+                                {Array(5)
+                                    .fill(0)
+                                    .map((_, index) => (
+                                        <Skeleton
+                                            key={index}
+                                            className="h-12 w-full rounded-md"
+                                        />
+                                    ))}
+                            </div>
+                        ) : (
+                            <div className="mt-[3rem]">
+                                <DataTable columns={columns} data={tabData} />
+                            </div>
+                        )}
+                    </div>
                 </div>
             </Tabs>
         </div>

@@ -71,17 +71,17 @@ export function DataTable<TData, TValue>({
             <div className="flex items-center py-4 container mx-auto">
                 <Input
                     placeholder="Filter emails..."
-                    // value={
-                    //     (table
-                    //         .getColumn("email")
-                    //         ?.getFilterValue() as string) ?? ""
-                    // }
-                    // onChange={(event) => {
-                    //     const emailColumn = table.getColumn("email");
-                    //     if (emailColumn) {
-                    //         emailColumn.setFilterValue(event.target.value);
-                    //     }
-                    // }}
+                    value={
+                        (table
+                            .getColumn("email")
+                            ?.getFilterValue() as string) ?? ""
+                    }
+                    onChange={(event) => {
+                        const emailColumn = table.getColumn("email");
+                        if (emailColumn) {
+                            emailColumn.setFilterValue(event.target.value);
+                        }
+                    }}
                     className="max-w-sm"
                 />
 
@@ -89,12 +89,15 @@ export function DataTable<TData, TValue>({
                     <DropdownMenuTrigger asChild>
                         <Button
                             variant="outline"
-                            className="sm:ml-auto ml-4 border dark:border-green-500 text-primary dark:text-gray-300 font-medium sm:px-[5.5rem]"
+                            className="sm:ml-auto ml-4 cursor-pointer border dark:border-green-500 text-primary dark:text-gray-300 font-medium sm:px-[5.5rem]"
                         >
                             Filter
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent
+                        align="end"
+                        className="bg-white cursor-pointer"
+                    >
                         {table
                             .getAllColumns()
                             .filter((column) => column.getCanHide())
