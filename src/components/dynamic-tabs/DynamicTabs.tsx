@@ -44,7 +44,7 @@ const DynamicTabs = <T,>({
                             <TabsTrigger
                                 key={tab}
                                 value={tab}
-                                className="flex items-center gap-2 px-4 py-2 text-sm sm:text-base font-medium text-slate-700 cursor-pointer bg-gray-100 rounded-md hover:bg-[#FA7275]/20 data-[state=active]:bg-[#FA7275] data-[state=active]:text-white transition-all duration-300"
+                                className="flex items-center gap-2 px-4 py-2 text-sm sm:text-base  text-slate-700 cursor-pointer bg-[#FA7275]/20 rounded-md hover:bg-[#FA7275]/20 data-[state=active]:bg-[#FA7275] data-[state=active]:text-white data-[state=active]:font-semibold transition-all duration-300"
                             >
                                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
                                 {loading && activeTab === tab ? (

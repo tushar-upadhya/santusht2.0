@@ -10,6 +10,7 @@ interface Grievance {
     title: string;
     raisedBy: string;
 }
+
 async function fetchEmployeeData(type: string): Promise<Employee[]> {
     return new Promise((resolve) => {
         setTimeout(() => {
@@ -28,6 +29,7 @@ async function fetchEmployeeData(type: string): Promise<Employee[]> {
         }, 1500);
     });
 }
+
 const LevelOnePage: React.FC = () => {
     // Default grievance data
     const [grievances] = useState<{
@@ -52,17 +54,22 @@ const LevelOnePage: React.FC = () => {
     });
 
     return (
-        <div className="p-6 max-w-5xl mx-auto space-y-4">
-            {/* Notification Component */}
-            <Notification count={grievances.new.length} />
+        <div className="min-h-screen bg-[#FA7275]/8">
+            {/* Main container */}
+            <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8 max-w-6xl">
+                {/* Notification section */}
+                <div className="mb-6">
+                    <Notification count={grievances.new.length} />
+                </div>
 
-            {/* Tabs Component */}
-            <div className="mt-6">
-                <DynamicTabs
-                    tabOptions={["new", "active", "closed", "verified"]}
-                    fetchData={fetchEmployeeData}
-                    columns={columns}
-                />
+                {/* Tabs section */}
+                <div className="">
+                    <DynamicTabs
+                        tabOptions={["new", "active", "closed", "verified"]}
+                        fetchData={fetchEmployeeData}
+                        columns={columns}
+                    />
+                </div>
             </div>
         </div>
     );

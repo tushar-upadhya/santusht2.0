@@ -6,43 +6,51 @@ import { Textarea } from "../../ui/textarea";
 
 const ContactForm: React.FC = () => {
     return (
-        <form className="flex flex-col gap-y-4 ">
-            {/* input */}
-
-            <div className="relative flex items-center">
+        <form className="flex flex-col gap-y-6 w-full max-w-md">
+            {/* Name Input */}
+            <div className="relative">
                 <Input
-                    type="name"
+                    type="text"
                     id="name"
                     placeholder="Name"
-                    className="flex min-h-[60px] w-full rounded-[30px]  dark:border-primary/50 border border-input bg-background px-8 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="w-full min-h-[56px] rounded-full border border-gray-300 dark:border-primary/50 bg-white dark:bg-gray-800 px-6 py-3 text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                 />
-                <User className="absolute right-6" size={20} />
+                <User
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
+                    size={20}
+                />
             </div>
 
-            {/* input */}
-
-            <div className="relative flex items-center">
+            {/* Email Input */}
+            <div className="relative">
                 <Input
                     type="email"
                     id="email"
                     placeholder="Email"
-                    className="flex min-h-[60px] w-full dark:border-primary/50 rounded-[30px] border border-input bg-background px-8 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="w-full min-h-[56px] rounded-full border border-gray-300 dark:border-primary/50 bg-white dark:bg-gray-800 px-6 py-3 text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                 />
-                <MailIcon className="absolute right-6" size={20} />
+                <MailIcon
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
+                    size={20}
+                />
             </div>
 
-            {/* textarea */}
-
-            <div className="relative flex items-center">
+            {/* Message Textarea */}
+            <div className="relative">
                 <Textarea
-                    placeholder="Type Your Message Here."
-                    className="flex min-h-[180px] w-full dark:border-primary/50 rounded-[30px] border border-input bg-background px-8 py-4 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    placeholder="Type Your Message Here"
+                    className="w-full min-h-[160px] rounded-3xl border border-gray-300 dark:border-primary/50 bg-white dark:bg-gray-800 px-6 py-4 text-base placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all resize-y"
                 />
-                <MessageSquare className="absolute top-4 right-6" size={20} />
+                <MessageSquare
+                    className="absolute right-4 top-4 text-gray-500 dark:text-gray-400"
+                    size={20}
+                />
             </div>
+
+            {/* Submit Button */}
             <Button
-                className="flex text-white font-medium  bg-[#FA7275] hover:bg-[#FA7275]/40hover:animate-none cursor-pointer items-center gap-x-1 max-w-[166px] "
-                variant={"secondary"}
+                className="flex items-center justify-center gap-x-2 max-w-[180px] cursor-pointer bg-[#FA7275] hover:bg-[#FA7275]/80 text-white font-semibold rounded-full px-6 py-3 transition-colors"
+                variant="secondary"
             >
                 Send Message
                 <ArrowRightIcon size={20} />

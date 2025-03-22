@@ -1,6 +1,7 @@
 import { AnimatedTestimonials } from "@/components/ui/animated-testimonials";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
+
 interface Testimonial {
     id: number;
     name: string;
@@ -16,7 +17,7 @@ const testimonials: Testimonial[] = [
         role: "Local Guide",
         feedback:
             "U will get best possible treatment in AIIMS DELHI ...FOR general medicine , gynec nd so on do visit new rajkumari nd for cancer ,neuro nd cardio, eye have individual hospital itself in the same ground for more info ask me in comment.",
-        image: "/aiimshospital.svg", // ✅ Directly reference the file in public folder
+        image: "/aiimshospital.svg",
     },
     {
         id: 2,
@@ -44,22 +45,25 @@ const Testimonials = () => {
     }, []);
 
     return (
-        <section className="py-12 bg-primary/20  rounded-md">
-            <div className="container mx-auto text-center px-4">
-                <h2 className="text-[min(6vw,1.5rem)] font-semibold text-foreground text-green-500 ">
-                    TESTIMONIALS
-                    <Separator className="bg-gray-300  mx-auto mt-2 w-24 h-[2px]" />
+        <section className="py-12 bg-green-50 dark:bg-gray-900 rounded-lg">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                {/* Heading */}
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-green-500 mb-6">
+                    Testimonials
+                    <Separator className="bg-gray-300 dark:bg-gray-600 mx-auto mt-2 w-20 sm:w-24 h-[2px]" />
                 </h2>
 
-                <p className=" text-gray-700 mt-4 text-[min(4.5vw,1rem)] text-left leading-6 mb-12 capitalize">
+                {/* Description */}
+                <p className="text-sm sm:text-base lg:text-lg text-gray-700 dark:text-gray-300 text-left max-w-3xl mx-auto mt-4 mb-10 sm:mb-12 leading-relaxed">
                     Our faithful testimonials reflect the heart of our
-                    commitment satisfied patients sharing their positive
+                    commitment—satisfied patients sharing their positive
                     experiences. At SANTUSHT, real stories testify to our
                     compassionate care, effective solutions, and the dedication
                     of our staff. Trust in our services is built on the genuine
-                    voices of those we&apos;ve served.
+                    voices of those we've served.
                 </p>
 
+                {/* Animated Testimonials */}
                 {mounted && (
                     <AnimatedTestimonials
                         testimonials={testimonials.map((t) => ({

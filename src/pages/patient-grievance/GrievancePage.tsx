@@ -92,7 +92,7 @@ const GrievancePage: React.FC = () => {
     }
 
     return (
-        <div className="p-4 sm:p-6 md:p-8 space-y-6 max-w-full sm:max-w-3xl md:max-w-4xl mx-auto bg-gray-50 min-h-screen">
+        <div className="p-4 sm:p-6 md:p-8 space-y-6 max-w-full sm:max-w-3xl md:max-w-4xl mx-auto  min-h-screen">
             <div className="space-y-6">
                 {userGrievances.length > 0 ? (
                     userGrievances.map((grievance, index) => (

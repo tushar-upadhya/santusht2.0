@@ -64,14 +64,15 @@ const AuthForm = () => {
                 onSubmit={form.handleSubmit((values) =>
                     mutation.mutate(values)
                 )}
-                className="flex max-h-[800px] w-full max-w-[580px] flex-col justify-center space-y-6 transition-all lg:h-full lg:space-y-8"
+                className="w-full max-w-md mx-auto space-y-6 p-4 sm:p-6 bg-white rounded-lg"
             >
+                {/* Mobile Number Field */}
                 <FormField
                     control={form.control}
                     name="username"
                     render={({ field }) => (
-                        <FormItem className="flex h-[78px] flex-col justify-center px-4">
-                            <FormLabel className="ml-6 text-[min(4vw,1rem)] leading-relaxed">
+                        <FormItem>
+                            <FormLabel className="text-sm sm:text-base font-medium text-gray-700">
                                 Mobile Number
                             </FormLabel>
                             <FormControl>
@@ -79,19 +80,21 @@ const AuthForm = () => {
                                     type="text"
                                     placeholder="Enter your mobile number"
                                     {...field}
-                                    className="rounded-full h-14 px-6 text-[min(4vw,1rem)] bg-gray-200 leading-relaxed placeholder:text-[min(4vw,1rem)] placeholder:leading-relaxed border-none"
+                                    className="w-full h-12 sm:h-14 rounded-full border-none bg-gray-100 text-sm sm:text-base text-gray-800 placeholder:text-gray-500 px-5 sm:px-6 focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                 />
                             </FormControl>
-                            <FormMessage className="text-rose-600 font-semibold ml-4" />
+                            <FormMessage className="text-rose-600 text-xs sm:text-sm font-medium mt-1" />
                         </FormItem>
                     )}
                 />
+
+                {/* Password Field */}
                 <FormField
                     control={form.control}
                     name="password"
                     render={({ field }) => (
-                        <FormItem className="flex h-[78px] flex-col justify-center px-4">
-                            <FormLabel className="ml-6 text-[min(4vw,1rem)] leading-relaxed">
+                        <FormItem>
+                            <FormLabel className="text-sm sm:text-base font-medium text-gray-700">
                                 Password
                             </FormLabel>
                             <FormControl>
@@ -99,38 +102,44 @@ const AuthForm = () => {
                                     type="password"
                                     placeholder="Enter your password"
                                     {...field}
-                                    className="rounded-full h-14 px-6 text-[min(4vw,1rem)] bg-gray-200 leading-relaxed placeholder:text-[min(4vw,1rem)] placeholder:leading-relaxed border-none"
+                                    className="w-full h-12 sm:h-14 rounded-full border-none bg-gray-100 text-sm sm:text-base text-gray-800 placeholder:text-gray-500 px-5 sm:px-6 focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                                 />
                             </FormControl>
-                            <FormMessage className="text-rose-600 font-semibold ml-4" />
+                            <FormMessage className="text-rose-600 text-xs sm:text-sm font-medium mt-1" />
                         </FormItem>
                     )}
                 />
+
+                {/* Error Message */}
                 {mutation.isError && (
-                    <p className="text-red-500 text-sm">
-                        {mutation.error?.message}
+                    <p className="text-red-500 text-xs sm:text-sm text-center">
+                        {mutation.error?.message || "An error occurred"}
                     </p>
                 )}
+
+                {/* Submit Button */}
                 <Button
                     type="submit"
                     disabled={mutation.isPending}
-                    className="rounded-full sm:h-14 h-10 text-[min(4vw,1rem)] leading-relaxed cursor-pointer bg-[#FA7275] hover:bg-[#FA7275]/40 text-white"
+                    className="w-full h-12 sm:h-14 rounded-full bg-[#FA7275] cursor-pointer hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-semibold transition-colors"
                 >
                     {mutation.isPending ? "Logging in..." : "Log In"}
                 </Button>
-                <div className="flex w-full gap-4">
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                     <Button
                         type="button"
-                        className="w-1/2 rounded-full text-[min(3vw,.8rem)] cursor-pointer leading-relaxed"
+                        className="w-full rounded-full h-10 sm:h-12 cursor-pointer text-sm sm:text-base text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
                     >
                         GET OTP
                     </Button>
                     <Button
                         type="button"
                         onClick={handleForgotPassword}
-                        className="w-1/2 rounded-full text-[min(3vw,.8rem)] cursor-pointer leading-relaxed"
+                        className="w-full rounded-full h-10 cursor-pointer sm:h-12 text-sm sm:text-base text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
                     >
-                        Forget Password
+                        Forgot Password
                     </Button>
                 </div>
             </form>

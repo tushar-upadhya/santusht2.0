@@ -44,7 +44,7 @@ const Gallery: React.FC = () => {
     return (
         <section className="py-12">
             <div className="container mx-auto text-center px-4">
-                <p className="text-[min(6vw,1.5rem)] font-bold text-center mb-6 text-green-500">
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold mb-6 text-green-500">
                     Gallery
                 </p>
                 <Separator className="bg-gray-300  mx-auto -mt-4 mb-4 w-8 h-[2px]" />

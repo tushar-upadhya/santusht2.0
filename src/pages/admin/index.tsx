@@ -25,23 +25,29 @@ async function fetchEmployeeData(type: string): Promise<Employee[]> {
 
 const AdminPage = () => {
     return (
-        <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
-            <div className="mt-4 flex flex-col items-center sm:items-start">
-                <DialogForm
-                    title="SANTUSHT"
-                    description="Your well-being is our priority."
-                    formComponent={<RaiseGrievanceForm />}
-                    buttonLabel="Raise Grievance"
-                    logo={<Logo />}
-                    location="All India Institute Of Medical Sciences, Ansari Nagar New Delhi"
-                />
-            </div>
-            <div className="mt-6">
-                <DynamicTabs
-                    tabOptions={["new", "active", "closed", "verified"]}
-                    fetchData={fetchEmployeeData}
-                    columns={columns}
-                />
+        <div className="min-h-screen ">
+            {/* Main container */}
+            <div className="container mx-auto px-4 py-6 sm:px-6 md:px-8 lg:px-12 xl:px-16">
+                {/* Header section */}
+                <div className="mb-8 flex flex-col items-center space-y-4 sm:items-start sm:space-y-6">
+                    <DialogForm
+                        title="SANTUSHT"
+                        description="Your well-being is our priority."
+                        formComponent={<RaiseGrievanceForm />}
+                        buttonLabel="Raise Grievance"
+                        logo={<Logo />}
+                        location="All India Institute Of Medical Sciences, Ansari Nagar New Delhi"
+                    />
+                </div>
+
+                {/* Tabs section */}
+                <div className="w-full">
+                    <DynamicTabs
+                        tabOptions={["new", "active", "closed", "verified"]}
+                        fetchData={fetchEmployeeData}
+                        columns={columns}
+                    />
+                </div>
             </div>
         </div>
     );

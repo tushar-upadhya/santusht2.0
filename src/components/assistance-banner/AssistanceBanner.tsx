@@ -5,20 +5,24 @@ import Logo from "../header/logo/Logo";
 
 const AssistanceBanner: React.FC = () => {
     return (
-        <section className="py-12">
-            <div className="container mx-auto text-center px-4">
-                <h2 className="text-[min(6vw,1.5rem)] font-bold mb-4 capitalize text-green-500">
+        <section className="py-12 bg-gray-50 dark:bg-gray-900">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                {/* Heading */}
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-4 sm:mb-6 text-green-500 capitalize">
                     We are here to assist you
                 </h2>
-                <p className="text-[min(4vw,1rem)]  max-w-3xl mx-auto mb-6 leading-relaxed">
-                    Urgent Assistance 24x7 : Facing an emergency? Reach out for
-                    immediate support and expert help. We&#39;re here around the
+
+                {/* Description */}
+                <p className="text-sm sm:text-base lg:text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto mb-6 sm:mb-8 leading-relaxed">
+                    Urgent Assistance 24x7: Facing an emergency? Reach out for
+                    immediate support and expert help. We're here around the
                     clock to provide the assistance you need in critical
                     situations. Your well-being is our top priority.
                 </p>
-                <div className="flex flex-col sm:flex-row justify-center  dark:text-gray-300   text-primary items-center gap-4">
-                    {/* Raise Grievance  */}
 
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6">
+                    {/* Raise Grievance */}
                     <DialogForm
                         title="SANTUSHT"
                         description="Your well-being is our priority."
@@ -28,6 +32,7 @@ const AssistanceBanner: React.FC = () => {
                         location="All India Institute Of Medical Sciences, Ansari Nagar New Delhi"
                     />
 
+                    {/* Give Feedback */}
                     <DialogForm
                         title="SANTUSHT"
                         description="Your well-being is our priority."
