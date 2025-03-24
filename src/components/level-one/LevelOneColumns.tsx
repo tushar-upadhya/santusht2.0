@@ -6,7 +6,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { ColumnDef } from "@tanstack/react-table";
-import { Eye } from "lucide-react";
+import { Eye, Forward, Trash } from "lucide-react";
 import { useState } from "react";
 
 export type Employee = {
@@ -17,7 +17,7 @@ export type Employee = {
     lastUpdate: string;
 };
 
-export const columns: ColumnDef<Employee>[] = [
+export const LevelOneColumns = (activeTab: string): ColumnDef<Employee>[] => [
     {
         accessorKey: "serialNumber",
         header: () => <div className="text-left">S.No</div>,
@@ -66,11 +66,19 @@ export const columns: ColumnDef<Employee>[] = [
     {
         accessorKey: "action",
         header: () => <div className="text-left">Action</div>,
-        cell: ({ row }) => <ActionButtons employee={row.original} />,
+        cell: ({ row }) => (
+            <ActionButtons employee={row.original} activeTab={activeTab} />
+        ),
     },
 ];
 
-const ActionButtons = ({ employee }: { employee: Employee }) => {
+const ActionButtons = ({
+    employee,
+    activeTab,
+}: {
+    employee: Employee;
+    activeTab: string;
+}) => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [dialogTitle, setDialogTitle] = useState("");
 
@@ -79,25 +87,57 @@ const ActionButtons = ({ employee }: { employee: Employee }) => {
         setIsDialogOpen(true);
     };
 
+    const handleForward = () => {
+        console.log(`Forwarding ${employee.refNo}`);
+    };
+
+    const handleClose = () => {
+        console.log(`Closing ${employee.refNo}`);
+    };
+
     return (
         <>
             <div className="flex items-center gap-2">
+                {/* Always show View button */}
                 <Button
                     size="icon"
                     variant="outline"
                     onClick={handleView}
-                    className="border-none text-gray-900 dark:text-white dark:bg-gray-800 hover:dark:bg-gray-700"
+                    className="border-none text-gray-900 cursor-pointer dark:text-white dark:bg-gray-800 hover:dark:bg-gray-700"
                 >
                     <Eye className="w-4 h-4" />
                 </Button>
+
+                {/* Show Forward and Close buttons only for 'active' tab */}
+                {activeTab === "active" && (
+                    <>
+                        <Button
+                            size="icon"
+                            variant="outline"
+                            onClick={handleForward}
+                            className="border-none text-gray-900 cursor-pointer dark:text-white dark:bg-gray-800 hover:dark:bg-gray-700"
+                        >
+                            <Forward className="w-4 h-4" />
+                        </Button>
+                        <Button
+                            size="icon"
+                            variant="destructive"
+                            onClick={handleClose}
+                            className="border-none text-gray-900 cursor-pointer   dark:text-white dark:bg-gray-800 hover:dark:bg-gray-700"
+                        >
+                            <Trash className="w-4 h-4" />
+                        </Button>
+                    </>
+                )}
             </div>
 
+            {/* Dialog for View action */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="bg-white">
                     <DialogHeader>
                         <DialogTitle>{dialogTitle}</DialogTitle>
                     </DialogHeader>
-                    <div className="space-y-4 ">
+                    <div className="space-y-4">
                         <p>
                             <strong>Ref No:</strong> {employee.refNo}
                         </p>

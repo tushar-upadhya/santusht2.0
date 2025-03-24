@@ -88,15 +88,15 @@ export function DataTable<TData, TValue>({
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button
-                            variant="outline"
-                            className="sm:ml-auto ml-4 cursor-pointer border dark:border-green-500 text-primary dark:text-gray-300 font-medium sm:px-[5.5rem]"
+                            variant="default"
+                            className="sm:ml-auto ml-4 cursor-pointer text-slate-700 bg-[#FA7275]/20 rounded-md hover:bg-[#FA7275] font-semibold transition-all duration-300 dark:text-gray-300 sm:px-[5.5rem]"
                         >
                             Filter
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
                         align="end"
-                        className="bg-white cursor-pointer"
+                        className="bg-white cursor-pointer border-none"
                     >
                         {table
                             .getAllColumns()
@@ -105,7 +105,7 @@ export function DataTable<TData, TValue>({
                                 return (
                                     <DropdownMenuCheckboxItem
                                         key={column.id}
-                                        className="capitalize"
+                                        className="capitalize cursor-pointer"
                                         checked={column.getIsVisible()}
                                         onCheckedChange={(value) =>
                                             column.toggleVisibility(!!value)
@@ -162,7 +162,7 @@ export function DataTable<TData, TValue>({
                             <TableRow>
                                 <TableCell
                                     colSpan={columns.length}
-                                    className="h-24 text-center"
+                                    className="h-24 text-center text-[#FA7275]"
                                 >
                                     No results.
                                 </TableCell>
@@ -173,18 +173,18 @@ export function DataTable<TData, TValue>({
             </div>
             <div className="flex items-center justify-end space-x-2 py-4">
                 <Button
-                    variant="outline"
                     size="sm"
                     onClick={() => table.previousPage()}
                     disabled={!table.getCanPreviousPage()}
+                    className="cursor-pointer text-slate-800 bg-[#FA7275]/20 hover:text-white rounded-md hover:bg-[#FA7275] font-semibold transition-all duration-300"
                 >
                     Previous
                 </Button>
                 <Button
-                    variant="outline"
                     size="sm"
                     onClick={() => table.nextPage()}
                     disabled={!table.getCanNextPage()}
+                    className="cursor-pointer text-slate-800 bg-[#FA7275]/20 hover:text-white rounded-md hover:bg-[#FA7275] transition-all duration-300"
                 >
                     Next
                 </Button>

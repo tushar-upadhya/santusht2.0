@@ -8,17 +8,21 @@ interface DynamicTabsProps<T> {
     tabOptions: string[];
     fetchData: (tab: string) => Promise<T[]>;
     columns: any;
+    initialNewData?: { count: number; data: T[] }; // Optional prop for initial "new" tab data
 }
 
 const DynamicTabs = <T,>({
     tabOptions,
     fetchData,
     columns,
+    initialNewData,
 }: DynamicTabsProps<T>) => {
-    const [tabData, setTabData] = useState<T[]>([]);
+    const [tabData, setTabData] = useState<T[]>(initialNewData?.data || []);
     const [loading, setLoading] = useState<boolean>(true);
     const [activeTab, setActiveTab] = useState<string>(tabOptions[0]);
-    const [counts, setCounts] = useState<Record<string, number>>({});
+    const [counts, setCounts] = useState<Record<string, number>>({
+        new: initialNewData?.count || 0,
+    });
 
     useEffect(() => {
         handleTabChange(tabOptions[0]);
@@ -28,12 +32,22 @@ const DynamicTabs = <T,>({
         setActiveTab(tab);
         setLoading(true);
 
-        fetchData(tab).then((data) => {
-            setTabData(data);
+        // Use initial data for "new" tab if provided, otherwise fetch
+        if (tab === "new" && initialNewData) {
+            setTabData(initialNewData.data);
+            setCounts((prev) => ({ ...prev, [tab]: initialNewData.count }));
             setLoading(false);
-            setCounts((prev) => ({ ...prev, [tab]: data.length }));
-        });
+        } else {
+            fetchData(tab).then((data) => {
+                setTabData(data);
+                setLoading(false);
+                setCounts((prev) => ({ ...prev, [tab]: data.length }));
+            });
+        }
     };
+
+    const resolvedColumns =
+        typeof columns === "function" ? columns(activeTab) : columns;
 
     return (
         <div className="py-6 md:py-12 px-4 md:px-6 max-w-full md:max-w-6xl mx-auto">
@@ -44,7 +58,7 @@ const DynamicTabs = <T,>({
                             <TabsTrigger
                                 key={tab}
                                 value={tab}
-                                className="flex items-center gap-2 px-4 py-2 text-sm sm:text-base  text-slate-700 cursor-pointer bg-[#FA7275]/20 rounded-md hover:bg-[#FA7275]/20 data-[state=active]:bg-[#FA7275] data-[state=active]:text-white data-[state=active]:font-semibold transition-all duration-300"
+                                className="flex items-center gap-2 px-4 py-2 text-sm sm:text-base text-slate-700 cursor-pointer bg-[#FA7275]/20 rounded-md hover:bg-[#FA7275]/20 data-[state=active]:bg-[#FA7275] data-[state=active]:text-white data-[state=active]:font-semibold transition-all duration-300"
                             >
                                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
                                 {loading && activeTab === tab ? (
@@ -52,7 +66,7 @@ const DynamicTabs = <T,>({
                                 ) : (
                                     <Badge
                                         variant="secondary"
-                                        className="ml-2 px-2 py-0.5 text-xs bg-[#FA7275]  text-white rounded-full"
+                                        className="ml-2 px-2 py-0.5 text-xs bg-[#FA7275] text-white rounded-full"
                                     >
                                         {counts[tab] || 0}
                                     </Badge>
@@ -75,7 +89,10 @@ const DynamicTabs = <T,>({
                             </div>
                         ) : (
                             <div className="mt-[3rem]">
-                                <DataTable columns={columns} data={tabData} />
+                                <DataTable
+                                    columns={resolvedColumns}
+                                    data={tabData}
+                                />
                             </div>
                         )}
                     </div>
