@@ -22,6 +22,7 @@ export default function AuthChecker({
         // console.log("Token Exists:", Boolean(token));
 
         const allowedWithoutAuth = ["/login", "/contact", "/"];
+
         if (!token && !allowedWithoutAuth.includes(location.pathname)) {
             dispatch(logout());
             navigate("/login", { replace: true });
