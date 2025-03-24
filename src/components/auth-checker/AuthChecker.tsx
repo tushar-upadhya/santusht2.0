@@ -30,7 +30,7 @@ export default function AuthChecker({
         }
 
         if (isAuthenticated && location.pathname === "/") {
-            console.log("Logging out because user is on home page after login");
+            // console.log("Logging out because user is on home page after login");
             dispatch(logout());
             navigate("/login", { replace: true });
         }

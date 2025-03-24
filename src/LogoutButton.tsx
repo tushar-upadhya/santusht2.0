@@ -21,7 +21,7 @@ export default function LogoutButton() {
     );
 
     useEffect(() => {
-        console.log("Auth State Updated:", { fullname, isAuthenticated });
+        // console.log("Auth State Updated:", { fullname, isAuthenticated });
     }, [fullname, isAuthenticated]);
 
     const handleLogout = () => {

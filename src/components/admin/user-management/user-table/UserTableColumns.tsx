@@ -133,7 +133,7 @@ const ActionButtons = ({ employee }: { employee: Employee }) => {
     // Function to delete employee (DELETE request)
     const handleDelete = async () => {
         try {
-            console.log(`Deleting employee with ID: ${employee.serialNumber}`);
+            // console.log(`Deleting employee with ID: ${employee.serialNumber}`);
 
             const response = await fetch(
                 `${API_URL}/${employee.serialNumber}`,
@@ -144,8 +144,8 @@ const ActionButtons = ({ employee }: { employee: Employee }) => {
             );
 
             const responseText = await response.text();
-            console.log("Response Status:", response.status);
-            console.log("Response Body:", responseText);
+            // console.log("Response Status:", response.status);
+            // console.log("Response Body:", responseText);
 
             if (!response.ok) {
                 throw new Error(

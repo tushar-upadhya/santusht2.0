@@ -1,4 +1,4 @@
-import { loginUser } from "@/api/authApi";
+import { LoginResponse, loginUser } from "@/api/authApi";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -10,15 +10,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PASSWORD_REGEX, USERNAME_REGEX } from "@/lib/regexs/regex";
-import { AppDispatch, RootState } from "@/redux/store";
+import { setAuthData, setError, setLoading } from "@/redux/features/authSlice";
+import { RootState } from "@/redux/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { unwrapResult } from "@reduxjs/toolkit";
 import { useMutation } from "@tanstack/react-query";
+import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
+// Form schema
 const authFormSchema = z.object({
     username: z.string().regex(USERNAME_REGEX, "Invalid mobile number"),
     password: z.string().regex(PASSWORD_REGEX, "Invalid password format"),
@@ -26,11 +28,20 @@ const authFormSchema = z.object({
 
 type AuthFormValues = z.infer<typeof authFormSchema>;
 
-const AuthForm = () => {
-    const dispatch = useDispatch<AppDispatch>();
+const INPUT_CLASS =
+    "w-full h-12 sm:h-14 rounded-full border-none bg-gray-100 text-sm sm:text-base text-gray-800 placeholder:text-gray-500 px-5 sm:px-6 focus:ring-2 focus:ring-primary focus:border-transparent transition-all";
+
+const AuthForm: React.FC = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { role, isAuthenticated } = useSelector(
-        (state: RootState) => state.auth
+
+    const { isAuthenticated, loading, error } = useSelector(
+        (state: RootState) => ({
+            role: state.auth.role,
+            isAuthenticated: state.auth.isAuthenticated,
+            loading: state.auth.loading,
+            error: state.auth.error,
+        })
     );
 
     const form = useForm<AuthFormValues>({
@@ -38,32 +49,48 @@ const AuthForm = () => {
         defaultValues: { username: "", password: "" },
     });
 
-    const mutation = useMutation({
-        mutationFn: async (values: AuthFormValues) => {
-            const resultAction = await dispatch(loginUser(values));
-            unwrapResult(resultAction);
+    // Tanstack Query mutation for login
+    const mutation = useMutation<LoginResponse, Error, AuthFormValues>({
+        mutationFn: loginUser,
+        onMutate: () => {
+            dispatch(setLoading(true));
+            dispatch(setError(null));
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
+            dispatch(setAuthData(data));
+            dispatch(setLoading(false));
             if (isAuthenticated) {
-                navigate(
-                    role === "ADMIN"
+                const redirectPath =
+                    data.role === "ADMIN"
                         ? "/admin"
-                        : role === "SUPER_ADMIN"
+                        : data.role === "SUPER_ADMIN"
                         ? "/super-admin"
-                        : "/"
-                );
+                        : "/";
+                navigate(redirectPath);
             }
         },
+        onError: (error) => {
+            dispatch(setError(error.message || "Login failed"));
+            dispatch(setLoading(false));
+        },
+        retry: 2,
+        retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 5000),
     });
 
-    const handleForgotPassword = () => navigate("/forgot-password");
+    const handleForgotPassword = useCallback(
+        () => navigate("/forgot-password"),
+        [navigate]
+    );
+
+    const onSubmit = useCallback(
+        (values: AuthFormValues) => mutation.mutate(values),
+        [mutation]
+    );
 
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit((values) =>
-                    mutation.mutate(values)
-                )}
+                onSubmit={form.handleSubmit(onSubmit)}
                 className="w-full max-w-md mx-auto space-y-6 p-4 sm:p-6 bg-white rounded-lg"
             >
                 {/* Mobile Number Field */}
@@ -80,7 +107,7 @@ const AuthForm = () => {
                                     type="text"
                                     placeholder="Enter your mobile number"
                                     {...field}
-                                    className="w-full h-12 sm:h-14 rounded-full border-none bg-gray-100 text-sm sm:text-base text-gray-800 placeholder:text-gray-500 px-5 sm:px-6 focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    className={INPUT_CLASS}
                                 />
                             </FormControl>
                             <FormMessage className="text-rose-600 text-xs sm:text-sm font-medium mt-1" />
@@ -102,7 +129,7 @@ const AuthForm = () => {
                                     type="password"
                                     placeholder="Enter your password"
                                     {...field}
-                                    className="w-full h-12 sm:h-14 rounded-full border-none bg-gray-100 text-sm sm:text-base text-gray-800 placeholder:text-gray-500 px-5 sm:px-6 focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                                    className={INPUT_CLASS}
                                 />
                             </FormControl>
                             <FormMessage className="text-rose-600 text-xs sm:text-sm font-medium mt-1" />
@@ -111,33 +138,33 @@ const AuthForm = () => {
                 />
 
                 {/* Error Message */}
-                {mutation.isError && (
+                {error && (
                     <p className="text-red-500 text-xs sm:text-sm text-center">
-                        {mutation.error?.message || "An error occurred"}
+                        {error}
                     </p>
                 )}
 
                 {/* Submit Button */}
                 <Button
                     type="submit"
-                    disabled={mutation.isPending}
-                    className="w-full h-12 sm:h-14 rounded-full bg-[#FA7275] cursor-pointer hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-semibold transition-colors"
+                    disabled={mutation.isPending || loading}
+                    className="w-full h-12 sm:h-14 rounded-full bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-semibold transition-colors"
                 >
-                    {mutation.isPending ? "Logging in..." : "Log In"}
+                    {mutation.isPending || loading ? "Logging in..." : "Log In"}
                 </Button>
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                     <Button
                         type="button"
-                        className="w-full rounded-full h-10 sm:h-12 cursor-pointer text-sm sm:text-base text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                        className="w-full rounded-full h-10 sm:h-12 text-sm sm:text-base text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
                     >
                         GET OTP
                     </Button>
                     <Button
                         type="button"
                         onClick={handleForgotPassword}
-                        className="w-full rounded-full h-10 cursor-pointer sm:h-12 text-sm sm:text-base text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                        className="w-full rounded-full h-10 sm:h-12 text-sm sm:text-base text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
                     >
                         Forgot Password
                     </Button>
@@ -147,4 +174,4 @@ const AuthForm = () => {
     );
 };
 
-export default AuthForm;
+export default React.memo(AuthForm);

@@ -1,24 +1,49 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const BASE_URL = "http://192.168.30.88:8080/santusht/auth";
+// Define and export API response type
+export interface LoginResponse {
+    fullname: string;
+    role: string;
+    token: string;
+}
 
-export const loginUser = createAsyncThunk(
-    "auth/loginUser",
-    async (
-        { username, password }: { username: string; password: string },
-        { rejectWithValue }
-    ) => {
-        try {
-            const { data } = await axios.post(`${BASE_URL}/login`, {
-                username,
-                password,
-            });
-            return data;
-        } catch (error: any) {
+// API config
+const BASE_URL = "http://192.168.30.88:8080/santusht/auth";
+const axiosInstance = axios.create({
+    baseURL: BASE_URL,
+    timeout: 5000,
+    headers: {
+        "Content-Type": "application/json",
+        "Accept-Encoding": "gzip, deflate, br",
+    },
+});
+
+// Login fetch function (for Tanstack Query)
+export const loginUser = async (credentials: {
+    username: string;
+    password: string;
+}): Promise<LoginResponse> => {
+    const { data } = await axiosInstance.post<LoginResponse>(
+        "/login",
+        credentials
+    );
+    return data;
+};
+
+export const loginUserThunk = createAsyncThunk<
+    LoginResponse,
+    { username: string; password: string },
+    { rejectValue: string }
+>("auth/loginUser", async ({ username, password }, { rejectWithValue }) => {
+    try {
+        return await loginUser({ username, password });
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
             return rejectWithValue(
                 error.response?.data?.message || "Login failed"
             );
         }
+        return rejectWithValue("An unexpected error occurred");
     }
-);
+});

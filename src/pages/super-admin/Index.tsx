@@ -25,7 +25,7 @@ const fetchUsers = async (): Promise<UserData[]> => {
             throw new Error(`Failed to fetch users: ${res.statusText}`);
 
         const rawData: any[] = await res.json();
-        console.log("Fetched Users Data:", rawData);
+        // console.log("Fetched Users Data:", rawData);
 
         return rawData.map((user, index) => ({
             serialNumber: index + 1,

@@ -1,4 +1,4 @@
-import { loginUser } from "@/api/authApi";
+import { LoginResponse, loginUserThunk } from "@/api/authApi";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {
@@ -10,62 +10,81 @@ interface AuthState {
     error: string | null;
 }
 
-const getSessionValue = (key: string) => sessionStorage.getItem(key) || null;
-
-const initialState: AuthState = {
-    fullname: getSessionValue("fullname"),
-    role: getSessionValue("role"),
-    token: getSessionValue("token"),
-    isAuthenticated: !!getSessionValue("token"),
-    loading: false,
-    error: null,
+// Utility to sync session storage
+const syncSessionStorage = (state: AuthState) => {
+    const keys = ["token", "role", "fullname"] as const;
+    if (state.token) {
+        keys.forEach((key) => sessionStorage.setItem(key, state[key] || ""));
+    } else {
+        keys.forEach((key) => sessionStorage.removeItem(key));
+    }
 };
+
+// Initialize state from session storage
+const getInitialState = (): AuthState => {
+    const token = sessionStorage.getItem("token");
+    return {
+        fullname: sessionStorage.getItem("fullname"),
+        role: sessionStorage.getItem("role"),
+        token,
+        isAuthenticated: !!token,
+        loading: false,
+        error: null,
+    };
+};
+
+const initialState: AuthState = getInitialState();
 
 const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
+        setAuthData: (state, action: PayloadAction<LoginResponse>) => {
+            const { fullname, role, token } = action.payload;
+            state.fullname = fullname;
+            state.role = role;
+            state.token = token;
+            state.isAuthenticated = true;
+            syncSessionStorage(state);
+        },
         logout: (state) => {
             state.fullname = null;
             state.role = null;
             state.token = null;
             state.isAuthenticated = false;
-
-            ["token", "role", "fullname"].forEach((key) =>
-                sessionStorage.removeItem(key)
-            );
+            syncSessionStorage(state);
+        },
+        setLoading: (state, action: PayloadAction<boolean>) => {
+            state.loading = action.payload;
+        },
+        setError: (state, action: PayloadAction<string | null>) => {
+            state.error = action.payload;
         },
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loginUser.pending, (state) => {
+            .addCase(loginUserThunk.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
             .addCase(
-                loginUser.fulfilled,
-                (state, action: PayloadAction<Partial<AuthState>>) => {
+                loginUserThunk.fulfilled,
+                (state, action: PayloadAction<LoginResponse>) => {
                     const { fullname, role, token } = action.payload;
-
-                    state.fullname = fullname || null;
-                    state.role = role || null;
-                    state.token = token || null;
-                    state.isAuthenticated = !!token;
+                    state.fullname = fullname;
+                    state.role = role;
+                    state.token = token;
+                    state.isAuthenticated = true;
                     state.loading = false;
-
-                    if (token) {
-                        sessionStorage.setItem("token", token);
-                        sessionStorage.setItem("role", role || "");
-                        sessionStorage.setItem("fullname", fullname || "");
-                    }
+                    syncSessionStorage(state);
                 }
             )
-            .addCase(loginUser.rejected, (state, action) => {
+            .addCase(loginUserThunk.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message || "Login failed";
+                state.error = action.payload || "Login failed";
             });
     },
 });
 
-export const { logout } = authSlice.actions;
+export const { setAuthData, logout, setLoading, setError } = authSlice.actions;
 export default authSlice.reducer;
