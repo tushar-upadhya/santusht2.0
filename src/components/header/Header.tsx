@@ -1,6 +1,6 @@
 import { adminLinks, userLinks } from "@/lib/links/NavLinks";
 import LogoutButton from "@/LogoutButton";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import Breadcrumbs from "../ui/bread-crumbs/Breadcrumbs";
@@ -9,6 +9,17 @@ import Logo from "./logo/Logo";
 import MobileNav from "./mobile-nav/MobileNav";
 import Nav from "./nav/Nav";
 
+const throttle = (func: (...args: any[]) => void, limit: number) => {
+    let inThrottle: boolean;
+    return (...args: any[]) => {
+        if (!inThrottle) {
+            func(...args);
+            inThrottle = true;
+            setTimeout(() => (inThrottle = false), limit);
+        }
+    };
+};
+
 const Header: React.FC = () => {
     const [header, setHeader] = useState<boolean>(false);
     const location = useLocation();
@@ -16,31 +27,35 @@ const Header: React.FC = () => {
         (state: any) => state.auth.isAuthenticated
     );
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setHeader(window.scrollY > 50);
-        };
+    const isAdminRoute = useMemo(
+        () => location.pathname.startsWith("/admin"),
+        [location.pathname]
+    );
 
-        window.addEventListener("scroll", handleScroll);
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
+    const handleScroll = useCallback(() => {
+        setHeader(window.scrollY > 50);
     }, []);
 
-    const isAdminRoute = location.pathname.startsWith("/admin");
+    useEffect(() => {
+        const throttledHandleScroll = throttle(handleScroll, 100);
+        window.addEventListener("scroll", throttledHandleScroll);
+        return () => {
+            window.removeEventListener("scroll", throttledHandleScroll);
+        };
+    }, [handleScroll]);
+
+    const baseClasses =
+        "sticky top-0 z-30 transition-colors duration-300 ease-in-out";
+    const scrollClasses = header
+        ? "py-4 bg-white dark:bg-gray-900"
+        : "py-6 bg-[#fef9f5] dark:bg-transparent";
+    const routeClasses =
+        location.pathname !== "/" && !header ? "bg-white dark:bg-gray-900" : "";
 
     return (
-        <header
-            className={`sticky top-0 z-30 transition-all ${
-                header ? "py-4 dark:bg-accent/100 " : "py-6 dark:bg-transparent"
-            } ${
-                location.pathname === "/"
-                    ? "bg-[#fef9f5]"
-                    : "bg-white dark:bg-accent"
-            }`}
-        >
-            <div className="container mx-auto">
-                <div className="-mt-4">
+        <header className={`${baseClasses} ${scrollClasses} ${routeClasses}`}>
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="mb-4">
                     <HeaderOne />
                 </div>
 
@@ -49,17 +64,15 @@ const Header: React.FC = () => {
                         title="SANTUSHT"
                         description="All India Institute Of Medical Sciences, Ansari Nagar New Delhi"
                     />
-                    <div className="flex items-center gap-x-3">
+                    <div className="flex items-center gap-x-4">
                         <Nav
                             links={isAdminRoute ? adminLinks : userLinks}
                             containerStyles="hidden xl:flex gap-x-8 items-center"
-                            linkStyles="relative hover:text-primary transition-all"
+                            linkStyles="relative hover:text-primary transition-colors duration-200"
                             underlineStyles="absolute left-0 top-full h-[2px] bg-primary w-full"
                         />
-
                         {isAuthenticated && <LogoutButton />}
-
-                        <div className="xl:hidden mr-4">
+                        <div className="xl:hidden">
                             <MobileNav
                                 links={isAdminRoute ? adminLinks : userLinks}
                             />
@@ -68,7 +81,7 @@ const Header: React.FC = () => {
                 </div>
             </div>
 
-            <div className="flex justify-center mt-2">
+            <div className="flex justify-center mt-4">
                 <Breadcrumbs />
             </div>
         </header>

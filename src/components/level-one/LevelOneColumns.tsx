@@ -235,7 +235,6 @@ const ActionButtons = ({
                                     {employee.lastUpdate}
                                 </p>
                             </div>
-                            {/* Show media only for 'new' and 'active' tabs */}
                             {(activeTab === "new" || activeTab === "active") &&
                                 (employee.images ||
                                     employee.video ||
@@ -353,8 +352,8 @@ const ActionButtons = ({
                         </div>
                         {activeTab === "new" && (
                             <Button
-                                size="sm"
-                                className="bg-[#FA7275] hover:bg-[#FA7275]/80 cursor-pointer text-white w-full sm:w-auto text-xs sm:text-sm h-9 rounded-md mt-4"
+                                // size="lg"
+                                className="bg-[#FA7275] hover:bg-[#FA7275]/80 text-white  min-w-full sm:w-40 text-xs sm:text-sm h-9 rounded-md mt-4"
                                 onClick={handleAssign}
                             >
                                 <Fingerprint className="w-4 h-4 mr-2" />

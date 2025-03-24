@@ -1,7 +1,17 @@
+import React, { memo } from "react";
 import DialogForm from "../forms/dialog-form/DialogForm";
 import FeedbackForm from "../forms/feedback-form/FeedbackForm";
 import RaiseGrievanceForm from "../forms/raise-grievance-form/RaiseGrievanceForm";
 import Logo from "../header/logo/Logo";
+
+const DIALOG_PROPS = {
+    title: "SANTUSHT",
+    description: "Your well-being is our priority.",
+    logo: <Logo />,
+    location: "All India Institute Of Medical Sciences, Ansari Nagar New Delhi",
+    buttonClassName:
+        "border border-gray-300 hover:border-[#FA7275] text-green-500 hover:text-[#FA7275] transition-colors duration-300 font-semibold w-full sm:w-fit px-6 py-3 sm:px-14 sm:py-5",
+};
 
 const AssistanceBanner: React.FC = () => {
     return (
@@ -15,33 +25,22 @@ const AssistanceBanner: React.FC = () => {
                 {/* Description */}
                 <p className="text-sm sm:text-base lg:text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto mb-6 sm:mb-8 leading-relaxed">
                     Urgent Assistance 24x7: Facing an emergency? Reach out for
-                    immediate support and expert help. We're here around the
+                    immediate support and expert help. We’re here around the
                     clock to provide the assistance you need in critical
                     situations. Your well-being is our top priority.
                 </p>
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6">
-                    {/* Raise Grievance */}
                     <DialogForm
-                        title="SANTUSHT"
-                        description="Your well-being is our priority."
+                        {...DIALOG_PROPS}
                         formComponent={<RaiseGrievanceForm />}
                         buttonLabel="Raise Grievance"
-                        logo={<Logo />}
-                        buttonClassName="border hover:border-[#FA7275] text-green-500 hover:text-[#FA7275]   transition-all duration-300 font-semibold w-full cursor-pointer sm:w-fit px-6 py-3 sm:px-14 sm:py-5"
-                        location="All India Institute Of Medical Sciences, Ansari Nagar New Delhi"
                     />
-
-                    {/* Give Feedback */}
                     <DialogForm
-                        title="SANTUSHT"
-                        description="Your well-being is our priority."
+                        {...DIALOG_PROPS}
                         formComponent={<FeedbackForm />}
                         buttonLabel="Give Feedback"
-                        logo={<Logo />}
-                        buttonClassName="border hover:border-[#FA7275] text-green-500 hover:text-[#FA7275]   transition-all duration-300 font-semibold w-full cursor-pointer sm:w-fit px-6 py-3 sm:px-14 sm:py-5"
-                        location="All India Institute Of Medical Sciences, Ansari Nagar New Delhi"
                     />
                 </div>
             </div>
@@ -49,4 +48,4 @@ const AssistanceBanner: React.FC = () => {
     );
 };
 
-export default AssistanceBanner;
+export default memo(AssistanceBanner);

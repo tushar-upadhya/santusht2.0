@@ -89,7 +89,7 @@ export function DataTable<TData, TValue>({
                     <DropdownMenuTrigger asChild>
                         <Button
                             variant="default"
-                            className="sm:ml-auto ml-4 cursor-pointer text-slate-700 bg-[#FA7275]/20 rounded-md hover:bg-[#FA7275] font-semibold transition-all duration-300 dark:text-gray-300 sm:px-[5.5rem]"
+                            className="sm:ml-auto ml-4 cursor-pointer hover:text-white text-slate-700 bg-[#FA7275]/20 rounded-md hover:bg-[#FA7275] font-semibold transition-all duration-300 dark:text-gray-300 sm:px-[5.5rem]"
                         >
                             Filter
                         </Button>
