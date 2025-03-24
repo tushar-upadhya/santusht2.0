@@ -1,8 +1,6 @@
-// src/redux/features/grievanceSlice.ts
 import { Employee } from "@/lib/types/employeeType";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// Mock fetch function (same as before)
 async function fetchEmployeeData(type: string): Promise<Employee[]> {
     return new Promise((resolve) => {
         setTimeout(() => {
@@ -24,7 +22,6 @@ async function fetchEmployeeData(type: string): Promise<Employee[]> {
     });
 }
 
-// Define the state shape
 interface GrievanceState {
     newGrievanceCount: number;
     newGrievanceData: Employee[];
@@ -41,7 +38,6 @@ const initialState: GrievanceState = {
     isFetching: false,
 };
 
-// Async thunk to fetch new grievances
 export const fetchNewGrievances = createAsyncThunk(
     "grievance/fetchNewGrievances",
     async (_, { rejectWithValue }) => {
