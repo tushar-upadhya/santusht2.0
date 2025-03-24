@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Define and export API response type
 export interface LoginResponse {
     fullname: string;
     role: string;
@@ -10,6 +9,7 @@ export interface LoginResponse {
 
 // API config
 const BASE_URL = "http://192.168.30.88:8080/santusht/auth";
+
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
     timeout: 5000,
@@ -19,7 +19,6 @@ const axiosInstance = axios.create({
     },
 });
 
-// Login fetch function (for Tanstack Query)
 export const loginUser = async (credentials: {
     username: string;
     password: string;

@@ -49,7 +49,7 @@ const AuthForm: React.FC = () => {
         defaultValues: { username: "", password: "" },
     });
 
-    // Tanstack Query mutation for login
+    // Mutation for login
     const mutation = useMutation<LoginResponse, Error, AuthFormValues>({
         mutationFn: loginUser,
         onMutate: () => {
@@ -77,13 +77,33 @@ const AuthForm: React.FC = () => {
         retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 5000),
     });
 
-    const handleForgotPassword = useCallback(
-        () => navigate("/forgot-password"),
-        [navigate]
-    );
+    /**
+     * Navigates the user to the forgot password page.
+     * This function is memoized to prevent unnecessary re-creation on every render,
+     * ensuring stable performance when passed as an event handler.
+     *
+     * @returns {void} - No return value; triggers navigation as a side effect.
+     * @dependencies {navigate} - Depends on the `navigate` function from react-router-dom.
+     * @sideEffects - Updates the browser's URL and history stack via navigation.
+     */
+    const handleForgotPassword = useCallback(() => {
+        navigate("/forgot-password");
+    }, [navigate]);
 
+    /**
+     * Handles form submission by triggering the login mutation with form values.
+     * This function is memoized to ensure it only re-creates if the `mutation` object changes,
+     * preventing unnecessary re-renders and maintaining stable event handler references.
+     *
+     * @param {AuthFormValues} values - The form data containing `username` and `password`.
+     * @returns {void} - No return value; triggers the mutation as a side effect.
+     * @dependencies {mutation} - Depends on the Tanstack Query mutation object.
+     * @sideEffects - Initiates an API call via `mutation.mutate`, which updates Redux state and UI.
+     */
     const onSubmit = useCallback(
-        (values: AuthFormValues) => mutation.mutate(values),
+        (values: AuthFormValues) => {
+            mutation.mutate(values);
+        },
         [mutation]
     );
 
