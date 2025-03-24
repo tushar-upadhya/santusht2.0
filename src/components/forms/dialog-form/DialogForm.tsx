@@ -31,7 +31,7 @@ const DialogForm = ({
         <Dialog>
             <DialogTrigger asChild>
                 <Button
-                    className={`px-4 py-2 cursor-pointer  sm:px-6 sm:py-3 bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-medium transition-colors duration-300 ${buttonClassName}`}
+                    className={`w-full sm:w-auto cursor-pointer ${buttonClassName}`}
                 >
                     {buttonLabel}
                 </Button>

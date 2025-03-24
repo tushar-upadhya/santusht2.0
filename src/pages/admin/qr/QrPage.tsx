@@ -82,6 +82,7 @@ const QRPage: React.FC = () => {
                         formComponent={<AddQrCodeForm />}
                         buttonLabel="Generate QR"
                         logo={<Logo />}
+                        buttonClassName="px-4 py-2 sm:px-6 sm:py-3 bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-medium rounded-md transition-colors duration-300"
                         location="All India Institute Of Medical Sciences, Ansari Nagar New Delhi"
                     />
                 </div>

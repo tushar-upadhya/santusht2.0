@@ -29,6 +29,7 @@ const AssistanceBanner: React.FC = () => {
                         formComponent={<RaiseGrievanceForm />}
                         buttonLabel="Raise Grievance"
                         logo={<Logo />}
+                        buttonClassName="border hover:border-[#FA7275] text-green-500 hover:text-[#FA7275]   transition-all duration-300 font-semibold w-full cursor-pointer sm:w-fit px-6 py-3 sm:px-14 sm:py-5"
                         location="All India Institute Of Medical Sciences, Ansari Nagar New Delhi"
                     />
 
@@ -39,6 +40,7 @@ const AssistanceBanner: React.FC = () => {
                         formComponent={<FeedbackForm />}
                         buttonLabel="Give Feedback"
                         logo={<Logo />}
+                        buttonClassName="border hover:border-[#FA7275] text-green-500 hover:text-[#FA7275]   transition-all duration-300 font-semibold w-full cursor-pointer sm:w-fit px-6 py-3 sm:px-14 sm:py-5"
                         location="All India Institute Of Medical Sciences, Ansari Nagar New Delhi"
                     />
                 </div>

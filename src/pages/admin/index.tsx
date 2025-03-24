@@ -26,9 +26,7 @@ async function fetchEmployeeData(type: string): Promise<Employee[]> {
 const AdminPage = () => {
     return (
         <div className="min-h-screen bg-[#FA7275]/7">
-            {/* Main container */}
             <div className="container mx-auto px-4 py-6 sm:px-6 md:px-8 lg:px-12 xl:px-16">
-                {/* Header section */}
                 <div className="mb-8 flex flex-col items-center space-y-4 sm:items-start sm:space-y-6">
                     <DialogForm
                         title="SANTUSHT"
@@ -36,11 +34,10 @@ const AdminPage = () => {
                         formComponent={<RaiseGrievanceForm />}
                         buttonLabel="Raise Grievance"
                         logo={<Logo />}
+                        buttonClassName="px-4 py-2 sm:px-6 sm:py-3 bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-medium rounded-md transition-colors duration-300"
                         location="All India Institute Of Medical Sciences, Ansari Nagar New Delhi"
                     />
                 </div>
-
-                {/* Tabs section */}
                 <div className="w-full">
                     <DynamicTabs
                         tabOptions={["new", "active", "closed", "verified"]}
