@@ -25,7 +25,7 @@ async function fetchEmployeeData(type: string): Promise<Employee[]> {
 
 const AdminPage = () => {
     return (
-        <div className="min-h-screen ">
+        <div className="min-h-screen bg-[#FA7275]/7">
             {/* Main container */}
             <div className="container mx-auto px-4 py-6 sm:px-6 md:px-8 lg:px-12 xl:px-16">
                 {/* Header section */}

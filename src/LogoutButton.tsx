@@ -37,15 +37,14 @@ export default function LogoutButton() {
 
     return (
         <>
-            {/* Logout Trigger Button */}
             <Button
                 onClick={() => setOpen(true)}
-                className="rounded-full px-4 py-2 sm:px-6 sm:py-3 bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-medium transition-colors duration-300"
+                className="px-4 py-2 cursor-pointer  sm:px-6 sm:py-3 bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-medium transition-colors duration-300"
             >
                 Logout
             </Button>
 
-            {/* Logout Confirmation Dialog */}
+            {/* confirmation dialog */}
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="w-full max-w-sm sm:max-w-md p-6 bg-white rounded-lg shadow-lg">
                     <DialogHeader>
@@ -60,13 +59,13 @@ export default function LogoutButton() {
                         <Button
                             onClick={() => setOpen(false)}
                             variant="outline"
-                            className="w-full sm:w-auto px-4 py-2 rounded-full border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-800 text-sm sm:text-base transition-colors"
+                            className="w-full cursor-pointer sm:w-auto px-4 py-2  border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-800 text-sm sm:text-base transition-colors"
                         >
                             Cancel
                         </Button>
                         <Button
                             onClick={handleLogout}
-                            className="w-full sm:w-auto px-4 py-2 rounded-full bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-medium transition-colors"
+                            className="w-full cursor-pointer sm:w-auto px-4 py-2  bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-medium transition-colors"
                         >
                             Logout
                         </Button>
