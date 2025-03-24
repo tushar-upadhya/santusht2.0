@@ -37,7 +37,6 @@ const AdminPage = () => {
                         buttonLabel="Raise Grievance"
                         logo={<Logo />}
                         location="All India Institute Of Medical Sciences, Ansari Nagar New Delhi"
-                        buttonClassName="bg-[#FA7275] hover:bg-[#FA7275]/80 text-white hover"
                     />
                 </div>
 

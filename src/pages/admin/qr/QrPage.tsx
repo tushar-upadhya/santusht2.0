@@ -73,7 +73,7 @@ const QRPage: React.FC = () => {
     };
 
     return (
-        <div className="py-12">
+        <div className="py-12 bg-[#FA7275]/7">
             <div className="container mx-auto">
                 <div className="flex justify-start w-full px-4 sm:px-0">
                     <DialogForm

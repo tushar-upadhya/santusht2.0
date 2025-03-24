@@ -77,7 +77,7 @@ export default function Breadcrumbs() {
 
             {/* Breadcrumb Navigation */}
             <Breadcrumb>
-                <BreadcrumbList className="leading-4">
+                <BreadcrumbList className="leading-4 capitalize">
                     {segments.map((segment, index) => {
                         const route = `/${segments
                             .slice(0, index + 1)
@@ -88,7 +88,7 @@ export default function Breadcrumbs() {
                             <React.Fragment key={route}>
                                 <BreadcrumbItem>
                                     {index === segments.length - 1 ? (
-                                        <BreadcrumbPage className="font-medium capitalize underline underline-offset-4 dark:text-primary text-slate-800 ">
+                                        <BreadcrumbPage className="font-medium uppercase dark:text-primary text-slate-800 ">
                                             {formattedSegment}
                                         </BreadcrumbPage>
                                     ) : (

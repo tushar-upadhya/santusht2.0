@@ -35,7 +35,7 @@ const UserManagementPage: React.FC = () => {
     });
 
     return (
-        <div className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4">
+        <div className="px-4 bg-[#FA7275]/7 sm:px-6 md:px-8 lg:px-12 xl:px-16 py-4">
             <div className="container mx-auto">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                     {isLoading

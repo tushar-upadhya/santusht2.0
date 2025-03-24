@@ -25,11 +25,13 @@ async function fetchContactRequests(type: string): Promise<QRType[]> {
 
 const ContactRequestPage = () => {
     return (
-        <DynamicTabs
-            tabOptions={["new", "closed"]}
-            fetchData={fetchContactRequests}
-            columns={ContactRequestColumns}
-        />
+        <div className="bg-[#FA7275]/7">
+            <DynamicTabs
+                tabOptions={["new", "closed"]}
+                fetchData={fetchContactRequests}
+                columns={ContactRequestColumns}
+            />
+        </div>
     );
 };
 
