@@ -2,32 +2,14 @@ import DynamicTabs from "@/components/dynamic-tabs/DynamicTabs";
 import GrievanceNotification from "@/components/grievance-info/grievance-notification/GrievanceNotification";
 import { LevelOneColumns } from "@/components/level-one/LevelOneColumns";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Employee } from "@/lib/types/employeeType";
-import { fetchNewGrievances } from "@/redux/features/grievanceSlice";
+import {
+    fetchEmployeeData,
+    fetchNewGrievances,
+    updateNewGrievanceCount,
+} from "@/redux/features/grievanceSlice";
 import { RootState } from "@/redux/store";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-async function fetchEmployeeData(type: string): Promise<Employee[]> {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const data = Array(Math.floor(Math.random() * 20) + 1)
-                .fill({
-                    refNo: `EMP-${type.toUpperCase()}-${Math.floor(
-                        Math.random() * 1000
-                    )}`,
-                    location: "New York",
-                    description: `${type} Task`,
-                    lastUpdate: "2024-11-15",
-                })
-                .map((item, index) => ({
-                    ...item,
-                    serialNumber: index + 1,
-                }));
-            resolve(data);
-        }, 1500);
-    });
-}
 
 const LevelOnePage: React.FC = () => {
     const dispatch = useDispatch();
@@ -37,6 +19,14 @@ const LevelOnePage: React.FC = () => {
     useEffect(() => {
         dispatch(fetchNewGrievances() as any);
     }, [dispatch]);
+
+    const handleFetchData = async (type: string) => {
+        const data = await fetchEmployeeData(type);
+        if (type === "new") {
+            dispatch(updateNewGrievanceCount(data));
+        }
+        return data;
+    };
 
     return (
         <div className="min-h-screen bg-[#FA7275]/7">
@@ -61,7 +51,7 @@ const LevelOnePage: React.FC = () => {
                     ) : (
                         <DynamicTabs
                             tabOptions={["new", "active", "closed", "verified"]}
-                            fetchData={fetchEmployeeData}
+                            fetchData={handleFetchData}
                             columns={LevelOneColumns}
                             initialNewData={{
                                 count: newGrievanceCount,

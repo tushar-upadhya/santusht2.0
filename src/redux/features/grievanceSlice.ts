@@ -1,7 +1,7 @@
 import { Employee } from "@/lib/types/employeeType";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-async function fetchEmployeeData(type: string): Promise<Employee[]> {
+export async function fetchEmployeeData(type: string): Promise<Employee[]> {
     return new Promise((resolve) => {
         setTimeout(() => {
             const data = Array(Math.floor(Math.random() * 20) + 1)
@@ -12,13 +12,20 @@ async function fetchEmployeeData(type: string): Promise<Employee[]> {
                     location: "New York",
                     description: `${type} Task`,
                     lastUpdate: "2024-11-15",
+                    ...(type === "new" || type === "active"
+                        ? {
+                              images: ["https://via.placeholder.com/150"],
+                              video: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
+                              audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                          }
+                        : {}),
                 })
                 .map((item, index) => ({
                     ...item,
                     serialNumber: index + 1,
                 }));
             resolve(data);
-        }, 1500);
+        }, 0);
     });
 }
 
@@ -55,15 +62,19 @@ export const fetchNewGrievances = createAsyncThunk(
 const grievanceSlice = createSlice({
     name: "grievance",
     initialState,
-    reducers: {},
+    reducers: {
+        updateNewGrievanceCount(state, action: PayloadAction<Employee[]>) {
+            state.newGrievanceCount = action.payload.length;
+            state.newGrievanceData = action.payload;
+            state.loadingCount = false;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchNewGrievances.pending, (state) => {
-                if (!state.isFetching) {
-                    state.isFetching = true;
-                    state.loadingCount = true;
-                    state.error = null;
-                }
+                state.isFetching = true;
+                state.loadingCount = true;
+                state.error = null;
             })
             .addCase(
                 fetchNewGrievances.fulfilled,
@@ -84,4 +95,5 @@ const grievanceSlice = createSlice({
     },
 });
 
+export const { updateNewGrievanceCount } = grievanceSlice.actions;
 export default grievanceSlice.reducer;
