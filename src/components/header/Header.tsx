@@ -1,5 +1,5 @@
+import LogoutButton from "@/components/logout-button/LogoutButton";
 import { adminLinks, userLinks } from "@/lib/links/NavLinks";
-import LogoutButton from "@/LogoutButton";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
