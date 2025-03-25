@@ -73,6 +73,7 @@ const SuperAdminPage = () => {
 
                     <DialogForm
                         title="SANTUSHT"
+                        buttonClassName="px-4 py-2 sm:px-6 sm:py-3 bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-medium rounded-md transition-colors duration-300"
                         formComponent={
                             <SuperAdminAddInstituteForm admins={admins} />
                         }
