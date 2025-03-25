@@ -68,6 +68,7 @@ const SuperAdminPage = () => {
                             <SuperAdminAddAdminForm onAdminAdded={refetch} />
                         }
                         buttonLabel="Add Admin"
+                        buttonClassName="px-4 py-2 sm:px-6 sm:py-3 bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-medium rounded-md transition-colors duration-300"
                     />
 
                     <DialogForm
@@ -76,7 +77,7 @@ const SuperAdminPage = () => {
                             <SuperAdminAddInstituteForm admins={admins} />
                         }
                         buttonLabel="Add Institute"
-                        buttonClassName="hover:border-[#FA7275] hover:text-[#FA7275]"
+                        buttonClassName="px-4 py-2 sm:px-6 sm:py-3 bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-medium rounded-md transition-colors duration-300"
                     />
                 </div>
 
