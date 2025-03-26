@@ -71,7 +71,7 @@ const RaiseGrievanceForm = () => {
     const handleMediaChange = async (type: "image" | "audio" | "video") => {
         setMediaTypes((prev) => ({
             ...prev,
-            [type]: !prev[type], // Toggle the selected media type
+            [type]: !prev[type],
         }));
 
         if (type === "video" && !mediaTypes.video && !mediaStream) {
