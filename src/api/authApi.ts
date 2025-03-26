@@ -14,34 +14,39 @@ const axiosInstance = axios.create({
     timeout: 5000,
     headers: {
         "Content-Type": "application/json",
-        "Accept-Encoding": "gzip, deflate, br",
     },
 });
+
+// Add response interceptor for better error handling
+axiosInstance.interceptors.response.use(
+    (response) => response,
+    (error) => Promise.reject(error)
+);
 
 export const loginUser = async (credentials: {
     username: string;
     password: string;
 }): Promise<LoginResponse> => {
-    const { data } = await axiosInstance.post<LoginResponse>(
+    const response = await axiosInstance.post<LoginResponse>(
         "/login",
         credentials
     );
-    return data;
+    return response.data;
 };
 
 export const loginUserThunk = createAsyncThunk<
     LoginResponse,
     { username: string; password: string },
     { rejectValue: string }
->("auth/loginUser", async ({ username, password }, { rejectWithValue }) => {
+>("auth/loginUser", async (credentials, { rejectWithValue }) => {
     try {
-        return await loginUser({ username, password });
+        return await loginUser(credentials);
     } catch (error) {
         if (axios.isAxiosError(error)) {
             return rejectWithValue(
-                error.response?.data?.message || "Login failed"
+                error.response?.data?.message || "Invalid credentials"
             );
         }
-        return rejectWithValue("An unexpected error occurred");
+        return rejectWithValue("Network error occurred");
     }
 });
