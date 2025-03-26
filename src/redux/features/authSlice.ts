@@ -10,7 +10,7 @@ interface AuthState {
     error: string | null;
 }
 
-// Utility to sync session storage
+// utility to sync session storage
 const syncSessionStorage = (state: AuthState) => {
     const keys = ["token", "role", "fullname"] as const;
     if (state.token) {
@@ -20,7 +20,7 @@ const syncSessionStorage = (state: AuthState) => {
     }
 };
 
-// Initialize state from session storage
+// initialize state from session storage
 const getInitialState = (): AuthState => {
     const token = sessionStorage.getItem("token");
     return {

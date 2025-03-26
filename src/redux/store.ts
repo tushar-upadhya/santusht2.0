@@ -1,7 +1,7 @@
 import authReducer from "@/redux/features/authSlice";
+import grievanceReducer from "@/redux/features/grievanceSlice";
 import instituteReducer from "@/redux/features/instituteSlice";
 import { configureStore } from "@reduxjs/toolkit";
-import grievanceReducer from "./features/grievanceSlice";
 
 export const store = configureStore({
     reducer: {
