@@ -36,7 +36,12 @@ const AuthForm: React.FC = () => {
     const navigate = useNavigate();
 
     const { isAuthenticated, loading, error } = useSelector(
-        (state: RootState) => state.auth
+        (state: RootState) => ({
+            role: state.auth.role,
+            isAuthenticated: state.auth.isAuthenticated,
+            loading: state.auth.loading,
+            error: state.auth.error,
+        })
     );
 
     const form = useForm<AuthFormValues>({
@@ -44,6 +49,7 @@ const AuthForm: React.FC = () => {
         defaultValues: { username: "", password: "" },
     });
 
+    // Mutation for login
     const mutation = useMutation<LoginResponse, Error, AuthFormValues>({
         mutationFn: loginUser,
         onMutate: () => {
@@ -53,26 +59,47 @@ const AuthForm: React.FC = () => {
         onSuccess: (data) => {
             dispatch(setAuthData(data));
             dispatch(setLoading(false));
-            const redirectPath =
-                data.role === "ADMIN"
-                    ? "/admin"
-                    : data.role === "SUPER_ADMIN"
-                    ? "/super-admin"
-                    : "/";
-            navigate(redirectPath);
+            if (isAuthenticated) {
+                const redirectPath =
+                    data.role === "ADMIN"
+                        ? "/admin"
+                        : data.role === "SUPER_ADMIN"
+                        ? "/super-admin"
+                        : "/";
+                navigate(redirectPath);
+            }
         },
         onError: (error) => {
-            dispatch(setError(error.message));
+            dispatch(setError(error.message || "Login failed"));
             dispatch(setLoading(false));
         },
         retry: 2,
         retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 5000),
     });
 
+    /**
+     * Navigates the user to the forgot password page.
+     * This function is memoized to prevent unnecessary re-creation on every render,
+     * ensuring stable performance when passed as an event handler.
+     *
+     * @returns {void} - No return value; triggers navigation as a side effect.
+     * @dependencies {navigate} - Depends on the `navigate` function from react-router-dom.
+     * @sideEffects - Updates the browser's URL and history stack via navigation.
+     */
     const handleForgotPassword = useCallback(() => {
         navigate("/forgot-password");
     }, [navigate]);
 
+    /**
+     * Handles form submission by triggering the login mutation with form values.
+     * This function is memoized to ensure it only re-creates if the `mutation` object changes,
+     * preventing unnecessary re-renders and maintaining stable event handler references.
+     *
+     * @param {AuthFormValues} values - The form data containing `username` and `password`.
+     * @returns {void} - No return value; triggers the mutation as a side effect.
+     * @dependencies {mutation} - Depends on the Tanstack Query mutation object.
+     * @sideEffects - Initiates an API call via `mutation.mutate`, which updates Redux state and UI.
+     */
     const onSubmit = useCallback(
         (values: AuthFormValues) => {
             mutation.mutate(values);
@@ -80,19 +107,13 @@ const AuthForm: React.FC = () => {
         [mutation]
     );
 
-    // Redirect if already authenticated
-    React.useEffect(() => {
-        if (isAuthenticated && !loading) {
-            navigate("/");
-        }
-    }, [isAuthenticated, loading, navigate]);
-
     return (
         <Form {...form}>
             <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="w-full max-w-md mx-auto space-y-6 p-4 sm:p-6 bg-white rounded-lg"
             >
+                {/* Mobile Number Field */}
                 <FormField
                     control={form.control}
                     name="username"
@@ -105,7 +126,6 @@ const AuthForm: React.FC = () => {
                                 <Input
                                     type="text"
                                     placeholder="Enter your mobile number"
-                                    disabled={loading}
                                     {...field}
                                     className={INPUT_CLASS}
                                 />
@@ -115,6 +135,7 @@ const AuthForm: React.FC = () => {
                     )}
                 />
 
+                {/* Password Field */}
                 <FormField
                     control={form.control}
                     name="password"
@@ -127,7 +148,6 @@ const AuthForm: React.FC = () => {
                                 <Input
                                     type="password"
                                     placeholder="Enter your password"
-                                    disabled={loading}
                                     {...field}
                                     className={INPUT_CLASS}
                                 />
@@ -137,33 +157,34 @@ const AuthForm: React.FC = () => {
                     )}
                 />
 
+                {/* Error Message */}
                 {error && (
                     <p className="text-red-500 text-xs sm:text-sm text-center">
                         {error}
                     </p>
                 )}
 
+                {/* Submit Button */}
                 <Button
                     type="submit"
                     disabled={mutation.isPending || loading}
-                    className="w-full h-12 sm:h-14 rounded-full bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-semibold transition-colors disabled:opacity-50"
+                    className="w-full h-12 sm:h-14 rounded-full bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-semibold transition-colors"
                 >
                     {mutation.isPending || loading ? "Logging in..." : "Log In"}
                 </Button>
 
+                {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                     <Button
                         type="button"
-                        disabled={loading}
-                        className="w-full rounded-full h-10 sm:h-12 text-sm sm:text-base text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50"
+                        className="w-full rounded-full h-10 sm:h-12 text-sm sm:text-base text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
                     >
                         GET OTP
                     </Button>
                     <Button
                         type="button"
                         onClick={handleForgotPassword}
-                        disabled={loading}
-                        className="w-full rounded-full h-10 sm:h-12 text-sm sm:text-base text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50"
+                        className="w-full rounded-full h-10 sm:h-12 text-sm sm:text-base text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
                     >
                         Forgot Password
                     </Button>

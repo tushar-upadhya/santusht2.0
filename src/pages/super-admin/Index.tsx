@@ -19,27 +19,20 @@ interface UserData {
 }
 
 const fetchUsers = async (): Promise<UserData[]> => {
-    try {
-        const res = await fetch("http://localhost:5000/users");
-        if (!res.ok)
-            throw new Error(`Failed to fetch users: ${res.statusText}`);
-
-        const rawData: any[] = await res.json();
-        // console.log("Fetched Users Data:", rawData);
-
-        return rawData.map((user, index) => ({
-            serialNumber: index + 1,
-            status: user.status ?? "Unknown",
-            role: user.role ?? "N/A",
-            adminName: user.adminName ?? "N/A",
-            instituteName: user.instituteName ?? "N/A",
-            mobile: user.mobile ?? "N/A",
-            location: user.location ?? "N/A",
-        })) as UserData[];
-    } catch (error) {
-        console.error("Error fetching users:", error);
-        throw error;
+    const response = await fetch(
+        "http://192.168.30.88:8080/santusht/superadmin/users",
+        {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                // Add any necessary authentication headers here
+            },
+        }
+    );
+    if (!response.ok) {
+        throw new Error("Failed to fetch users");
     }
+    return response.json();
 };
 
 const SuperAdminPage = () => {
@@ -74,7 +67,10 @@ const SuperAdminPage = () => {
                     <DialogForm
                         title="SANTUSHT"
                         formComponent={
-                            <SuperAdminAddInstituteForm admins={admins} />
+                            <SuperAdminAddInstituteForm
+                                admins={admins}
+                                onInstituteAdded={refetch}
+                            />
                         }
                         buttonLabel="Add Institute"
                         buttonClassName="px-4 py-2 sm:px-6 sm:py-3 bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-medium rounded-md transition-colors duration-300"
@@ -87,7 +83,10 @@ const SuperAdminPage = () => {
                         <Skeleton className="h-10 w-full max-w-lg rounded-md" />
                     ) : isError ? (
                         <div className="text-red-500">
-                            Error: {error.message}
+                            Error:{" "}
+                            {error instanceof Error
+                                ? error.message
+                                : "Unknown error"}
                         </div>
                     ) : (
                         <DataTable
