@@ -5,7 +5,9 @@ import SuperAdminAddInstituteForm from "@/components/forms/super-admin-forms/sup
 import Sidebar from "@/components/super-admin/sidebar/Sidebar";
 import { SuperAdminTableColumns } from "@/components/super-admin/SuperAdminTableColumns";
 import { Skeleton } from "@/components/ui/skeleton";
+import { restoreInstitutes } from "@/redux/features/instituteSlice";
 import { AppDispatch, RootState } from "@/redux/store";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 interface UserData {
@@ -20,11 +22,20 @@ interface UserData {
 }
 
 const SuperAdminPage = () => {
-    const dispatch = useDispatch<AppDispatch>(); // Added useDispatch
+    const dispatch = useDispatch<AppDispatch>();
     const { institutes, loading, error } = useSelector(
         (state: RootState) => state.institutes
     );
     const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+
+    useEffect(() => {
+        const storedInstitutes = sessionStorage.getItem("institutes");
+        if (storedInstitutes && institutes.length === 0) {
+            const parsedInstitutes = JSON.parse(storedInstitutes);
+            dispatch(restoreInstitutes(parsedInstitutes));
+            console.log("Restored institutes on mount:", parsedInstitutes);
+        }
+    }, [dispatch]);
 
     const tableData: UserData[] = institutes.map((inst, index) => ({
         id: inst.id || index,
@@ -37,17 +48,9 @@ const SuperAdminPage = () => {
         location: "",
     }));
 
-    // Temporarily disable fetch to avoid 500 error; rely on local state
     const handleInstituteAdded = () => {
-        // Empty function; fetch skipped until backend provides correct payload
-        // if (isAuthenticated) {
-        //     try {
-        //         await dispatch(fetchInstitutesThunk()).unwrap();
-        //         console.log("Institutes refreshed after adding");
-        //     } catch (err) {
-        //         console.error("Refresh fetch failed:", err);
-        //     }
-        // }
+        console.log("Saving institutes to sessionStorage:", institutes);
+        sessionStorage.setItem("institutes", JSON.stringify(institutes));
     };
 
     return (

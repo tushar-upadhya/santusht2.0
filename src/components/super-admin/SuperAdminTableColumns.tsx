@@ -1,3 +1,4 @@
+import { BASE_URL } from "@/api/instituteApi";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -33,15 +34,15 @@ export const SuperAdminTableColumns: ColumnDef<UserData>[] = [
         header: "S.No",
         cell: ({ row }) => <div className="text-left">{row.index + 1}</div>,
     },
-    {
-        accessorKey: "adminName",
-        header: "Admin Name",
-        cell: ({ row }) => (
-            <div className="text-left">
-                {row.getValue("adminName") || "N/A"}
-            </div>
-        ),
-    },
+    // {
+    //     accessorKey: "adminName",
+    //     header: "Admin Name",
+    //     cell: ({ row }) => (
+    //         <div className="text-left">
+    //             {row.getValue("adminName") || "N/A"}
+    //         </div>
+    //     ),
+    // },
     {
         accessorKey: "instituteName",
         header: "Institute Name",
@@ -49,25 +50,42 @@ export const SuperAdminTableColumns: ColumnDef<UserData>[] = [
             <div className="text-left">{row.getValue("instituteName")}</div>
         ),
     },
+    // {
+    //     accessorKey: "role",
+    //     header: "Role",
+    //     cell: ({ row }) => (
+    //         <div className="text-left">{row.getValue("role")}</div>
+    //     ),
+    // },
+    // {
+    //     accessorKey: "location",
+    //     header: "Location",
+    //     cell: ({ row }) => (
+    //         <div className="text-left">{row.getValue("location")}</div>
+    //     ),
+    // },
+    // {
+    //     accessorKey: "mobile",
+    //     header: "Mobile",
+    //     cell: ({ row }) => (
+    //         <div className="text-left">{row.getValue("mobile")}</div>
+    //     ),
+    // },
     {
-        accessorKey: "role",
-        header: "Role",
+        accessorKey: "status",
+        header: "Status",
         cell: ({ row }) => (
-            <div className="text-left">{row.getValue("role")}</div>
-        ),
-    },
-    {
-        accessorKey: "location",
-        header: "Location",
-        cell: ({ row }) => (
-            <div className="text-left">{row.getValue("location")}</div>
-        ),
-    },
-    {
-        accessorKey: "mobile",
-        header: "Mobile",
-        cell: ({ row }) => (
-            <div className="text-left">{row.getValue("mobile")}</div>
+            <div className="text-left">
+                <span
+                    className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                        row.getValue("status") === "Active"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-100 text-gray-800"
+                    }`}
+                >
+                    {row.getValue("status")}
+                </span>
+            </div>
         ),
     },
     {
@@ -83,13 +101,12 @@ const ActionButtons = ({ employee }: { employee: UserData }) => {
         delete: false,
     });
     const queryClient = useQueryClient();
-    const API_URL = "http://192.168.30.88:8080/santusht/superadmin"; // Adjust if needed
 
     const deleteMutation = useMutation({
         mutationFn: async () => {
             const token = sessionStorage.getItem("token");
             const res = await fetch(
-                `${API_URL}/delete-institute/${employee.id}`,
+                `${BASE_URL}/delete-institute/${employee.id}`,
                 {
                     method: "DELETE",
                     headers: {

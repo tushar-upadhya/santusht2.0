@@ -1,4 +1,4 @@
-import { addInstituteThunk } from "@/api/instituteApi"; // Removed fetchInstitutesThunk import
+import { addInstituteThunk } from "@/api/instituteApi";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import * as z from "zod";
 
 const formSchema = z.object({
@@ -66,17 +67,16 @@ const SuperAdminAddInstituteForm: React.FC<SuperAdminAddInstituteFormProps> = ({
         try {
             const result = await dispatch(addInstituteThunk(values)).unwrap();
             console.log("Institute added successfully:", result);
+            toast.success(`${values.instituteName} added successfully!`, {
+                description: "The institute is now listed.",
+            });
             form.reset();
-
-            // Temporarily skip fetch due to 500 error
-            // console.log("Token before POST (fetch):", token);
-            // console.log("SessionStorage token before POST (fetch):", sessionStorage.getItem("token"));
-            // await dispatch(fetchInstitutesThunk()).unwrap();
-            // console.log("Institutes fetched after POST");
-
             onInstituteAdded?.();
         } catch (err) {
             console.error("Request failed:", err);
+            toast.error("Failed to add institute", {
+                description: err instanceof Error ? err.message : String(err),
+            });
             if (
                 err ===
                 "Full authentication is required to access this resource"
@@ -131,10 +131,13 @@ const SuperAdminAddInstituteForm: React.FC<SuperAdminAddInstituteFormProps> = ({
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Status</FormLabel>
-                            <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                            />
+                            <FormControl>
+                                <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                    className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-300 transition-colors duration-200"
+                                />
+                            </FormControl>
                         </FormItem>
                     )}
                 />

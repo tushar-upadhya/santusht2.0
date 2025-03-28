@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const BASE_URL = "http://192.168.30.88:8080/santusht";
+export const BASE_URL = "http://192.168.30.88:8080/santusht";
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
@@ -103,7 +103,7 @@ export const addInstituteThunk = createAsyncThunk<
 export const fetchInstitutesAPI = async () => {
     const response = await axiosInstance.post<Institute[]>(
         "/superadmin/add-update-institute",
-        {} // Empty payload; update with correct fetch payload from backend
+        {}
     );
     return response.data;
 };
