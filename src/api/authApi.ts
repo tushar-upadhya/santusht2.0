@@ -1,12 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export interface LoginResponse {
-    fullname: string;
-    role: string;
-    token: string;
-}
-
 const BASE_URL = "http://192.168.30.88:8080/santusht/auth";
 
 const axiosInstance = axios.create({
@@ -14,19 +8,25 @@ const axiosInstance = axios.create({
     timeout: 5000,
     headers: {
         "Content-Type": "application/json",
-        "Accept-Encoding": "gzip, deflate, br",
     },
 });
+
+export interface LoginResponse {
+    fullname: string;
+    role: string;
+    token: string;
+}
 
 export const loginUser = async (credentials: {
     username: string;
     password: string;
 }): Promise<LoginResponse> => {
-    const { data } = await axiosInstance.post<LoginResponse>(
+    const response = await axiosInstance.post<LoginResponse>(
         "/login",
         credentials
     );
-    return data;
+    console.log("Login Response:", response.data);
+    return response.data;
 };
 
 export const loginUserThunk = createAsyncThunk<

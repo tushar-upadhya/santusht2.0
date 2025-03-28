@@ -37,7 +37,7 @@
     --sidebar-accent-foreground: hsl(240 5.9% 10%);
     --sidebar-border: hsl(220 13% 91%);
     --sidebar-ring: hsl(217.2 91.2% 59.8%);
-    --fa7275: 359 92% 71%; /* Added for #FA7275 */
+    --fa7275: 359 92% 71%;
 }
 
 .dark {
@@ -73,7 +73,7 @@
     --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
     --sidebar-border: hsl(240 3.7% 15.9%);
     --sidebar-ring: hsl(217.2 91.2% 59.8%);
-    --fa7275: 359 92% 61%; /* Slightly darker for dark mode */
+    --fa7275: 359 92% 61%;
 }
 
 @theme inline {
@@ -127,24 +127,28 @@
     ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
+        border-radius: 5px;
     }
 
     ::-webkit-scrollbar-track {
         background: hsl(var(--muted));
-        border-radius: var(--radius);
+        border-radius: 5px;
     }
 
     ::-webkit-scrollbar-thumb {
         background: hsl(var(--fa7275));
-        border-radius: var(--radius);
+        border-radius: 5px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
         background: hsl(var(--fa7275) / 0.8);
+        border-radius: 5px;
     }
 
+    /* For Firefox */
     * {
         scrollbar-width: thin;
         scrollbar-color: hsl(var(--fa7275)) hsl(var(--muted));
+        border-radius: 5px;
     }
 }

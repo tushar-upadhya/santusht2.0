@@ -1,12 +1,9 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
-interface Institute {
-    id?: number;
-    instituteName: string;
-    instituteNameHindi?: string;
-    location: string;
-    status: boolean;
-}
+import {
+    addInstituteThunk,
+    fetchInstitutesThunk,
+    Institute,
+} from "@/api/instituteApi";
+import { createSlice } from "@reduxjs/toolkit";
 
 interface InstituteState {
     institutes: Institute[];
@@ -20,60 +17,35 @@ const initialState: InstituteState = {
     error: null,
 };
 
-// Fetch Institutes
-export const fetchInstitutes = createAsyncThunk(
-    "institutes/fetchInstitutes",
-    async () => {
-        const response = await fetch(
-            "http://192.168.30.88:8080/santusht/superadmin/add-update-institute"
-        );
-        if (!response.ok) throw new Error("Failed to fetch data");
-        return await response.json();
-    }
-);
-
-// Add Institute
-export const addInstitute = createAsyncThunk(
-    "institutes/addInstitute",
-    async (institute: Institute, { rejectWithValue }) => {
-        try {
-            const response = await fetch(
-                "http://192.168.30.88:8080/santusht/superadmin/add-update-institute",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(institute),
-                }
-            );
-            if (!response.ok) throw new Error("Failed to add institute");
-            return await response.json();
-        } catch (error: any) {
-            return rejectWithValue(error.message);
-        }
-    }
-);
-
 const instituteSlice = createSlice({
     name: "institutes",
     initialState,
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(fetchInstitutes.pending, (state) => {
+            .addCase(fetchInstitutesThunk.pending, (state) => {
                 state.loading = true;
+                state.error = null;
             })
-            .addCase(fetchInstitutes.fulfilled, (state, action) => {
+            .addCase(fetchInstitutesThunk.fulfilled, (state, action) => {
                 state.loading = false;
                 state.institutes = action.payload;
             })
-            .addCase(fetchInstitutes.rejected, (state, action) => {
+            .addCase(fetchInstitutesThunk.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             })
-            .addCase(addInstitute.fulfilled, (state, action) => {
-                state.institutes.push(action.payload);
+            .addCase(addInstituteThunk.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(addInstituteThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                state.institutes.push(action.payload.data);
+            })
+            .addCase(addInstituteThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
             });
     },
 });

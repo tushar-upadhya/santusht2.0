@@ -1,3 +1,4 @@
+import ErrorBoundary from "@/components/ErrorBoundary";
 import Header from "@/components/header/Header";
 import Index from "@/pages/admin";
 import ContactRequestPage from "@/pages/admin/contact-request/ContactRequestPage";
@@ -50,7 +51,6 @@ const AppRoutes = () => {
     const superAdminRoutes = [
         { path: "/super-admin", element: <SuperAdminPage /> },
     ];
-    // const levelOneRoutes = [{ path: "/level-one", element: <LevelOnePage /> }];
     const levelTwoRoutes = [{ path: "/level-two", element: <LevelTwoPage /> }];
     const levelThreeRoutes = [
         { path: "/level-three", element: <LevelThreePage /> },
@@ -73,41 +73,44 @@ const AppRoutes = () => {
                 />
                 <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
                     {adminRoutes.map(({ path, element }) => (
-                        <Route key={path} path={path} element={element} />
+                        <Route
+                            key={path}
+                            path={path}
+                            element={<ErrorBoundary>{element}</ErrorBoundary>}
+                        />
                     ))}
                 </Route>
                 <Route
                     element={<ProtectedRoute allowedRoles={["SUPER_ADMIN"]} />}
                 >
                     {superAdminRoutes.map(({ path, element }) => (
-                        <Route key={path} path={path} element={element} />
+                        <Route
+                            key={path}
+                            path={path}
+                            element={<ErrorBoundary>{element}</ErrorBoundary>}
+                        />
                     ))}
                 </Route>
-
-                {/* Level One Routes */}
-                {/* <Route
-                <Route
-                    element={<ProtectedRoute allowedRoles={["LEVEL_ONE"]} />}
-                >
-                    {levelOneRoutes.map(({ path, element }) => (
-                        <Route key={path} path={path} element={element} />
-                    ))}
-                </Route> */}
-
-                {/* Level Two Routes */}
-                {/* </Route> */}
                 <Route
                     element={<ProtectedRoute allowedRoles={["LEVEL_TWO"]} />}
                 >
                     {levelTwoRoutes.map(({ path, element }) => (
-                        <Route key={path} path={path} element={element} />
+                        <Route
+                            key={path}
+                            path={path}
+                            element={<ErrorBoundary>{element}</ErrorBoundary>}
+                        />
                     ))}
                 </Route>
                 <Route
                     element={<ProtectedRoute allowedRoles={["LEVEL_THREE"]} />}
                 >
                     {levelThreeRoutes.map(({ path, element }) => (
-                        <Route key={path} path={path} element={element} />
+                        <Route
+                            key={path}
+                            path={path}
+                            element={<ErrorBoundary>{element}</ErrorBoundary>}
+                        />
                     ))}
                 </Route>
                 <Route path="/contact" element={<ContactPage />} />

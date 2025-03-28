@@ -20,7 +20,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
-// Form schema
 const authFormSchema = z.object({
     username: z.string().regex(USERNAME_REGEX, "Invalid mobile number"),
     password: z.string().regex(PASSWORD_REGEX, "Invalid password format"),
@@ -34,14 +33,8 @@ const INPUT_CLASS =
 const AuthForm: React.FC = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
     const { isAuthenticated, loading, error } = useSelector(
-        (state: RootState) => ({
-            role: state.auth.role,
-            isAuthenticated: state.auth.isAuthenticated,
-            loading: state.auth.loading,
-            error: state.auth.error,
-        })
+        (state: RootState) => state.auth
     );
 
     const form = useForm<AuthFormValues>({
@@ -49,7 +42,6 @@ const AuthForm: React.FC = () => {
         defaultValues: { username: "", password: "" },
     });
 
-    // Mutation for login
     const mutation = useMutation<LoginResponse, Error, AuthFormValues>({
         mutationFn: loginUser,
         onMutate: () => {
@@ -59,15 +51,14 @@ const AuthForm: React.FC = () => {
         onSuccess: (data) => {
             dispatch(setAuthData(data));
             dispatch(setLoading(false));
-            if (isAuthenticated) {
-                const redirectPath =
-                    data.role === "ADMIN"
-                        ? "/admin"
-                        : data.role === "SUPER_ADMIN"
-                        ? "/super-admin"
-                        : "/";
-                navigate(redirectPath);
-            }
+            console.log("Token stored:", sessionStorage.getItem("token"));
+            const redirectPath =
+                data.role === "ADMIN"
+                    ? "/admin"
+                    : data.role === "SUPER_ADMIN"
+                    ? "/super-admin"
+                    : "/";
+            navigate(redirectPath);
         },
         onError: (error) => {
             dispatch(setError(error.message || "Login failed"));
@@ -77,35 +68,34 @@ const AuthForm: React.FC = () => {
         retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 5000),
     });
 
-    /**
-     * Navigates the user to the forgot password page.
-     * This function is memoized to prevent unnecessary re-creation on every render,
-     * ensuring stable performance when passed as an event handler.
-     *
-     * @returns {void} - No return value; triggers navigation as a side effect.
-     * @dependencies {navigate} - Depends on the `navigate` function from react-router-dom.
-     * @sideEffects - Updates the browser's URL and history stack via navigation.
-     */
     const handleForgotPassword = useCallback(() => {
         navigate("/forgot-password");
     }, [navigate]);
 
-    /**
-     * Handles form submission by triggering the login mutation with form values.
-     * This function is memoized to ensure it only re-creates if the `mutation` object changes,
-     * preventing unnecessary re-renders and maintaining stable event handler references.
-     *
-     * @param {AuthFormValues} values - The form data containing `username` and `password`.
-     * @returns {void} - No return value; triggers the mutation as a side effect.
-     * @dependencies {mutation} - Depends on the Tanstack Query mutation object.
-     * @sideEffects - Initiates an API call via `mutation.mutate`, which updates Redux state and UI.
-     */
     const onSubmit = useCallback(
         (values: AuthFormValues) => {
-            mutation.mutate(values);
+            if (!isAuthenticated) {
+                mutation.mutate(values);
+            }
         },
-        [mutation]
+        [mutation, isAuthenticated]
     );
+
+    if (isAuthenticated) {
+        return (
+            <div className="w-full max-w-md mx-auto p-4 sm:p-6 bg-white rounded-lg text-center">
+                <p className="text-green-600 text-lg">
+                    You are already logged in!
+                </p>
+                <Button
+                    onClick={() => navigate("/super-admin")}
+                    className="mt-4 rounded-full bg-[#FA7275] hover:bg-[#FA7275]/80 text-white"
+                >
+                    Go to Dashboard
+                </Button>
+            </div>
+        );
+    }
 
     return (
         <Form {...form}>
@@ -113,78 +103,65 @@ const AuthForm: React.FC = () => {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="w-full max-w-md mx-auto space-y-6 p-4 sm:p-6 bg-white rounded-lg"
             >
-                {/* Mobile Number Field */}
                 <FormField
                     control={form.control}
                     name="username"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="text-sm sm:text-base font-medium text-gray-700">
-                                Mobile Number
-                            </FormLabel>
+                            <FormLabel>Mobile Number</FormLabel>
                             <FormControl>
                                 <Input
                                     type="text"
                                     placeholder="Enter your mobile number"
                                     {...field}
                                     className={INPUT_CLASS}
+                                    disabled={loading}
                                 />
                             </FormControl>
-                            <FormMessage className="text-rose-600 text-xs sm:text-sm font-medium mt-1" />
+                            <FormMessage />
                         </FormItem>
                     )}
                 />
-
-                {/* Password Field */}
                 <FormField
                     control={form.control}
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="text-sm sm:text-base font-medium text-gray-700">
-                                Password
-                            </FormLabel>
+                            <FormLabel>Password</FormLabel>
                             <FormControl>
                                 <Input
                                     type="password"
                                     placeholder="Enter your password"
                                     {...field}
                                     className={INPUT_CLASS}
+                                    disabled={loading}
                                 />
                             </FormControl>
-                            <FormMessage className="text-rose-600 text-xs sm:text-sm font-medium mt-1" />
+                            <FormMessage />
                         </FormItem>
                     )}
                 />
-
-                {/* Error Message */}
-                {error && (
-                    <p className="text-red-500 text-xs sm:text-sm text-center">
-                        {error}
-                    </p>
-                )}
-
-                {/* Submit Button */}
+                {error && <p className="text-red-500 text-center">{error}</p>}
                 <Button
                     type="submit"
                     disabled={mutation.isPending || loading}
-                    className="w-full h-12 sm:h-14 rounded-full bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-semibold transition-colors"
+                    className="w-full h-12 sm:h-14 rounded-full bg-[#FA7275] hover:bg-[#FA7275]/80 text-white font-semibold"
                 >
                     {mutation.isPending || loading ? "Logging in..." : "Log In"}
                 </Button>
-
-                {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                     <Button
                         type="button"
-                        className="w-full rounded-full h-10 sm:h-12 text-sm sm:text-base text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                        className="w-full rounded-full h-10 sm:h-12 text-gray-700 bg-gray-100 hover:bg-gray-200"
+                        disabled={loading}
                     >
                         GET OTP
                     </Button>
                     <Button
                         type="button"
                         onClick={handleForgotPassword}
-                        className="w-full rounded-full h-10 sm:h-12 text-sm sm:text-base text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+                        className="w-full rounded-full h-10 sm:h-12 text-gray-700 bg-gray-100 hover:bg-gray-200"
+                        disabled={loading}
                     >
                         Forgot Password
                     </Button>
@@ -194,4 +171,4 @@ const AuthForm: React.FC = () => {
     );
 };
 
-export default React.memo(AuthForm);
+export default AuthForm;

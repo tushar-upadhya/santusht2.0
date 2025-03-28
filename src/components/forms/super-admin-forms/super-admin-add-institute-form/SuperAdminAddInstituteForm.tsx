@@ -1,3 +1,4 @@
+import { addInstituteThunk } from "@/api/instituteApi";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -9,27 +10,38 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { addInstitute } from "@/redux/features/instituteSlice";
-import { AppDispatch } from "@/redux/store";
+import { AppDispatch, RootState } from "@/redux/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import * as z from "zod";
 
 const formSchema = z.object({
     instituteName: z
         .string()
         .min(3, "Institute name must be at least 3 characters"),
-
     instituteNameHindi: z.string().optional(),
     status: z.boolean().default(false),
 });
 
-const SuperAdminAddInstituteForm: React.FC = () => {
-    const dispatch = useDispatch<AppDispatch>();
+interface SuperAdminAddInstituteFormProps {
+    onInstituteAdded?: () => void;
+}
 
-    const form = useForm({
+const SuperAdminAddInstituteForm: React.FC<SuperAdminAddInstituteFormProps> = ({
+    onInstituteAdded,
+}) => {
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
+    const { loading, error } = useSelector(
+        (state: RootState) => state.institutes
+    );
+    const { isAuthenticated, token } = useSelector(
+        (state: RootState) => state.auth
+    );
+
+    const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             instituteName: "",
@@ -38,36 +50,33 @@ const SuperAdminAddInstituteForm: React.FC = () => {
         },
     });
 
-    const mutation = useMutation({
-        mutationFn: async (values: z.infer<typeof formSchema>) => {
-            const payload = {
-                name: values.instituteName,
-                nameHindi: values.instituteNameHindi,
-                status: values.status ? "ACTIVE" : "INACTIVE",
-            };
-            const response = await fetch(
-                "http://192.168.30.88:8080/santusht/superadmin/add-update-institute",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(payload),
-                }
-            );
-            if (!response.ok) {
-                throw new Error("Failed to add institute");
-            }
-            return response.json();
-        },
-        onSuccess: (data) => {
-            dispatch(addInstitute(data));
-            form.reset();
-        },
-    });
+    const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+        if (!isAuthenticated || !token) {
+            navigate("/login");
+            return;
+        }
 
-    const handleSubmit = (values: z.infer<typeof formSchema>) => {
-        mutation.mutate(values);
+        try {
+            const result = await dispatch(addInstituteThunk(values)).unwrap();
+            form.reset();
+
+            // Temporarily skip fetch due to 500 error
+            console.log(
+                "Institute added, skipping fetch due to backend issue:",
+                result
+            );
+            // await dispatch(fetchInstitutesThunk()).unwrap(); // Comment out until backend is fixed
+
+            onInstituteAdded?.();
+        } catch (err) {
+            console.error("Request failed:", err);
+            if (
+                err ===
+                "Full authentication is required to access this resource"
+            ) {
+                navigate("/login");
+            }
+        }
     };
 
     return (
@@ -108,7 +117,6 @@ const SuperAdminAddInstituteForm: React.FC = () => {
                         </FormItem>
                     )}
                 />
-
                 <FormField
                     control={form.control}
                     name="status"
@@ -122,12 +130,13 @@ const SuperAdminAddInstituteForm: React.FC = () => {
                         </FormItem>
                     )}
                 />
+                {error && <p className="text-red-500">{error}</p>}
                 <Button
                     type="submit"
                     className="w-full bg-green-500 hover:bg-green-600 text-white"
-                    disabled={mutation.isPending}
+                    disabled={loading || !isAuthenticated}
                 >
-                    {mutation.isPending ? "Adding..." : "Add Institute"}
+                    {loading ? "Adding..." : "Add Institute"}
                 </Button>
             </form>
         </Form>

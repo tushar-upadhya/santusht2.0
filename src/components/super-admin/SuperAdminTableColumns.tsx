@@ -11,7 +11,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Eye, Trash } from "lucide-react";
 import { useState } from "react";
 
-// Define UserData Type
 interface UserData {
     id: number;
     serialNumber: number;
@@ -23,13 +22,11 @@ interface UserData {
     location: string;
 }
 
-// Define Dialog State Type
 interface DialogState {
     view: boolean;
     delete: boolean;
 }
 
-// Define Columns for Table
 export const SuperAdminTableColumns: ColumnDef<UserData>[] = [
     {
         accessorKey: "serialNumber",
@@ -80,25 +77,30 @@ export const SuperAdminTableColumns: ColumnDef<UserData>[] = [
     },
 ];
 
-// Action Buttons Component
 const ActionButtons = ({ employee }: { employee: UserData }) => {
     const [dialogState, setDialogState] = useState<DialogState>({
         view: false,
         delete: false,
     });
     const queryClient = useQueryClient();
-    const API_URL = "http://localhost:5000/users";
+    const API_URL = "http://192.168.30.88:8080/santusht/superadmin";
 
-    // Mutation for Deleting User
     const deleteMutation = useMutation({
         mutationFn: async () => {
-            const res = await fetch(`${API_URL}/${employee.id}`, {
-                method: "DELETE",
-            });
+            const token = sessionStorage.getItem("token");
+            const res = await fetch(
+                `${API_URL}/delete-institute/${employee.id}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             if (!res.ok) throw new Error("Failed to delete user");
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["users"] });
+            queryClient.invalidateQueries({ queryKey: ["institutes"] });
             setDialogState((prev) => ({ ...prev, delete: false }));
         },
         onError: (error) => {
@@ -119,7 +121,6 @@ const ActionButtons = ({ employee }: { employee: UserData }) => {
                 >
                     <Eye className="w-4 h-4" />
                 </Button>
-
                 <Button
                     size="icon"
                     variant="destructive"
@@ -131,7 +132,6 @@ const ActionButtons = ({ employee }: { employee: UserData }) => {
                 </Button>
             </div>
 
-            {/* View Employee Dialog */}
             <Dialog
                 open={dialogState.view}
                 onOpenChange={() =>
@@ -154,7 +154,6 @@ const ActionButtons = ({ employee }: { employee: UserData }) => {
                 </DialogContent>
             </Dialog>
 
-            {/* Delete Confirmation Dialog */}
             <Dialog
                 open={dialogState.delete}
                 onOpenChange={() =>
