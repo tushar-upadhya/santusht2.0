@@ -1,4 +1,4 @@
-import { addInstituteThunk, fetchInstitutesThunk } from "@/api/instituteApi";
+import { addInstituteThunk } from "@/api/instituteApi"; // Removed fetchInstitutesThunk import
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -68,14 +68,11 @@ const SuperAdminAddInstituteForm: React.FC<SuperAdminAddInstituteFormProps> = ({
             console.log("Institute added successfully:", result);
             form.reset();
 
-            console.log("Token before POST (fetch):", token);
-            console.log(
-                "SessionStorage token before POST (fetch):",
-                sessionStorage.getItem("token")
-            );
-
-            await dispatch(fetchInstitutesThunk()).unwrap();
-            console.log("Institutes fetched after POST");
+            // Temporarily skip fetch due to 500 error
+            // console.log("Token before POST (fetch):", token);
+            // console.log("SessionStorage token before POST (fetch):", sessionStorage.getItem("token"));
+            // await dispatch(fetchInstitutesThunk()).unwrap();
+            // console.log("Institutes fetched after POST");
 
             onInstituteAdded?.();
         } catch (err) {

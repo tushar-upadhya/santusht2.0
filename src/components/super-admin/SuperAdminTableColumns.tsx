@@ -83,7 +83,7 @@ const ActionButtons = ({ employee }: { employee: UserData }) => {
         delete: false,
     });
     const queryClient = useQueryClient();
-    const API_URL = "http://192.168.30.88:8080/santusht/superadmin";
+    const API_URL = "http://192.168.30.88:8080/santusht/superadmin"; // Adjust if needed
 
     const deleteMutation = useMutation({
         mutationFn: async () => {

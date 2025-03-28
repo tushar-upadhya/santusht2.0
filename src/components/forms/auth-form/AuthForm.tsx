@@ -33,6 +33,7 @@ const INPUT_CLASS =
 const AuthForm: React.FC = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
     const { loading, error } = useSelector((state: RootState) => state.auth);
 
     const form = useForm<AuthFormValues>({
@@ -49,7 +50,10 @@ const AuthForm: React.FC = () => {
         onSuccess: (data) => {
             dispatch(setAuthData(data));
             dispatch(setLoading(false));
-            console.log("Token stored:", sessionStorage.getItem("token"));
+            console.log(
+                "Token stored in sessionStorage:",
+                sessionStorage.getItem("token")
+            ); // Debug token
             const redirectPath =
                 data.role === "ADMIN"
                     ? "/admin"
@@ -88,7 +92,9 @@ const AuthForm: React.FC = () => {
                     name="username"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Mobile Number</FormLabel>
+                            <FormLabel className="text-sm sm:text-base font-medium text-gray-700">
+                                Mobile Number
+                            </FormLabel>
                             <FormControl>
                                 <Input
                                     type="text"
@@ -97,7 +103,7 @@ const AuthForm: React.FC = () => {
                                     className={INPUT_CLASS}
                                 />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-rose-600 text-xs sm:text-sm font-medium mt-1" />
                         </FormItem>
                     )}
                 />
@@ -106,7 +112,9 @@ const AuthForm: React.FC = () => {
                     name="password"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel className="text-sm sm:text-base font-medium text-gray-700">
+                                Password
+                            </FormLabel>
                             <FormControl>
                                 <Input
                                     type="password"
@@ -115,29 +123,33 @@ const AuthForm: React.FC = () => {
                                     className={INPUT_CLASS}
                                 />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-rose-600 text-xs sm:text-sm font-medium mt-1" />
                         </FormItem>
                     )}
                 />
-                {error && <p className="text-red-500 text-center">{error}</p>}
+                {error && (
+                    <p className="text-red-500 text-xs sm:text-sm text-center">
+                        {error}
+                    </p>
+                )}
                 <Button
                     type="submit"
                     disabled={mutation.isPending || loading}
-                    className="w-full h-12 sm:h-14 rounded-full bg-[#FA7275] hover:bg-[#FA7275]/80 text-white font-semibold"
+                    className="w-full h-12 sm:h-14 rounded-full bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-semibold transition-colors"
                 >
                     {mutation.isPending || loading ? "Logging in..." : "Log In"}
                 </Button>
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                     <Button
                         type="button"
-                        className="w-full rounded-full h-10 sm:h-12 text-gray-700 bg-gray-100 hover:bg-gray-200"
+                        className="w-full rounded-full h-10 sm:h-12 text-sm sm:text-base text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
                     >
                         GET OTP
                     </Button>
                     <Button
                         type="button"
                         onClick={handleForgotPassword}
-                        className="w-full rounded-full h-10 sm:h-12 text-gray-700 bg-gray-100 hover:bg-gray-200"
+                        className="w-full rounded-full h-10 sm:h-12 text-sm sm:text-base text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
                     >
                         Forgot Password
                     </Button>

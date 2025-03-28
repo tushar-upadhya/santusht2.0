@@ -11,50 +11,38 @@ const axiosInstance = axios.create({
     },
 });
 
-// Interceptors unchanged...
+// Add interceptor to include token and log details
 axiosInstance.interceptors.request.use(
     (config) => {
         const token = sessionStorage.getItem("token");
-        // console.log(
-        //     `[${config.method?.toUpperCase()}] Token from sessionStorage:`,
-        //     token
-        // );
+        // Uncomment for debugging if needed
+        // console.log(`[${config.method?.toUpperCase()}] Token from sessionStorage:`, token);
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
-            // console.log(
-            //     `[${config.method?.toUpperCase()}] Request URL:`,
-            //     `${BASE_URL}${config.url}`
-            // );
-            // console.log(
-            //     `[${config.method?.toUpperCase()}] Headers:`,
-            //     config.headers
-            // );
+            // console.log(`[${config.method?.toUpperCase()}] Request URL:`, `${BASE_URL}${config.url}`);
+            // console.log(`[${config.method?.toUpperCase()}] Headers:`, config.headers);
             if (config.method === "post") {
                 // console.log("POST Request Body:", config.data);
             }
         } else {
-            // console.warn(
-            //     `[${config.method?.toUpperCase()}] No token found in sessionStorage`
-            // );
+            // console.warn(`[${config.method?.toUpperCase()}] No token found in sessionStorage`);
         }
         return config;
     },
     (error) => Promise.reject(error)
 );
 
+// Log response details
 axiosInstance.interceptors.response.use(
     (response) => {
-        // console.log(
-        //     `[${response.config.method?.toUpperCase()}] Response:`,
-        //     response.data
-        // );
+        // console.log(`[${response.config.method?.toUpperCase()}] Response:`, response.data);
         return response;
     },
     (error) => {
-        // console.error(
-        //     `[${error.config.method?.toUpperCase()}] API Error:`,
-        //     error.response?.data || error.message
-        // );
+        console.error(
+            `[${error.config.method?.toUpperCase()}] API Error:`,
+            error.response?.data || error.message
+        );
         return Promise.reject(error);
     }
 );
@@ -111,11 +99,11 @@ export const addInstituteThunk = createAsyncThunk<
     }
 });
 
-// Updated fetchInstitutesAPI
+// Placeholder fetchInstitutesAPI; adjust payload when confirmed
 export const fetchInstitutesAPI = async () => {
     const response = await axiosInstance.post<Institute[]>(
-        "superadmin/add-update-institute",
-        {}
+        "/superadmin/add-update-institute",
+        {} // Empty payload; update with correct fetch payload from backend
     );
     return response.data;
 };

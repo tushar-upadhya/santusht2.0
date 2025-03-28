@@ -1,4 +1,3 @@
-import { fetchInstitutesThunk } from "@/api/instituteApi";
 import { DataTable } from "@/components/data-table/data-table";
 import DialogForm from "@/components/forms/dialog-form/DialogForm";
 import SuperAdminAddAdminForm from "@/components/forms/super-admin-forms/super-admin-add-admin-form/SuperAdminAddAdminForm";
@@ -7,7 +6,6 @@ import Sidebar from "@/components/super-admin/sidebar/Sidebar";
 import { SuperAdminTableColumns } from "@/components/super-admin/SuperAdminTableColumns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppDispatch, RootState } from "@/redux/store";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 interface UserData {
@@ -22,21 +20,11 @@ interface UserData {
 }
 
 const SuperAdminPage = () => {
-    const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useDispatch<AppDispatch>(); // Added useDispatch
     const { institutes, loading, error } = useSelector(
         (state: RootState) => state.institutes
     );
     const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-
-    useEffect(() => {
-        if (isAuthenticated) {
-            dispatch(fetchInstitutesThunk())
-                .unwrap()
-                .catch((err) => {
-                    console.error("Initial fetch failed:", err);
-                });
-        }
-    }, [dispatch, isAuthenticated]);
 
     const tableData: UserData[] = institutes.map((inst, index) => ({
         id: inst.id || index,
@@ -49,15 +37,17 @@ const SuperAdminPage = () => {
         location: "",
     }));
 
-    const handleInstituteAdded = async () => {
-        if (isAuthenticated) {
-            try {
-                await dispatch(fetchInstitutesThunk()).unwrap();
-                console.log("Institutes refreshed after adding");
-            } catch (err) {
-                console.error("Refresh fetch failed:", err);
-            }
-        }
+    // Temporarily disable fetch to avoid 500 error; rely on local state
+    const handleInstituteAdded = () => {
+        // Empty function; fetch skipped until backend provides correct payload
+        // if (isAuthenticated) {
+        //     try {
+        //         await dispatch(fetchInstitutesThunk()).unwrap();
+        //         console.log("Institutes refreshed after adding");
+        //     } catch (err) {
+        //         console.error("Refresh fetch failed:", err);
+        //     }
+        // }
     };
 
     return (
