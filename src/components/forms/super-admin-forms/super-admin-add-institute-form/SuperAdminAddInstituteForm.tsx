@@ -91,7 +91,7 @@ const SuperAdminAddInstituteForm: React.FC<SuperAdminAddInstituteFormProps> = ({
         <Form {...form}>
             <form
                 onSubmit={form.handleSubmit(handleSubmit)}
-                className="space-y-4 bg-white p-6 rounded-lg shadow-md"
+                className="space-y-4 bg-white rounded-lg"
             >
                 <FormField
                     control={form.control}

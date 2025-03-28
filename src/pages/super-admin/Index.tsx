@@ -15,10 +15,7 @@ interface UserData {
     serialNumber: number;
     status: string;
     role: string;
-    adminName: string;
     instituteName: string;
-    mobile: string;
-    location: string;
 }
 
 const SuperAdminPage = () => {
@@ -42,10 +39,7 @@ const SuperAdminPage = () => {
         serialNumber: index + 1,
         status: inst.status,
         role: "Institute",
-        adminName: "",
         instituteName: inst.name,
-        mobile: "",
-        location: "",
     }));
 
     const handleInstituteAdded = () => {
