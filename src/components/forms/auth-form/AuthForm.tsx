@@ -33,9 +33,7 @@ const INPUT_CLASS =
 const AuthForm: React.FC = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { isAuthenticated, loading, error } = useSelector(
-        (state: RootState) => state.auth
-    );
+    const { loading, error } = useSelector((state: RootState) => state.auth);
 
     const form = useForm<AuthFormValues>({
         resolver: zodResolver(authFormSchema),
@@ -74,28 +72,10 @@ const AuthForm: React.FC = () => {
 
     const onSubmit = useCallback(
         (values: AuthFormValues) => {
-            if (!isAuthenticated) {
-                mutation.mutate(values);
-            }
+            mutation.mutate(values);
         },
-        [mutation, isAuthenticated]
+        [mutation]
     );
-
-    if (isAuthenticated) {
-        return (
-            <div className="w-full max-w-md mx-auto p-4 sm:p-6 bg-white rounded-lg text-center">
-                <p className="text-green-600 text-lg">
-                    You are already logged in!
-                </p>
-                <Button
-                    onClick={() => navigate("/super-admin")}
-                    className="mt-4 rounded-full bg-[#FA7275] hover:bg-[#FA7275]/80 text-white"
-                >
-                    Go to Dashboard
-                </Button>
-            </div>
-        );
-    }
 
     return (
         <Form {...form}>
@@ -115,7 +95,6 @@ const AuthForm: React.FC = () => {
                                     placeholder="Enter your mobile number"
                                     {...field}
                                     className={INPUT_CLASS}
-                                    disabled={loading}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -134,7 +113,6 @@ const AuthForm: React.FC = () => {
                                     placeholder="Enter your password"
                                     {...field}
                                     className={INPUT_CLASS}
-                                    disabled={loading}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -153,7 +131,6 @@ const AuthForm: React.FC = () => {
                     <Button
                         type="button"
                         className="w-full rounded-full h-10 sm:h-12 text-gray-700 bg-gray-100 hover:bg-gray-200"
-                        disabled={loading}
                     >
                         GET OTP
                     </Button>
@@ -161,7 +138,6 @@ const AuthForm: React.FC = () => {
                         type="button"
                         onClick={handleForgotPassword}
                         className="w-full rounded-full h-10 sm:h-12 text-gray-700 bg-gray-100 hover:bg-gray-200"
-                        disabled={loading}
                     >
                         Forgot Password
                     </Button>

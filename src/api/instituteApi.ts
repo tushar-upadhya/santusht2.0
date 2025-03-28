@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
     },
 });
 
-// Add interceptor to include token and log details
+// Interceptors unchanged...
 axiosInstance.interceptors.request.use(
     (config) => {
         const token = sessionStorage.getItem("token");
@@ -42,7 +42,6 @@ axiosInstance.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
-// Log response details
 axiosInstance.interceptors.response.use(
     (response) => {
         // console.log(
@@ -52,6 +51,10 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     (error) => {
+        // console.error(
+        //     `[${error.config.method?.toUpperCase()}] API Error:`,
+        //     error.response?.data || error.message
+        // );
         return Promise.reject(error);
     }
 );
@@ -108,14 +111,12 @@ export const addInstituteThunk = createAsyncThunk<
     }
 });
 
+// Updated fetchInstitutesAPI
 export const fetchInstitutesAPI = async () => {
-    const payload = {
-        action: "fetch", // Confirm with backend if this is correct
-    };
     const response = await axiosInstance.post<Institute[]>(
-        "/superadmin/add-update-institute",
-        payload
-    ); // Line 122
+        "superadmin/add-update-institute",
+        {}
+    );
     return response.data;
 };
 

@@ -1,4 +1,4 @@
-import { addInstituteThunk } from "@/api/instituteApi";
+import { addInstituteThunk, fetchInstitutesThunk } from "@/api/instituteApi";
 import { Button } from "@/components/ui/button";
 import {
     Form,
@@ -52,20 +52,30 @@ const SuperAdminAddInstituteForm: React.FC<SuperAdminAddInstituteFormProps> = ({
 
     const handleSubmit = async (values: z.infer<typeof formSchema>) => {
         if (!isAuthenticated || !token) {
+            console.warn("No authentication token available");
             navigate("/login");
             return;
         }
 
+        console.log("Token before POST (add):", token);
+        console.log(
+            "SessionStorage token before POST (add):",
+            sessionStorage.getItem("token")
+        );
+
         try {
             const result = await dispatch(addInstituteThunk(values)).unwrap();
+            console.log("Institute added successfully:", result);
             form.reset();
 
-            // Temporarily skip fetch due to 500 error
+            console.log("Token before POST (fetch):", token);
             console.log(
-                "Institute added, skipping fetch due to backend issue:",
-                result
+                "SessionStorage token before POST (fetch):",
+                sessionStorage.getItem("token")
             );
-            // await dispatch(fetchInstitutesThunk()).unwrap(); // Comment out until backend is fixed
+
+            await dispatch(fetchInstitutesThunk()).unwrap();
+            console.log("Institutes fetched after POST");
 
             onInstituteAdded?.();
         } catch (err) {
@@ -74,6 +84,7 @@ const SuperAdminAddInstituteForm: React.FC<SuperAdminAddInstituteFormProps> = ({
                 err ===
                 "Full authentication is required to access this resource"
             ) {
+                console.warn("Token may have expired or is invalid");
                 navigate("/login");
             }
         }
