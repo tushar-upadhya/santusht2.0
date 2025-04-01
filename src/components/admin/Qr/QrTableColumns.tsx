@@ -71,7 +71,6 @@ const ActionButtons = ({ employee }: { employee: QRType }) => {
         delete: false,
         resetPassword: false,
     });
-    const [editedEmployee] = useState({ ...employee });
 
     // API Base URL
     const API_URL = "http://localhost:3000/users";

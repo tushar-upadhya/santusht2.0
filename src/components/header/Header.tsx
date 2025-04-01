@@ -9,9 +9,9 @@ import Logo from "./logo/Logo";
 import MobileNav from "./mobile-nav/MobileNav";
 import Nav from "./nav/Nav";
 
-const throttle = (func: (...args: any[]) => void, limit: number) => {
+const throttle = (func: (...args: unknown[]) => void, limit: number) => {
     let inThrottle: boolean;
-    return (...args: any[]) => {
+    return (...args: unknown[]) => {
         if (!inThrottle) {
             func(...args);
             inThrottle = true;
@@ -24,7 +24,8 @@ const Header: React.FC = () => {
     const [header, setHeader] = useState<boolean>(false);
     const location = useLocation();
     const isAuthenticated = useSelector(
-        (state: any) => state.auth.isAuthenticated
+        (state: { auth: { isAuthenticated: boolean } }) =>
+            state.auth.isAuthenticated
     );
 
     const isAdminRoute = useMemo(
