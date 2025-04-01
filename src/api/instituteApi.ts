@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import axios from "axios"; // Confirm this import exists
 
 export const BASE_URL = "http://192.168.30.88:8080/santusht";
 
@@ -11,31 +11,42 @@ const axiosInstance = axios.create({
     },
 });
 
-// Add interceptor to include token and log details
 axiosInstance.interceptors.request.use(
     (config) => {
         const token = sessionStorage.getItem("token");
-        // Uncomment for debugging if needed
-        // console.log(`[${config.method?.toUpperCase()}] Token from sessionStorage:`, token);
+        console.log(
+            `[${config.method?.toUpperCase()}] Token from sessionStorage:`,
+            token
+        );
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
-            // console.log(`[${config.method?.toUpperCase()}] Request URL:`, `${BASE_URL}${config.url}`);
-            // console.log(`[${config.method?.toUpperCase()}] Headers:`, config.headers);
+            console.log(
+                `[${config.method?.toUpperCase()}] Request URL:`,
+                `${BASE_URL}${config.url}`
+            );
+            console.log(
+                `[${config.method?.toUpperCase()}] Headers:`,
+                config.headers
+            );
             if (config.method === "post") {
-                // console.log("POST Request Body:", config.data);
+                console.log("POST Request Body:", config.data);
             }
         } else {
-            // console.warn(`[${config.method?.toUpperCase()}] No token found in sessionStorage`);
+            console.warn(
+                `[${config.method?.toUpperCase()}] No token found in sessionStorage`
+            );
         }
         return config;
     },
     (error) => Promise.reject(error)
 );
 
-// Log response details
 axiosInstance.interceptors.response.use(
     (response) => {
-        // console.log(`[${response.config.method?.toUpperCase()}] Response:`, response.data);
+        console.log(
+            `[${response.config.method?.toUpperCase()}] Response:`,
+            response.data
+        );
         return response;
     },
     (error) => {
@@ -52,6 +63,16 @@ export interface Institute {
     name: string;
     nameHindi?: string;
     status: string;
+}
+
+export interface Admin {
+    id?: number;
+    username: string;
+    fullname: string;
+    role: string;
+    status: string;
+    email: string;
+    institute: { id: number };
 }
 
 interface ThunkAPI {
@@ -99,7 +120,6 @@ export const addInstituteThunk = createAsyncThunk<
     }
 });
 
-// Placeholder fetchInstitutesAPI; adjust payload when confirmed
 export const fetchInstitutesAPI = async () => {
     const response = await axiosInstance.post<Institute[]>(
         "/superadmin/add-update-institute",
@@ -119,6 +139,55 @@ export const fetchInstitutesThunk = createAsyncThunk<
         if (axios.isAxiosError(error)) {
             return rejectWithValue(
                 error.response?.data?.message || "Failed to fetch institutes"
+            );
+        }
+        return rejectWithValue("An unexpected error occurred");
+    }
+});
+
+export const addAdminAPI = async (admin: {
+    username: string;
+    fullname: string;
+    role: string;
+    status: boolean;
+    email: string;
+    instituteId: number;
+}) => {
+    const payload = {
+        username: admin.username,
+        fullname: admin.fullname,
+        role: admin.role,
+        status: admin.status ? "Active" : "NEW",
+        email: admin.email,
+        institute: { id: admin.instituteId },
+    };
+    const response = await axiosInstance.post<{
+        status: string;
+        message: string;
+        data: Admin;
+        errorCode: null | string;
+    }>("/superadmin/add-update-admin", payload);
+    return response.data;
+};
+
+export const addAdminThunk = createAsyncThunk<
+    { status: string; message: string; data: Admin; errorCode: null | string },
+    {
+        username: string;
+        fullname: string;
+        role: string;
+        status: boolean;
+        email: string;
+        instituteId: number;
+    },
+    ThunkAPI
+>("admins/addAdmin", async (admin, { rejectWithValue }) => {
+    try {
+        return await addAdminAPI(admin);
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            return rejectWithValue(
+                error.response?.data?.message || "Failed to add admin"
             );
         }
         return rejectWithValue("An unexpected error occurred");

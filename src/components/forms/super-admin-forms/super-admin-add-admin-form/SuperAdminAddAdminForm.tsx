@@ -1,5 +1,5 @@
+import { addAdminThunk } from "@/api/instituteApi";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
     Form,
     FormControl,
@@ -10,11 +10,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-import {
     Select,
     SelectContent,
     SelectItem,
@@ -23,76 +18,102 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
+import { AppDispatch, RootState } from "@/redux/store";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 const adminSchema = z.object({
-    adminName: z.string().min(2, "Admin Name is required"),
     username: z.string().min(2, "Username is required"),
-    mobile: z.string().min(10, "Mobile number must be 10 digits"),
+    fullname: z.string().min(2, "Full Name is required"),
+    role: z.string().min(1, "Role is required"),
     email: z.string().email("Invalid email address"),
-    gender: z.enum(["Male", "Female", "Other"]),
-    dateOfBirth: z.date(),
     status: z.boolean(),
-    role: z.enum(["admin", "manager", "supervisor"]),
+    instituteId: z.string().min(1, "Institute is required"),
 });
 
 type AdminFormValues = z.infer<typeof adminSchema>;
 
 interface SuperAdminAddAdminFormProps {
-    onAdminAdded: () => void;
+    onAdminAdded?: () => void;
 }
 
 const SuperAdminAddAdminForm: React.FC<SuperAdminAddAdminFormProps> = ({
     onAdminAdded,
 }) => {
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
+    const { institutes, loading, error } = useSelector(
+        (state: RootState) => state.institutes
+    );
+    const { isAuthenticated, token } = useSelector(
+        (state: RootState) => state.auth
+    );
+
     const form = useForm<AdminFormValues>({
         resolver: zodResolver(adminSchema),
         defaultValues: {
-            adminName: "",
             username: "",
-            mobile: "",
-            email: "",
-            gender: "Male",
-            dateOfBirth: new Date(),
-            status: true,
+            fullname: "",
             role: "admin",
+            email: "",
+            status: true,
+            instituteId: "",
         },
     });
 
     const onSubmit = async (values: AdminFormValues) => {
-        try {
-            const res = await fetch("http://localhost:5000/add-admin", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(values),
-            });
+        if (!isAuthenticated || !token) {
+            console.warn(
+                "No authentication token available, redirecting to login"
+            );
+            navigate("/login");
+            return;
+        }
 
-            if (res.ok) {
-                onAdminAdded();
-                form.reset();
-            }
+        try {
+            const adminData = {
+                username: values.username,
+                fullname: values.fullname,
+                role: values.role,
+                status: values.status,
+                email: values.email,
+                instituteId: parseInt(values.instituteId),
+            };
+            const result = await dispatch(addAdminThunk(adminData)).unwrap();
+            form.reset();
+            onAdminAdded?.();
+            sessionStorage.setItem(
+                "admins",
+                JSON.stringify([
+                    ...JSON.parse(sessionStorage.getItem("admins") || "[]"),
+                    result.data,
+                ])
+            );
         } catch (error) {
             console.error("Failed to add admin:", error);
+            if (String(error).includes("Full authentication is required")) {
+                console.warn("Token invalid or expired, redirecting to login");
+                navigate("/login");
+            }
         }
     };
 
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                {/* Admin Name & Mobile Number */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                         control={form.control}
-                        name="adminName"
+                        name="fullname"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Admin Name</FormLabel>
+                                <FormLabel>Full Name</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="Enter Admin Name"
+                                        placeholder="Enter Full Name"
                                         {...field}
                                     />
                                 </FormControl>
@@ -100,16 +121,15 @@ const SuperAdminAddAdminForm: React.FC<SuperAdminAddAdminFormProps> = ({
                             </FormItem>
                         )}
                     />
-
                     <FormField
                         control={form.control}
-                        name="mobile"
+                        name="username"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Mobile Number (ID)</FormLabel>
+                                <FormLabel>Username</FormLabel>
                                 <FormControl>
                                     <Input
-                                        placeholder="Enter Mobile Number"
+                                        placeholder="Enter Username"
                                         {...field}
                                     />
                                 </FormControl>
@@ -118,8 +138,6 @@ const SuperAdminAddAdminForm: React.FC<SuperAdminAddAdminFormProps> = ({
                         )}
                     />
                 </div>
-
-                {/* Email & Role */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                         control={form.control}
@@ -137,7 +155,44 @@ const SuperAdminAddAdminForm: React.FC<SuperAdminAddAdminFormProps> = ({
                             </FormItem>
                         )}
                     />
-
+                    <FormField
+                        control={form.control}
+                        name="instituteId"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Institute</FormLabel>
+                                <Select
+                                    onValueChange={field.onChange}
+                                    value={field.value}
+                                >
+                                    <FormControl>
+                                        <SelectTrigger className="cursor-pointer">
+                                            <SelectValue placeholder="Select Institute" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent className="bg-white cursor-pointer">
+                                        {institutes.length > 0 ? (
+                                            institutes.map((inst) => (
+                                                <SelectItem
+                                                    key={inst.id}
+                                                    value={String(inst.id)}
+                                                >
+                                                    {inst.name}
+                                                </SelectItem>
+                                            ))
+                                        ) : (
+                                            <SelectItem value="none" disabled>
+                                                No institutes available
+                                            </SelectItem>
+                                        )}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                         control={form.control}
                         name="role"
@@ -146,62 +201,23 @@ const SuperAdminAddAdminForm: React.FC<SuperAdminAddAdminFormProps> = ({
                                 <FormLabel>Role</FormLabel>
                                 <Select
                                     onValueChange={field.onChange}
-                                    defaultValue={field.value}
+                                    value={field.value}
                                 >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select Role" />
-                                    </SelectTrigger>
-                                    <SelectContent>
+                                    <FormControl>
+                                        <SelectTrigger className="cursor-pointer">
+                                            <SelectValue placeholder="Select Role" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent className="bg-white cursor-pointer">
                                         <SelectItem value="admin">
                                             Admin
                                         </SelectItem>
-                                        <SelectItem value="manager">
-                                            Manager
-                                        </SelectItem>
-                                        <SelectItem value="supervisor">
-                                            Supervisor
-                                        </SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-                </div>
-
-                {/* Gender & Status */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                        control={form.control}
-                        name="gender"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Gender</FormLabel>
-                                <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select Gender" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Male">
-                                            Male
-                                        </SelectItem>
-                                        <SelectItem value="Female">
-                                            Female
-                                        </SelectItem>
-                                        <SelectItem value="Other">
-                                            Other
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* Status Toggle */}
                     <FormField
                         control={form.control}
                         name="status"
@@ -221,7 +237,7 @@ const SuperAdminAddAdminForm: React.FC<SuperAdminAddAdminFormProps> = ({
                                                 : "text-red-700 bg-red-200"
                                         )}
                                     >
-                                        {field.value ? "active" : "inactive"}
+                                        {field.value ? "active" : "new"}
                                     </span>
                                 </div>
                                 <FormMessage />
@@ -229,46 +245,13 @@ const SuperAdminAddAdminForm: React.FC<SuperAdminAddAdminFormProps> = ({
                         )}
                     />
                 </div>
-
-                {/* Date of Birth */}
-                <FormField
-                    control={form.control}
-                    name="dateOfBirth"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Date of Birth</FormLabel>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        className="w-full"
-                                    >
-                                        {field.value
-                                            ? format(field.value, "yyyy-MM-dd")
-                                            : "Pick a date"}
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-2">
-                                    <Calendar
-                                        mode="single"
-                                        selected={field.value}
-                                        onSelect={(date) =>
-                                            field.onChange(date)
-                                        }
-                                    />
-                                </PopoverContent>
-                            </Popover>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                {/* Submit Button */}
+                {error && <p className="text-red-500">{error}</p>}
                 <Button
                     type="submit"
                     className="w-full bg-green-400 hover:bg-green-200"
+                    disabled={loading || !isAuthenticated}
                 >
-                    Submit
+                    {loading ? "Adding..." : "Submit"}
                 </Button>
             </form>
         </Form>

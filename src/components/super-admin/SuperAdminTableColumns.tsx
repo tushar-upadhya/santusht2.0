@@ -17,10 +17,9 @@ interface UserData {
     serialNumber: number;
     status: string;
     role: string;
-    adminName: string;
     instituteName: string;
-    mobile: string;
-    location: string;
+    fullname?: string;
+    mobile?: string;
 }
 
 interface DialogState {
@@ -32,45 +31,38 @@ export const SuperAdminTableColumns: ColumnDef<UserData>[] = [
     {
         accessorKey: "serialNumber",
         header: "S.No",
-        cell: ({ row }) => <div className="text-left">{row.index + 1}</div>,
+        cell: ({ row }) => (
+            <div className="text-left">{row.getValue("serialNumber")}</div>
+        ),
     },
-    // {
-    //     accessorKey: "adminName",
-    //     header: "Admin Name",
-    //     cell: ({ row }) => (
-    //         <div className="text-left">
-    //             {row.getValue("adminName") || "N/A"}
-    //         </div>
-    //     ),
-    // },
+    {
+        accessorKey: "fullname",
+        header: "Full Name",
+        cell: ({ row }) => (
+            <div className="text-left">{row.getValue("fullname") || "N/A"}</div>
+        ),
+    },
     {
         accessorKey: "instituteName",
         header: "Institute Name",
         cell: ({ row }) => (
-            <div className="text-left">{row.getValue("instituteName")}</div>
+            <div className="text-left">{row.getValue("instituteName")}</div> // Ensure this is a string
         ),
     },
-    // {
-    //     accessorKey: "role",
-    //     header: "Role",
-    //     cell: ({ row }) => (
-    //         <div className="text-left">{row.getValue("role")}</div>
-    //     ),
-    // },
-    // {
-    //     accessorKey: "location",
-    //     header: "Location",
-    //     cell: ({ row }) => (
-    //         <div className="text-left">{row.getValue("location")}</div>
-    //     ),
-    // },
-    // {
-    //     accessorKey: "mobile",
-    //     header: "Mobile",
-    //     cell: ({ row }) => (
-    //         <div className="text-left">{row.getValue("mobile")}</div>
-    //     ),
-    // },
+    {
+        accessorKey: "role",
+        header: "Role",
+        cell: ({ row }) => (
+            <div className="text-left">{row.getValue("role")}</div>
+        ),
+    },
+    {
+        accessorKey: "mobile",
+        header: "Mobile",
+        cell: ({ row }) => (
+            <div className="text-left">{row.getValue("mobile") || "N/A"}</div>
+        ),
+    },
     {
         accessorKey: "status",
         header: "Status",
@@ -105,16 +97,17 @@ const ActionButtons = ({ employee }: { employee: UserData }) => {
     const deleteMutation = useMutation({
         mutationFn: async () => {
             const token = sessionStorage.getItem("token");
-            const res = await fetch(
-                `${BASE_URL}/delete-institute/${employee.id}`,
-                {
-                    method: "DELETE",
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-            if (!res.ok) throw new Error("Failed to delete user");
+            const endpoint =
+                employee.role === "Institute"
+                    ? `${BASE_URL}/delete-institute/${employee.id}`
+                    : `${BASE_URL}/delete-admin/${employee.id}`;
+            const res = await fetch(endpoint, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (!res.ok) throw new Error("Failed to delete");
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["institutes"] });
@@ -122,7 +115,7 @@ const ActionButtons = ({ employee }: { employee: UserData }) => {
         },
         onError: (error) => {
             console.error("Delete Error:", error);
-            alert("Error deleting user");
+            alert("Error deleting entry");
         },
     });
 
@@ -157,7 +150,7 @@ const ActionButtons = ({ employee }: { employee: UserData }) => {
             >
                 <DialogContent className="bg-white">
                     <DialogHeader>
-                        <DialogTitle>Employee Details</DialogTitle>
+                        <DialogTitle>{employee.role} Details</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-2">
                         {Object.entries(employee).map(([key, value]) =>
@@ -181,7 +174,10 @@ const ActionButtons = ({ employee }: { employee: UserData }) => {
                     <DialogHeader>
                         <DialogTitle>Confirm Deletion</DialogTitle>
                     </DialogHeader>
-                    <p>Are you sure you want to delete this user?</p>
+                    <p>
+                        Are you sure you want to delete this{" "}
+                        {employee.role.toLowerCase()}?
+                    </p>
                     <DialogFooter>
                         <Button
                             variant="outline"

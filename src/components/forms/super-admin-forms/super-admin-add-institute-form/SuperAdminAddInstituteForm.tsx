@@ -15,7 +15,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import * as z from "zod";
 
 const formSchema = z.object({
@@ -35,7 +34,7 @@ const SuperAdminAddInstituteForm: React.FC<SuperAdminAddInstituteFormProps> = ({
 }) => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
-    const { loading, error } = useSelector(
+    const { loading, error, institutes } = useSelector(
         (state: RootState) => state.institutes
     );
     const { isAuthenticated, token } = useSelector(
@@ -58,27 +57,19 @@ const SuperAdminAddInstituteForm: React.FC<SuperAdminAddInstituteFormProps> = ({
             return;
         }
 
-        console.log("Token before POST (add):", token);
-        console.log(
-            "SessionStorage token before POST (add):",
-            sessionStorage.getItem("token")
-        );
-
         try {
             const result = await dispatch(addInstituteThunk(values)).unwrap();
             console.log("Institute added successfully:", result);
-            toast.success(`${values.instituteName} added successfully!`, {
-                description: "The institute is now listed.",
-            });
             form.reset();
             onInstituteAdded?.();
+            sessionStorage.setItem(
+                "institutes",
+                JSON.stringify([...institutes, result.data])
+            );
         } catch (err) {
             console.error("Request failed:", err);
-            toast.error("Failed to add institute", {
-                description: err instanceof Error ? err.message : String(err),
-            });
             if (
-                err ===
+                String(err) ===
                 "Full authentication is required to access this resource"
             ) {
                 console.warn("Token may have expired or is invalid");
@@ -91,7 +82,7 @@ const SuperAdminAddInstituteForm: React.FC<SuperAdminAddInstituteFormProps> = ({
         <Form {...form}>
             <form
                 onSubmit={form.handleSubmit(handleSubmit)}
-                className="space-y-4 bg-white rounded-lg"
+                className="space-y-4 bg-white p-6 rounded-lg shadow-md"
             >
                 <FormField
                     control={form.control}
@@ -131,13 +122,10 @@ const SuperAdminAddInstituteForm: React.FC<SuperAdminAddInstituteFormProps> = ({
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Status</FormLabel>
-                            <FormControl>
-                                <Switch
-                                    checked={field.value}
-                                    onCheckedChange={field.onChange}
-                                    className="data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-gray-300 transition-colors duration-200"
-                                />
-                            </FormControl>
+                            <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                            />
                         </FormItem>
                     )}
                 />

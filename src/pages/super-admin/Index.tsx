@@ -2,10 +2,12 @@ import { DataTable } from "@/components/data-table/data-table";
 import DialogForm from "@/components/forms/dialog-form/DialogForm";
 import SuperAdminAddAdminForm from "@/components/forms/super-admin-forms/super-admin-add-admin-form/SuperAdminAddAdminForm";
 import SuperAdminAddInstituteForm from "@/components/forms/super-admin-forms/super-admin-add-institute-form/SuperAdminAddInstituteForm";
-import Sidebar from "@/components/super-admin/sidebar/Sidebar";
 import { SuperAdminTableColumns } from "@/components/super-admin/SuperAdminTableColumns";
 import { Skeleton } from "@/components/ui/skeleton";
-import { restoreInstitutes } from "@/redux/features/instituteSlice";
+import {
+    restoreAdmins,
+    restoreInstitutes,
+} from "@/redux/features/instituteSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,47 +18,79 @@ interface UserData {
     status: string;
     role: string;
     instituteName: string;
+    fullname?: string;
+    mobile?: string;
 }
 
 const SuperAdminPage = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { institutes, loading, error } = useSelector(
+    const { institutes, admins, loading, error } = useSelector(
         (state: RootState) => state.institutes
     );
     const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
-        const storedInstitutes = sessionStorage.getItem("institutes");
-        if (storedInstitutes && institutes.length === 0) {
-            const parsedInstitutes = JSON.parse(storedInstitutes);
-            dispatch(restoreInstitutes(parsedInstitutes));
-            console.log("Restored institutes on mount:", parsedInstitutes);
+        try {
+            const storedInstitutes = sessionStorage.getItem("institutes");
+            if (storedInstitutes && institutes.length === 0) {
+                const parsedInstitutes = JSON.parse(storedInstitutes);
+                dispatch(restoreInstitutes(parsedInstitutes));
+            }
+            const storedAdmins = sessionStorage.getItem("admins");
+            if (storedAdmins && admins.length === 0) {
+                const parsedAdmins = JSON.parse(storedAdmins);
+                dispatch(restoreAdmins(parsedAdmins));
+            }
+        } catch (err) {
+            console.error("Failed to parse sessionStorage:", err);
+            sessionStorage.removeItem("institutes");
+            sessionStorage.removeItem("admins");
         }
     }, [dispatch]);
 
-    const tableData: UserData[] = institutes.map((inst, index) => ({
-        id: inst.id || index,
-        serialNumber: index + 1,
-        status: inst.status,
-        role: "Institute",
-        instituteName: inst.name,
-    }));
+    const tableData: UserData[] = [
+        ...institutes.map((inst, index) => ({
+            id: inst.id || index,
+            serialNumber: index + 1,
+            status: inst.status,
+            role: "Institute",
+            instituteName: inst.name,
+        })),
+        ...admins.map((admin, index) => {
+            const instituteName =
+                institutes.find((inst) => inst.id === admin.institute.id)
+                    ?.name || "Unknown";
+            return {
+                id: admin.id || index + institutes.length,
+                serialNumber: index + institutes.length + 1,
+                status: admin.status,
+                role: admin.role,
+                instituteName,
+                fullname: admin.fullname,
+                mobile: admin.mobile,
+            };
+        }),
+    ];
 
     const handleInstituteAdded = () => {
-        console.log("Saving institutes to sessionStorage:", institutes);
         sessionStorage.setItem("institutes", JSON.stringify(institutes));
+    };
+
+    const handleAdminAdded = () => {
+        sessionStorage.setItem("admins", JSON.stringify(admins));
     };
 
     return (
         <div className="flex min-h-screen">
-            <div className="w-[300px] flex-shrink-0">
-                <Sidebar users={tableData} />
-            </div>
-            <div className="flex-1 p-6 space-y-6">
+            <div className="flex-1 p-6 space-y-6 container mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <DialogForm
                         title="SANTUSHT"
-                        formComponent={<SuperAdminAddAdminForm />}
+                        formComponent={
+                            <SuperAdminAddAdminForm
+                                onAdminAdded={handleAdminAdded}
+                            />
+                        }
                         buttonLabel="Add Admin"
                         buttonClassName="px-4 py-2 sm:px-6 sm:py-3 bg-[#FA7275] hover:bg-[#FA7275]/80 text-white text-sm sm:text-base font-medium rounded-md transition-colors duration-300"
                     />
@@ -74,7 +108,7 @@ const SuperAdminPage = () => {
                 <div>
                     {loading ? (
                         <Skeleton className="h-10 w-full max-w-lg rounded-md" />
-                    ) : error && institutes.length === 0 ? (
+                    ) : error && tableData.length === 0 ? (
                         <div className="text-red-500">Error: {error}</div>
                     ) : (
                         <DataTable
