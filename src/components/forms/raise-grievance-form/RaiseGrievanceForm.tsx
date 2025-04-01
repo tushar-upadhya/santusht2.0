@@ -107,7 +107,7 @@ const RaiseGrievanceForm = () => {
         }
     };
 
-    const onSubmit = (data: any) => {
+    const onSubmit = (data: z.infer<typeof formSchema>) => {
         const grievance = {
             id: Date.now(),
             userId: data.uhid,
