@@ -50,10 +50,10 @@ const AuthForm: React.FC = () => {
         onSuccess: (data) => {
             dispatch(setAuthData(data));
             dispatch(setLoading(false));
-            console.log(
-                "Token stored in sessionStorage:",
-                sessionStorage.getItem("token")
-            ); // Debug token
+            // console.log(
+            //     "Token stored in sessionStorage:",
+            //     sessionStorage.getItem("token")
+            // );
             const redirectPath =
                 data.role === "ADMIN"
                     ? "/admin"

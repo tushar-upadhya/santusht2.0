@@ -59,7 +59,7 @@ const SuperAdminAddInstituteForm: React.FC<SuperAdminAddInstituteFormProps> = ({
 
         try {
             const result = await dispatch(addInstituteThunk(values)).unwrap();
-            console.log("Institute added successfully:", result);
+            // console.log("Institute added successfully:", result);
             form.reset();
             onInstituteAdded?.();
             sessionStorage.setItem(

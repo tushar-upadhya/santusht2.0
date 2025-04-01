@@ -13,20 +13,20 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
     (config) => {
         const token = sessionStorage.getItem("token");
-        console.log(
-            `[${config.method?.toUpperCase()}] Request URL:`,
-            `${BASE_URL}${config.url}`
-        );
-        console.log(
-            `[${config.method?.toUpperCase()}] Token from sessionStorage:`,
-            token
-        );
+        // console.log(
+        //     `[${config.method?.toUpperCase()}] Request URL:`,
+        //     `${BASE_URL}${config.url}`
+        // );
+        // console.log(
+        //     `[${config.method?.toUpperCase()}] Token from sessionStorage:`,
+        //     token
+        // );
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
-            console.log(
-                `[${config.method?.toUpperCase()}] Headers:`,
-                config.headers
-            );
+            // console.log(
+            //     `[${config.method?.toUpperCase()}] Headers:`,
+            //     config.headers
+            // );
         } else {
             console.warn(
                 `[${config.method?.toUpperCase()}] No token found in sessionStorage`
@@ -40,10 +40,10 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-        console.error(
-            `[${error.config.method?.toUpperCase()}] API Error:`,
-            error.response?.data || error.message
-        );
+        // console.error(
+        //     `[${error.config.method?.toUpperCase()}] API Error:`,
+        //     error.response?.data || error.message
+        // );
         return Promise.reject(error);
     }
 );
