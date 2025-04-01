@@ -1,14 +1,15 @@
 import { DataTable } from "@/components/data-table/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect, useState } from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import { useCallback, useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
 interface DynamicTabsProps<T> {
     tabOptions: string[];
     fetchData: (tab: string) => Promise<T[]>;
-    columns: any;
-    initialNewData?: { count: number; data: T[] }; // Optional prop for initial "new" tab data
+    columns: ColumnDef<T>[] | ((tab: string) => ColumnDef<T>[]);
+    initialNewData?: { count: number; data: T[] };
 }
 
 const DynamicTabs = <T,>({
@@ -24,27 +25,29 @@ const DynamicTabs = <T,>({
         new: initialNewData?.count || 0,
     });
 
+    const handleTabChange = useCallback(
+        (tab: string) => {
+            setActiveTab(tab);
+            setLoading(true);
+
+            if (tab === "new" && initialNewData) {
+                setTabData(initialNewData.data);
+                setCounts((prev) => ({ ...prev, [tab]: initialNewData.count }));
+                setLoading(false);
+            } else {
+                fetchData(tab).then((data) => {
+                    setTabData(data);
+                    setLoading(false);
+                    setCounts((prev) => ({ ...prev, [tab]: data.length }));
+                });
+            }
+        },
+        [fetchData, initialNewData]
+    );
+
     useEffect(() => {
         handleTabChange(tabOptions[0]);
-    }, []);
-
-    const handleTabChange = (tab: string) => {
-        setActiveTab(tab);
-        setLoading(true);
-
-        // Use initial data for "new" tab if provided, otherwise fetch
-        if (tab === "new" && initialNewData) {
-            setTabData(initialNewData.data);
-            setCounts((prev) => ({ ...prev, [tab]: initialNewData.count }));
-            setLoading(false);
-        } else {
-            fetchData(tab).then((data) => {
-                setTabData(data);
-                setLoading(false);
-                setCounts((prev) => ({ ...prev, [tab]: data.length }));
-            });
-        }
-    };
+    }, [handleTabChange, tabOptions]);
 
     const resolvedColumns =
         typeof columns === "function" ? columns(activeTab) : columns;
