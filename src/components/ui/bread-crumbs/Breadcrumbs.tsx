@@ -27,12 +27,21 @@ export default function Breadcrumbs() {
 
     const segments = location.pathname.split("/").filter(Boolean);
 
-    const user = useSelector((state: any) => state.auth.user);
+    interface RootState {
+        auth: {
+            user: {
+                firstName?: string;
+                lastName?: string;
+                profileImage?: string;
+            } | null;
+        };
+    }
+
+    const user = useSelector((state: RootState) => state.auth.user);
     const firstName = user?.firstName || "";
     const lastName = user?.lastName || "";
     const profileImage = user?.profileImage || "";
 
-    // initials from first and last name
     const avatarInitials = `${firstName?.charAt(0) || ""}${
         lastName?.charAt(0) || ""
     }`.toUpperCase();
