@@ -16,6 +16,7 @@ const demoData: QRType[] = [
         location: "Toilet Near HDO Room",
         description: "grievance",
         lastUpdate: "2024-11-15",
+        refNO: "REF001",
     },
     {
         serialNumber: 2,
@@ -25,6 +26,7 @@ const demoData: QRType[] = [
         location: "Toilet Near 555 Room",
         description: "grievance",
         lastUpdate: "2024-11-15",
+        refNO: "REF002",
     },
     {
         serialNumber: 3,
@@ -34,6 +36,7 @@ const demoData: QRType[] = [
         location: "Toilet Near 510 Room",
         description: "grievance",
         lastUpdate: "2024-11-15",
+        refNO: "REF003",
     },
     {
         serialNumber: 4,
@@ -43,6 +46,7 @@ const demoData: QRType[] = [
         location: "Toilet Near 628 Room",
         description: "grievance",
         lastUpdate: "2024-11-15",
+        refNO: "REF004",
     },
     {
         serialNumber: 5,
@@ -52,6 +56,7 @@ const demoData: QRType[] = [
         location: "Toilet Near 622 Room",
         description: "grievance",
         lastUpdate: "2024-11-15",
+        refNO: "REF005",
     },
 ];
 
