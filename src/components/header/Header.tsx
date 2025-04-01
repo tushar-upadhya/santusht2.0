@@ -70,7 +70,7 @@ const Header: React.FC = () => {
                             links={isAdminRoute ? adminLinks : userLinks}
                             containerStyles="hidden xl:flex gap-x-8 items-center"
                             linkStyles="relative hover:text-primary transition-colors duration-200"
-                            underlineStyles="absolute left-0 top-full h-[2px] bg-primary w-full"
+                            // underlineStyles removed as it is not part of NavProps
                         />
                         {isAuthenticated && <LogoutButton />}
                         <div className="xl:hidden">

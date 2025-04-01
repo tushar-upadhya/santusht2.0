@@ -4,7 +4,6 @@ interface NavProps {
     links: { name: string; path: string }[];
     containerStyles?: string;
     linkStyles?: string;
-    underlineStyles?: string;
     onClick?: () => void;
 }
 
@@ -12,8 +11,7 @@ const Nav = ({
     links = [],
     containerStyles = "",
     linkStyles = "",
-    underlineStyles = "",
-    onClick,
+    onClick = undefined,
 }: NavProps) => {
     if (!links || links.length === 0) {
         return null;
