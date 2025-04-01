@@ -51,7 +51,7 @@ export const fetchNewGrievances = createAsyncThunk(
         try {
             const newGrievances = await fetchEmployeeData("new");
             return newGrievances;
-        } catch (error) {
+        } catch {
             return rejectWithValue(
                 "Failed to fetch new grievances. Please try again."
             );
