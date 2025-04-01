@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios"; // Confirm this import exists
-
-export const BASE_URL = "http://192.168.30.88:8080/santusht";
+import axios from "axios";
+import { BASE_URL } from "./axiosInstance";
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
