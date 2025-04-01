@@ -27,7 +27,6 @@ const SuperAdminPage = () => {
     const { institutes, admins, loading, error } = useSelector(
         (state: RootState) => state.institutes
     );
-    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
         try {
@@ -46,7 +45,7 @@ const SuperAdminPage = () => {
             sessionStorage.removeItem("institutes");
             sessionStorage.removeItem("admins");
         }
-    }, [dispatch]);
+    }, [dispatch, admins.length, institutes.length]);
 
     const tableData: UserData[] = [
         ...institutes.map((inst, index) => ({
@@ -67,7 +66,7 @@ const SuperAdminPage = () => {
                 role: admin.role,
                 instituteName,
                 fullname: admin.fullname,
-                mobile: admin.mobile,
+                mobile: "N/A",
             };
         }),
     ];
