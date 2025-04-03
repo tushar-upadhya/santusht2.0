@@ -484,7 +484,7 @@ const RaiseGrievanceForm = () => {
                                     multiple
                                     ref={imageInputRef}
                                     onChange={handleImageUpload}
-                                    className="hidden" // Hide the default input
+                                    className="hidden"
                                 />
                             </div>
                             <p className="text-xs text-gray-600">
